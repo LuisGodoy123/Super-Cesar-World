@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Windows",
+            "includePath": [
+                "${workspaceFolder}/include",
+                "C:/raylib/raylib/src",
+                "C:/raylib/w64devkit/x86_64-w64-mingw32/include"
+            ],
+            "defines": [],
+            "compilerPath": "C:/raylib/w64devkit/bin/gcc.exe",
+            "cStandard": "c11",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
