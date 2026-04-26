@@ -3,14 +3,12 @@
 
 static const char *ARQ_PLACAR = "data/placar.dat";
 
-/* inicializa vetor de top scores com zero */
+// inicializa vetor de top scores com zero
 static void limpar_top_scores(Placar *p) {
 	for (int i = 0; i < TOP_SCORES; i++) p->topScores[i] = 0;
 }
 
-/* ------------------------------------------------------------------ */
-/* IniciarPlacar -- inicializa valores padrao                         */
-/* ------------------------------------------------------------------ */
+// IniciarPlacar -- inicializa valores padrao
 
 void IniciarPlacar(Placar *p) {
 	if (p == NULL) return;
@@ -21,9 +19,7 @@ void IniciarPlacar(Placar *p) {
 	limpar_top_scores(p);
 }
 
-/* ------------------------------------------------------------------ */
-/* AtualizarPlacar -- sincroniza dados atuais da partida               */
-/* ------------------------------------------------------------------ */
+// AtualizarPlacar -- sincroniza dados atuais da partida
 
 void AtualizarPlacar(Placar *p, int pontuacao, int vidas, int faseAtual) {
 	if (p == NULL) return;
@@ -33,9 +29,7 @@ void AtualizarPlacar(Placar *p, int pontuacao, int vidas, int faseAtual) {
 	p->faseAtual = faseAtual;
 }
 
-/* ------------------------------------------------------------------ */
-/* CarregarPlacar -- leitura de arquivo (data/placar.dat)             */
-/* ------------------------------------------------------------------ */
+// CarregarPlacar -- leitura de arquivo (data/placar.dat)
 
 void CarregarPlacar(Placar *p) {
 	if (p == NULL) return;
@@ -53,9 +47,7 @@ void CarregarPlacar(Placar *p) {
 	fclose(f);
 }
 
-/* ------------------------------------------------------------------ */
-/* SalvarPlacar -- escrita de arquivo (data/placar.dat)               */
-/* ------------------------------------------------------------------ */
+// SalvarPlacar -- escrita de arquivo (data/placar.dat)
 
 void SalvarPlacar(Placar *p) {
 	if (p == NULL) return;
@@ -68,9 +60,7 @@ void SalvarPlacar(Placar *p) {
 	fclose(f);
 }
 
-/* ------------------------------------------------------------------ */
-/* RegistrarPontuacaoFinal -- insere no top 5 em ordem decrescente    */
-/* ------------------------------------------------------------------ */
+// RegistrarPontuacaoFinal -- insere no top 5 em ordem decrescente
 
 void RegistrarPontuacaoFinal(Placar *p, int pontuacaoFinal) {
 	if (p == NULL) return;
@@ -90,9 +80,7 @@ void RegistrarPontuacaoFinal(Placar *p, int pontuacaoFinal) {
 	p->topScores[pos] = pontuacaoFinal;
 }
 
-/* ------------------------------------------------------------------ */
-/* DesenharPlacar -- HUD da partida (pontos, vidas e fase)            */
-/* ------------------------------------------------------------------ */
+// DesenharPlacar -- HUD da partida (pontos, vidas e fase)
 
 void DesenharPlacar(Placar *p) {
 	if (p == NULL) return;
@@ -102,9 +90,7 @@ void DesenharPlacar(Placar *p) {
 	DrawText(TextFormat("Fase: %d", p->faseAtual), 20, 80, 24, WHITE);
 }
 
-/* ------------------------------------------------------------------ */
-/* DesenharTopScores -- mostra ranking de pontuacoes                  */
-/* ------------------------------------------------------------------ */
+// DesenharTopScores -- mostra ranking de pontuacoes
 
 void DesenharTopScores(Placar *p, int x, int y) {
 	if (p == NULL) return;
