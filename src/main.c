@@ -18,9 +18,7 @@ typedef enum {
 	VITORIA
 } EstadoJogo;
 
-/* ------------------------------------------------------------------ */
-/* Utilitarios internos                                                */
-/* ------------------------------------------------------------------ */
+// Utilitarios internos
 
 static void resetar_posicao_jogador_preservando_status(Jogador *j) {
 	int vidas = j->vidas;
@@ -84,9 +82,7 @@ static void preparar_fase(Fase *fase,
 	carregar_inimigos_da_fase(listaInimigos, faseAtual);
 }
 
-/* ------------------------------------------------------------------ */
-/* main                                                                */
-/* ------------------------------------------------------------------ */
+// main
 
 int main(void) {
 	InitWindow(LARGURA_TELA, ALTURA_TELA, "Super Cesar World");
