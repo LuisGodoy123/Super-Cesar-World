@@ -36,16 +36,16 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     else
         j->vx = 0.0f;
 
-    // --- Pulo ---
+    // Pulo
     if ((IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) && j->noChao) {
         j->vy = FORCA_PULO;
         j->noChao = 0;
     }
 
-    // --- Gravidade ---
+    // Gravidade
     j->vy += GRAVIDADE * delta;
 
-    // --- Movimento e colisao no eixo X ---
+    // Movimento e colisao no eixo X
     j->x += j->vx * delta;
 
     int colEsq = (int)(j->x) / TILE;
@@ -62,7 +62,7 @@ void AtualizarJogador(Jogador *j, Fase *f) {
         j->vx = 0.0f;
     }
 
-    // --- Movimento e colisao no eixo Y ---
+    // Movimento e colisao no eixo Y
     j->y += j->vy * delta;
     j->noChao = 0;
 
@@ -81,19 +81,19 @@ void AtualizarJogador(Jogador *j, Fase *f) {
         j->vy = 0.0f;
     }
 
-    // --- Limites da fase ---
+    // Limites da fase
     if (j->x < 0) j->x = 0;
     float limDir = (float)((COLUNAS - 1) * TILE - JOGADOR_LARGURA);
     if (j->x > limDir) j->x = limDir;
 
-    // --- Camera segue o jogador ---
+    // Camera segue o jogador
     float maxCam = (float)(COLUNAS * TILE - GetScreenWidth());
     f->cameraX = j->x - GetScreenWidth() / 2.0f + JOGADOR_LARGURA / 2.0f;
     if (f->cameraX < 0)       f->cameraX = 0;
     if (f->cameraX > maxCam)  f->cameraX = maxCam;
     j->cameraX = f->cameraX;
 
-    // --- Timer de invencibilidade ---
+    // Timer de invencibilidade
     if (j->estado == INVENCIVEL) {
         j->timerInvencivel -= delta;
         if (j->timerInvencivel <= 0.0f) {
@@ -102,7 +102,7 @@ void AtualizarJogador(Jogador *j, Fase *f) {
         }
     }
 
-    // --- Caiu fora da tela ---
+    // Caiu fora da tela
     if (j->y > LINHAS * TILE) {
         j->vidas--;
         if (j->vidas <= 0)
