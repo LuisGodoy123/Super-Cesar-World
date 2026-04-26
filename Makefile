@@ -1,17 +1,12 @@
-# Ajuste este caminho para onde o raylib está instalado
-RAYLIB_PATH ?= C:/raylib/raylib
-
-CC      = gcc
+CC      = C:/raylib/w64devkit/bin/gcc.exe
 TARGET  = build/super-cesar-world.exe
 SRC     = $(wildcard src/*.c)
 OBJ     = $(patsubst src/%.c, build/%.o, $(SRC))
 
-CFLAGS  = -Wall -Wextra -std=c11 \
-          -Iinclude \
-          -I$(RAYLIB_PATH)/src
+RAYLIB  = C:/raylib/raylib/src
 
-LDFLAGS = -L$(RAYLIB_PATH)/src \
-          -lraylib -lopengl32 -lgdi32 -lwinmm
+CFLAGS  = -Wall -Wextra -std=c11 -Iinclude -I$(RAYLIB)
+LDFLAGS = -L$(RAYLIB) -lraylib -lopengl32 -lgdi32 -lwinmm -Wl,--subsystem,console
 
 .PHONY: all clean run
 
