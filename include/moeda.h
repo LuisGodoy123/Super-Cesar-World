@@ -7,10 +7,10 @@
 
 #define PONTOS_MOEDA 100
 
-typedef struct NoMoeda {
-	float x, y;
-	int coletada;
-	struct NoMoeda *proximo;
+typedef struct NoMoeda {        // NO DA LISTA ENCADEADA
+    float x, y;
+    int coletada;
+    struct NoMoeda *proximo;    // ponteiro para o proximo no
 } NoMoeda;
 
 NoMoeda *CriarMoeda(float x, float y);
