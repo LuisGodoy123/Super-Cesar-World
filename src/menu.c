@@ -42,17 +42,19 @@ static void desenhar_texto_contorno_grosso(const char *txt, int x, int y,
     DrawText(txt, x, y, tamanho, preenchimento);
 }
 
-/* texto com leve negrito (2 passadas) */
+/* texto com leve negrito (3 passadas) */
 static void desenhar_texto_fonte_negrito(Font fonte, const char *txt,
                                          Vector2 pos, float tamanho, float espacamento, Color cor) {
     DrawTextEx(fonte, txt, pos, tamanho, espacamento, cor);
     DrawTextEx(fonte, txt, (Vector2){pos.x + 1, pos.y}, tamanho, espacamento, cor);
+    DrawTextEx(fonte, txt, (Vector2){pos.x, pos.y + 1}, tamanho, espacamento, cor);
 }
 
 /* fallback de negrito para fonte padrao */
 static void desenhar_texto_negrito(const char *txt, int x, int y, int tamanho, Color cor) {
     DrawText(txt, x, y, tamanho, cor);
     DrawText(txt, x + 1, y, tamanho, cor);
+    DrawText(txt, x, y + 1, tamanho, cor);
 }
 
 /* desenha palavra letra a letra com fonte padrao, cada uma com sua cor */
@@ -445,39 +447,22 @@ void DesenharMenu(Menu *m, Placar *p) {
 
     /* --- titulo --- */
 
-    /* 4 cores que se revezam letra a letra em todo o titulo */
-    static const Color PALETA[4] = {
-        {255, 140,   0, 255},  /* 0 laranja      */
-        { 55,  55,  60, 255},  /* 1 cinza escuro */
-        {175, 130,   0, 255},  /* 2 amarelo escuro */
-        {255, 255, 255, 255},  /* 3 branco       */
-    };
+    /* paleta vibrante estilo classico */
+    const Color COR_SUPER    = (Color){218,  52,  46, 255}; /* vermelho */
+    const Color COR_CESAR    = (Color){239, 136,  40, 255}; /* laranja  */
+    const Color COR_WORLD    = (Color){ 58, 202, 214, 255}; /* turquesa */
+    const Color COR_CONTORNO = (Color){ 22,  55, 135, 255}; /* cobalto escuro */
 
-    /* SUPER = letras 0-4  → ciclo começa em 0 */
     Color cor_super[] = {
-        PALETA[0],  /* S */
-        PALETA[1],  /* U */
-        PALETA[2],  /* P */
-        PALETA[3],  /* E */
-        PALETA[0],  /* R */
+        COR_SUPER, COR_SUPER, COR_SUPER, COR_SUPER, COR_SUPER,
     };
 
-    /* CESAR = letras 5-9  → ciclo continua em 1 */
     Color cor_cesar[] = {
-        PALETA[1],  /* C */
-        PALETA[2],  /* E */
-        PALETA[3],  /* S */
-        PALETA[0],  /* A */
-        PALETA[1],  /* R */
+        COR_CESAR, COR_CESAR, COR_CESAR, COR_CESAR, COR_CESAR,
     };
 
-    /* WORLD = letras 10-14 → ciclo continua em 2 */
     Color cor_world[] = {
-        PALETA[2],  /* W */
-        PALETA[3],  /* O */
-        PALETA[0],  /* R */
-        PALETA[1],  /* L */
-        PALETA[2],  /* D */
+        COR_WORLD, COR_WORLD, COR_WORLD, COR_WORLD, COR_WORLD,
     };
 
     /* calcula larguras para centralizar */
@@ -507,11 +492,11 @@ void DesenharMenu(Menu *m, Placar *p) {
         int fxWorld = fxCesar + (int)szCesar.x + gap;
 
         desenhar_palavra_colorida_fonte("SUPER", cor_super, m->fonte,
-                                        fxSuper, 88, tSuper, (Color){80, 35, 0, 255});
+                                        fxSuper, 88, tSuper, COR_CONTORNO);
         desenhar_palavra_colorida_fonte("CESAR", cor_cesar, m->fonte,
-                                        fxCesar, 148, tTit, WHITE);
+                                        fxCesar, 148, tTit, COR_CONTORNO);
         desenhar_palavra_colorida_fonte("WORLD", cor_world, m->fonte,
-                                        fxWorld, 148, tTit, WHITE);
+                                        fxWorld, 148, tTit, COR_CONTORNO);
 
         Vector2 szTM = MeasureTextEx(m->fonte, "WORLD", tTit, 0);
         desenhar_texto_fonte_negrito(m->fonte, "TM",
@@ -519,9 +504,9 @@ void DesenharMenu(Menu *m, Placar *p) {
                                      22 * ESCALA_TEXTO_MENU, 0, WHITE);
     } else {
         /* fallback: fonte padrao */
-        desenhar_palavra_colorida("SUPER",  cor_super, xSuper, 92, tamSuperBase, (Color){80, 35, 0, 255});
-        desenhar_palavra_colorida("CESAR",  cor_cesar, xCesar, 160, tamTituloBase, WHITE);
-        desenhar_palavra_colorida("WORLD",  cor_world, xWorld, 160, tamTituloBase, WHITE);
+        desenhar_palavra_colorida("SUPER",  cor_super, xSuper, 92, tamSuperBase, COR_CONTORNO);
+        desenhar_palavra_colorida("CESAR",  cor_cesar, xCesar, 160, tamTituloBase, COR_CONTORNO);
+        desenhar_palavra_colorida("WORLD",  cor_world, xWorld, 160, tamTituloBase, COR_CONTORNO);
         desenhar_texto_negrito("TM", xWorld + MeasureText("WORLD", tamTituloBase) + 4,
                                168, (int)(24 * ESCALA_TEXTO_MENU), WHITE);
     }
