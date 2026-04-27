@@ -517,27 +517,41 @@ void DesenharMenu(Menu *m, Placar *p) {
     float tCursor = (m->temFonte ? 18.0f : 30.0f) * ESCALA_TEXTO_MENU;
     int   espaco  = (int)((m->temFonte ? 48.0f : (float)MENU_ESPACO) * ESCALA_TEXTO_MENU * 0.85f);
 
+    int larguraMaxItem = 0;
+    for (int i = 0; i < OPCAO_TOTAL; i++) {
+        int larguraItem;
+        if (m->temFonte)
+            larguraItem = (int)MeasureTextEx(m->fonte, LABELS[i], tItem, 1).x + 2;
+        else
+            larguraItem = MeasureText(LABELS[i], (int)tItem) + 2;
+
+        if (larguraItem > larguraMaxItem) larguraMaxItem = larguraItem;
+    }
+
+    int menuXCentralizado = LARGURA / 2 - larguraMaxItem / 2;
+    int cursorXCentralizado = menuXCentralizado - (m->temFonte ? 30 : 34);
+
     for (int i = 0; i < OPCAO_TOTAL; i++) {
         int y = MENU_Y_INICIO + i * espaco;
         int selecionado = (i == m->selecionado);
 
         if (m->temFonte) {
             desenhar_texto_fonte_negrito(m->fonte, LABELS[i],
-                                         (Vector2){MENU_X, y}, tItem, 1, WHITE);
+                                         (Vector2){menuXCentralizado, y}, tItem, 1, WHITE);
 
             /* cursor piscante */
             if (selecionado) {
                 int visivel = (int)(m->tempoCursor * 4) % 2;
                 if (visivel)
                     desenhar_texto_fonte_negrito(m->fonte, ">",
-                                                 (Vector2){CURSOR_X, y}, tCursor, 1, YELLOW);
+                                                 (Vector2){cursorXCentralizado, y}, tCursor, 1, YELLOW);
             }
         } else {
-            desenhar_texto_negrito(LABELS[i], MENU_X, y, (int)tItem, WHITE);
+            desenhar_texto_negrito(LABELS[i], menuXCentralizado, y, (int)tItem, WHITE);
             if (selecionado) {
                 int visivel = (int)(m->tempoCursor * 4) % 2;
                 if (visivel)
-                    desenhar_texto_negrito(">", CURSOR_X, y, (int)tCursor, YELLOW);
+                    desenhar_texto_negrito(">", cursorXCentralizado, y, (int)tCursor, YELLOW);
             }
         }
     }
