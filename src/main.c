@@ -83,6 +83,32 @@ static void preparar_fase(Fase *fase,
 	carregar_inimigos_da_fase(listaInimigos, faseAtual);
 }
 
+static int carregar_fonte_ui(Font *fonte) {
+	const char *caminhos_fonte[] = {
+		"assets/fontes/SuperMarioWorld.ttf",
+		"assets/fontes/PressStart2P-Regular.ttf",
+		"assets/fontes/SuperMario256.ttf",
+	};
+	int n = sizeof(caminhos_fonte) / sizeof(caminhos_fonte[0]);
+	for (int i = 0; i < n; i++) {
+		if (FileExists(caminhos_fonte[i])) {
+			*fonte = LoadFontEx(caminhos_fonte[i], 128, NULL, 0);
+			SetTextureFilter(fonte->texture, TEXTURE_FILTER_POINT);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+static void desenhar_texto_ui(Font *fonte, int temFonte, const char *txt,
+						  int x, int y, int tamanho, Color cor) {
+	if (temFonte && fonte != NULL) {
+		DrawTextEx(*fonte, txt, (Vector2){(float)x, (float)y}, (float)tamanho, 1, cor);
+	} else {
+		DrawText(txt, x, y, tamanho, cor);
+	}
+}
+
 // main
 
 int main(void) {
@@ -97,6 +123,8 @@ int main(void) {
 	Fase fase;
 	Jogador jogador;
 	Placar placar;
+	Font fonteUI;
+	int temFonteUI = 0;
 
 	No *listaInimigos = NULL;
 	NoMoeda *listaMoedas = NULL;
@@ -106,6 +134,7 @@ int main(void) {
 
 	IniciarPlacar(&placar);
 	CarregarPlacar(&placar);
+	temFonteUI = carregar_fonte_ui(&fonteUI);
 
 	Menu menu;
 	IniciarMenu(&menu);
@@ -191,7 +220,7 @@ int main(void) {
 			DesenharMoedas(listaMoedas, fase.cameraX);
 			DesenharInimigos(listaInimigos, fase.cameraX);
 			DesenharJogador(&jogador);
-			DesenharPlacar(&placar);
+			DesenharPlacar(&placar, &fonteUI, temFonteUI);
 
 			if (faseAtual == 3 && boss_ativo(listaInimigos)) {
 				DrawText("Derrote o boss para liberar a vitoria!", 340, 20, 24, GOLD);
@@ -199,15 +228,19 @@ int main(void) {
 		} else if (estado == GAME_OVER) {
 			ClearBackground(BLACK);
 
-			DrawText("GAME OVER", 500, 180, 72, RED);
-			DrawText(TextFormat("Pontuacao final: %d", jogador.pontos), 470, 300, 36, WHITE);
-			DrawText("Pressione ENTER para voltar ao menu", 365, 380, 30, LIGHTGRAY);
+			desenhar_texto_ui(&fonteUI, temFonteUI, "GAME OVER", 500, 180, 72, RED);
+			desenhar_texto_ui(&fonteUI, temFonteUI,
+						  TextFormat("Pontuacao final: %d", jogador.pontos), 470, 300, 36, WHITE);
+			desenhar_texto_ui(&fonteUI, temFonteUI,
+						  "Pressione ENTER para voltar ao menu", 365, 380, 30, LIGHTGRAY);
 		} else {
 			ClearBackground(DARKBLUE);
 
-			DrawText("VITORIA!", 520, 180, 72, YELLOW);
-			DrawText(TextFormat("Pontuacao final: %d", jogador.pontos), 470, 300, 36, WHITE);
-			DrawText("Recorde salvo! Pressione ENTER para voltar ao menu", 280, 380, 30, LIGHTGRAY);
+			desenhar_texto_ui(&fonteUI, temFonteUI, "VITORIA!", 520, 180, 72, YELLOW);
+			desenhar_texto_ui(&fonteUI, temFonteUI,
+						  TextFormat("Pontuacao final: %d", jogador.pontos), 470, 300, 36, WHITE);
+			desenhar_texto_ui(&fonteUI, temFonteUI,
+						  "Recorde salvo! Pressione ENTER para voltar ao menu", 280, 380, 30, LIGHTGRAY);
 		}
 
 		EndDrawing();
@@ -216,6 +249,7 @@ int main(void) {
 	LiberarInimigos(listaInimigos);
 	LiberarMoedas(listaMoedas);
 	LiberarMenu(&menu);
+	if (temFonteUI) UnloadFont(fonteUI);
 	CloseWindow();
 	return 0;
 }

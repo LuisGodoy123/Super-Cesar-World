@@ -17,7 +17,7 @@ void AtualizarPlacar(Placar *p, int pontuacao, int vidas, int faseAtual);
 void CarregarPlacar(Placar *p);
 void SalvarPlacar(Placar *p);
 void RegistrarPontuacaoFinal(Placar *p, int pontuacaoFinal);
-void DesenharPlacar(Placar *p);
+void DesenharPlacar(Placar *p, Font *fonte, int temFonte);
 void DesenharTopScores(Placar *p, int x, int y);
 
 #endif

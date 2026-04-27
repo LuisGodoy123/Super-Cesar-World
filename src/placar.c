@@ -3,6 +3,15 @@
 
 static const char *ARQ_PLACAR = "data/placar.dat";
 
+static void desenhar_texto_ui(Font *fonte, int temFonte, const char *txt,
+                              int x, int y, int tamanho, Color cor) {
+	if (temFonte && fonte != NULL) {
+		DrawTextEx(*fonte, txt, (Vector2){(float)x, (float)y}, (float)tamanho, 1, cor);
+	} else {
+		DrawText(txt, x, y, tamanho, cor);
+	}
+}
+
 // inicializa vetor de top scores com zero
 static void limpar_top_scores(Placar *p) {
 	for (int i = 0; i < TOP_SCORES; i++) p->topScores[i] = 0;
@@ -82,12 +91,12 @@ void RegistrarPontuacaoFinal(Placar *p, int pontuacaoFinal) {
 
 // DesenharPlacar -- HUD da partida (pontos, vidas e fase)
 
-void DesenharPlacar(Placar *p) {
+void DesenharPlacar(Placar *p, Font *fonte, int temFonte) {
 	if (p == NULL) return;
 
-	DrawText(TextFormat("Pontos: %d", p->pontuacao), 20, 20, 24, WHITE);
-	DrawText(TextFormat("Vidas: %d", p->vidas), 20, 50, 24, WHITE);
-	DrawText(TextFormat("Fase: %d", p->faseAtual), 20, 80, 24, WHITE);
+	desenhar_texto_ui(fonte, temFonte, TextFormat("Pontos: %d", p->pontuacao), 20, 20, 24, WHITE);
+	desenhar_texto_ui(fonte, temFonte, TextFormat("Vidas: %d", p->vidas), 20, 50, 24, WHITE);
+	desenhar_texto_ui(fonte, temFonte, TextFormat("Fase: %d", p->faseAtual), 20, 80, 24, WHITE);
 }
 
 // DesenharTopScores -- mostra ranking de pontuacoes
