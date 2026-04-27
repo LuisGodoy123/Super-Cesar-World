@@ -530,7 +530,7 @@ void DesenharMenu(Menu *m, Placar *p) {
     /* --- itens do menu --- */
     float tItem   = (m->temFonte ? 18.0f : 28.0f) * ESCALA_TEXTO_MENU;
     float tCursor = (m->temFonte ? 18.0f : 30.0f) * ESCALA_TEXTO_MENU;
-    int   espaco  = (int)((m->temFonte ? 48.0f : (float)MENU_ESPACO) * ESCALA_TEXTO_MENU);
+    int   espaco  = (int)((m->temFonte ? 48.0f : (float)MENU_ESPACO) * ESCALA_TEXTO_MENU * 0.85f);
 
     for (int i = 0; i < OPCAO_TOTAL; i++) {
         int y = MENU_Y_INICIO + i * espaco;
