@@ -4,6 +4,7 @@
 #include "inimigo.h"
 #include "moeda.h"
 #include "placar.h"
+#include "menu.h"
 #include <stddef.h>
 
 #define LARGURA_TELA 1280
@@ -103,9 +104,16 @@ int main(void) {
 	IniciarPlacar(&placar);
 	CarregarPlacar(&placar);
 
+	Menu menu;
+	IniciarMenu(&menu);
+
 	while (!WindowShouldClose()) {
 		if (estado == MENU) {
-			if (IsKeyPressed(KEY_ENTER)) {
+			int opcao = AtualizarMenu(&menu);
+			if (opcao == OPCAO_COMECAR ||
+			    opcao == OPCAO_SLOT_A  ||
+			    opcao == OPCAO_SLOT_B  ||
+			    opcao == OPCAO_SLOT_C) {
 				faseAtual = 1;
 				scoreRegistrado = 0;
 				preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 0);
@@ -164,12 +172,7 @@ int main(void) {
 		BeginDrawing();
 
 		if (estado == MENU) {
-			ClearBackground(BLACK);
-
-			DrawText("SUPER CESAR WORLD", 380, 120, 56, YELLOW);
-			DrawText("Pressione ENTER para jogar", 420, 220, 30, WHITE);
-			DrawText("Setas/A-D para mover | Espaco/W/Seta Cima para pular", 280, 270, 24, LIGHTGRAY);
-			DesenharTopScores(&placar, 500, 350);
+			DesenharMenu(&menu, &placar);
 		} else if (estado == JOGANDO) {
 			DesenharFase(&fase);
 			DesenharMoedas(listaMoedas, fase.cameraX);
@@ -199,6 +202,7 @@ int main(void) {
 
 	LiberarInimigos(listaInimigos);
 	LiberarMoedas(listaMoedas);
+	LiberarMenu(&menu);
 	CloseWindow();
 	return 0;
 }
