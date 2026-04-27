@@ -165,9 +165,21 @@ void IniciarMenu(Menu *m) {
         m->temFundo = 1;
     }
 
-    if (FileExists("assets/fontes/SuperMario256.ttf")) {
-        m->fonte    = LoadFontEx("assets/fontes/SuperMario256.ttf", 120, NULL, 0);
-        m->temFonte = 1;
+    /* tenta carregar fonte local sem antialiasing (pixel perfeito) */
+    const char *caminhos_fonte[] = {
+        "assets/fontes/SuperMarioWorld.ttf",
+        "assets/fontes/PressStart2P-Regular.ttf",
+        "assets/fontes/SuperMario256.ttf",
+    };
+    int n = sizeof(caminhos_fonte) / sizeof(caminhos_fonte[0]);
+    for (int i = 0; i < n; i++) {
+        if (FileExists(caminhos_fonte[i])) {
+            m->fonte = LoadFontEx(caminhos_fonte[i], 128, NULL, 0);
+            /* desativa antialiasing — filtro de ponto mantem aspecto pixel */
+            SetTextureFilter(m->fonte.texture, TEXTURE_FILTER_POINT);
+            m->temFonte = 1;
+            break;
+        }
     }
 }
 
@@ -297,8 +309,8 @@ void DesenharMenu(Menu *m, Placar *p) {
         int y = MENU_Y_INICIO + i * MENU_ESPACO;
         int selecionado = (i == m->selecionado);
 
-        Color cor = selecionado ? WHITE : (Color){180, 180, 180, 255};
-        int tamanho = selecionado ? 30 : 26;
+        Color cor = WHITE;
+        int tamanho = selecionado ? 30 : 28;
 
         DrawText(LABELS[i], MENU_X, y, tamanho, cor);
 
