@@ -305,9 +305,17 @@ void IniciarMenu(Menu *m) {
     m->temFundo    = 0;
     m->temFonte    = 0;
 
-    if (FileExists("assets/sprites/menu_bg.png")) {
-        m->fundo    = LoadTexture("assets/sprites/menu_bg.png");
-        m->temFundo = 1;
+    const char *fundos[] = {
+        "assets/sprites/Gemini_Generated_Image_ye86j2ye86j2ye86 (1).png",
+        "assets/sprites/menu_bg.png"
+    };
+
+    for (int i = 0; i < 2; i++) {
+        if (FileExists(fundos[i])) {
+            m->fundo = LoadTexture(fundos[i]);
+            m->temFundo = 1;
+            break;
+        }
     }
 
     /* tenta carregar fonte local sem antialiasing (pixel perfeito) */
