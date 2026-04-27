@@ -32,6 +32,48 @@ static void desenhar_texto_contorno(const char *txt, int x, int y,
     DrawText(txt, x, y,         tamanho, preenchimento);
 }
 
+/* contorno grosso (3px) para o titulo principal */
+static void desenhar_texto_contorno_grosso(const char *txt, int x, int y,
+                                           int tamanho, Color preenchimento, Color contorno) {
+    for (int dx = -3; dx <= 3; dx++)
+        for (int dy = -3; dy <= 3; dy++)
+            if (dx != 0 || dy != 0)
+                DrawText(txt, x + dx, y + dy, tamanho, contorno);
+    DrawText(txt, x, y, tamanho, preenchimento);
+}
+
+/* desenha palavra letra a letra com fonte padrao, cada uma com sua cor */
+static void desenhar_palavra_colorida(const char *palavra, Color *cores,
+                                      int x, int y, int tamanho, Color contorno) {
+    char buf[2] = {0, 0};
+    int curX = x;
+    for (int i = 0; palavra[i] != '\0'; i++) {
+        buf[0] = palavra[i];
+        desenhar_texto_contorno_grosso(buf, curX, y, tamanho, cores[i], contorno);
+        curX += MeasureText(buf, tamanho) - 2;
+    }
+}
+
+/* desenha palavra letra a letra com fonte customizada, cada uma com sua cor */
+static void desenhar_palavra_colorida_fonte(const char *palavra, Color *cores,
+                                            Font fonte, int x, int y,
+                                            float tamanho, Color contorno) {
+    char buf[2] = {0, 0};
+    int curX = x;
+    for (int i = 0; palavra[i] != '\0'; i++) {
+        buf[0] = palavra[i];
+        Vector2 tam = MeasureTextEx(fonte, buf, tamanho, 1);
+        /* contorno grosso */
+        for (int dx = -3; dx <= 3; dx++)
+            for (int dy = -3; dy <= 3; dy++)
+                if (dx != 0 || dy != 0)
+                    DrawTextEx(fonte, buf, (Vector2){curX + dx, y + dy},
+                               tamanho, 1, contorno);
+        DrawTextEx(fonte, buf, (Vector2){curX, y}, tamanho, 1, cores[i]);
+        curX += (int)tam.x - 1;
+    }
+}
+
 static void desenhar_fundo_programatico(void) {
     /* parede superior */
     DrawRectangle(0, 0, LARGURA, 480, (Color){170, 155, 125, 255});
@@ -116,15 +158,22 @@ void IniciarMenu(Menu *m) {
     m->selecionado = OPCAO_COMECAR;
     m->tempoCursor = 0.0f;
     m->temFundo    = 0;
+    m->temFonte    = 0;
 
     if (FileExists("assets/sprites/menu_bg.png")) {
         m->fundo    = LoadTexture("assets/sprites/menu_bg.png");
         m->temFundo = 1;
     }
+
+    if (FileExists("assets/fontes/SuperMario256.ttf")) {
+        m->fonte    = LoadFontEx("assets/fontes/SuperMario256.ttf", 120, NULL, 0);
+        m->temFonte = 1;
+    }
 }
 
 void LiberarMenu(Menu *m) {
     if (m->temFundo) UnloadTexture(m->fundo);
+    if (m->temFonte) UnloadFont(m->fonte);
 }
 
 /* ------------------------------------------------------------------ */
@@ -164,26 +213,84 @@ void DesenharMenu(Menu *m, Placar *p) {
     }
 
     /* --- titulo --- */
-    const char *super = "SUPER";
-    int lSuper = MeasureText(super, 68);
-    desenhar_texto_contorno(super,
-        LARGURA / 2 - lSuper / 2, 110,
-        68, (Color){255, 165, 0, 255}, (Color){80, 40, 0, 255});
 
-    const char *titulo = "CESAR WORLD";
-    int lTitulo = MeasureText(titulo, 88);
-    desenhar_texto_contorno(titulo,
-        LARGURA / 2 - lTitulo / 2, 178,
-        88, (Color){220, 220, 220, 255}, (Color){20, 20, 20, 255});
+    /* 4 cores que se revezam letra a letra em todo o titulo */
+    static const Color PALETA[4] = {
+        {255, 140,   0, 255},  /* 0 laranja      */
+        { 55,  55,  60, 255},  /* 1 cinza escuro */
+        {175, 130,   0, 255},  /* 2 amarelo escuro */
+        {255, 255, 255, 255},  /* 3 branco       */
+    };
 
-    /* TM superscrito */
-    DrawText("TM", LARGURA / 2 + lTitulo / 2 + 4, 184, 22,
-             (Color){200, 200, 200, 255});
+    /* SUPER = letras 0-4  → ciclo começa em 0 */
+    Color cor_super[] = {
+        PALETA[0],  /* S */
+        PALETA[1],  /* U */
+        PALETA[2],  /* P */
+        PALETA[3],  /* E */
+        PALETA[0],  /* R */
+    };
 
-    /* --- painel semi-transparente atras do menu --- */
-    DrawRectangle(CURSOR_X - 20, MENU_Y_INICIO - 14,
-                  520, OPCAO_TOTAL * MENU_ESPACO + 28,
-                  (Color){0, 0, 0, 110});
+    /* CESAR = letras 5-9  → ciclo continua em 1 */
+    Color cor_cesar[] = {
+        PALETA[1],  /* C */
+        PALETA[2],  /* E */
+        PALETA[3],  /* S */
+        PALETA[0],  /* A */
+        PALETA[1],  /* R */
+    };
+
+    /* WORLD = letras 10-14 → ciclo continua em 2 */
+    Color cor_world[] = {
+        PALETA[2],  /* W */
+        PALETA[3],  /* O */
+        PALETA[0],  /* R */
+        PALETA[1],  /* L */
+        PALETA[2],  /* D */
+    };
+
+    /* calcula larguras para centralizar */
+    int lSuper = MeasureText("SUPER",      72);
+    int lCesar = MeasureText("CESAR",      96);
+    int lWorld = MeasureText(" WORLD",     96);
+    int lTitulo = lCesar + MeasureText(" ", 96) + lWorld;
+
+    int xSuper  = LARGURA / 2 - lSuper  / 2 + 30;
+    int xCesar  = LARGURA / 2 - lTitulo / 2;
+    int xWorld  = xCesar + lCesar + MeasureText(" ", 96) - 10;
+
+    if (m->temFonte) {
+        /* usa fonte Super Mario 256 */
+        float tSuper = 80.0f;
+        float tTit   = 108.0f;
+
+        Vector2 szSuper = MeasureTextEx(m->fonte, "SUPER",      tSuper, 1);
+        Vector2 szCesar = MeasureTextEx(m->fonte, "CESAR",      tTit,   1);
+        Vector2 szWorld = MeasureTextEx(m->fonte, " WORLD",     tTit,   1);
+        int totalTit = (int)(szCesar.x + szWorld.x);
+
+        int fxSuper = LARGURA / 2 - (int)szSuper.x / 2 + 30;
+        int fxCesar = LARGURA / 2 - totalTit / 2;
+        int fxWorld = fxCesar + (int)szCesar.x;
+
+        desenhar_palavra_colorida_fonte("SUPER", cor_super, m->fonte,
+                                        fxSuper, 88, tSuper, (Color){80, 35, 0, 255});
+        desenhar_palavra_colorida_fonte("CESAR", cor_cesar, m->fonte,
+                                        fxCesar, 162, tTit, WHITE);
+        desenhar_palavra_colorida_fonte(" WORLD", cor_world, m->fonte,
+                                        fxWorld, 162, tTit, WHITE);
+
+        Vector2 szTM = MeasureTextEx(m->fonte, "WORLD", tTit, 1);
+        DrawTextEx(m->fonte, "TM",
+                   (Vector2){fxWorld + (int)szTM.x + 4, 168}, 26, 1, WHITE);
+    } else {
+        /* fallback: fonte padrao */
+        desenhar_palavra_colorida("SUPER",  cor_super, xSuper, 95,  72, (Color){80, 35, 0, 255});
+        desenhar_palavra_colorida("CESAR",  cor_cesar, xCesar, 168, 96, WHITE);
+        desenhar_palavra_colorida("WORLD",  cor_world, xWorld, 168, 96, WHITE);
+        DrawText("TM", xWorld + MeasureText("WORLD", 96) + 4, 174, 24, WHITE);
+    }
+
 
     /* --- itens do menu --- */
     for (int i = 0; i < OPCAO_TOTAL; i++) {
