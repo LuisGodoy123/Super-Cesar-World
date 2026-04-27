@@ -370,7 +370,7 @@ void IniciarMenu(Menu *m) {
     m->temFonte    = 0;
 
     const char *fundos[] = {
-        "assets/sprites/Gemini_Generated_Image_ye86j2ye86j2ye86 (1).png",
+        "assets/sprites/fotocenario.png",
         "assets/sprites/menu_bg.png"
     };
 
@@ -447,22 +447,38 @@ void DesenharMenu(Menu *m, Placar *p) {
 
     /* --- titulo --- */
 
-    /* paleta vibrante estilo classico */
-    const Color COR_SUPER    = (Color){218,  52,  46, 255}; /* vermelho */
-    const Color COR_CESAR    = (Color){239, 136,  40, 255}; /* laranja  */
-    const Color COR_WORLD    = (Color){ 58, 202, 214, 255}; /* turquesa */
+    /* paleta do titulo: laranja, cinza escuro, amarelo escuro e branco */
+    const Color COR_BORGONHA       = (Color){255, 140,   0, 255}; /* agora laranja */
+    const Color COR_CINZA_ESCURO   = (Color){ 55,  55,  60, 255};
+    const Color COR_AMARELO_ESCURO = (Color){255, 200,  70, 255}; /* mais claro */
+    const Color COR_BRANCO         = (Color){255, 255, 255, 255};
     const Color COR_CONTORNO = (Color){ 22,  55, 135, 255}; /* cobalto escuro */
 
+    /* sequencia repetida: laranja -> cinza escuro -> amarelo escuro -> branco */
     Color cor_super[] = {
-        COR_SUPER, COR_SUPER, COR_SUPER, COR_SUPER, COR_SUPER,
+        COR_BORGONHA,
+        COR_CINZA_ESCURO,
+        COR_AMARELO_ESCURO,
+        COR_BRANCO,
+        COR_BORGONHA,
     };
 
+    /* mesma sequencia para CESAR */
     Color cor_cesar[] = {
-        COR_CESAR, COR_CESAR, COR_CESAR, COR_CESAR, COR_CESAR,
+        COR_BORGONHA,
+        COR_CINZA_ESCURO,
+        COR_AMARELO_ESCURO,
+        COR_BRANCO,
+        COR_BORGONHA,
     };
 
+    /* mesma sequencia para WORLD */
     Color cor_world[] = {
-        COR_WORLD, COR_WORLD, COR_WORLD, COR_WORLD, COR_WORLD,
+        COR_BORGONHA,
+        COR_CINZA_ESCURO,
+        COR_AMARELO_ESCURO,
+        COR_BRANCO,
+        COR_BORGONHA,
     };
 
     /* calcula larguras para centralizar */
@@ -492,23 +508,23 @@ void DesenharMenu(Menu *m, Placar *p) {
         int fxWorld = fxCesar + (int)szCesar.x + gap;
 
         desenhar_palavra_colorida_fonte("SUPER", cor_super, m->fonte,
-                                        fxSuper, 88, tSuper, COR_CONTORNO);
+                        fxSuper, 70, tSuper, COR_CONTORNO);
         desenhar_palavra_colorida_fonte("CESAR", cor_cesar, m->fonte,
-                                        fxCesar, 148, tTit, COR_CONTORNO);
+                        fxCesar, 130, tTit, COR_CONTORNO);
         desenhar_palavra_colorida_fonte("WORLD", cor_world, m->fonte,
-                                        fxWorld, 148, tTit, COR_CONTORNO);
+                        fxWorld, 130, tTit, COR_CONTORNO);
 
         Vector2 szTM = MeasureTextEx(m->fonte, "WORLD", tTit, 0);
         desenhar_texto_fonte_negrito(m->fonte, "TM",
-                                     (Vector2){fxWorld + (int)szTM.x + 4, 154},
+                                     (Vector2){fxWorld + (int)szTM.x + 4, 136},
                                      22 * ESCALA_TEXTO_MENU, 0, WHITE);
     } else {
         /* fallback: fonte padrao */
-        desenhar_palavra_colorida("SUPER",  cor_super, xSuper, 92, tamSuperBase, COR_CONTORNO);
-        desenhar_palavra_colorida("CESAR",  cor_cesar, xCesar, 160, tamTituloBase, COR_CONTORNO);
-        desenhar_palavra_colorida("WORLD",  cor_world, xWorld, 160, tamTituloBase, COR_CONTORNO);
+        desenhar_palavra_colorida("SUPER",  cor_super, xSuper, 74, tamSuperBase, COR_CONTORNO);
+        desenhar_palavra_colorida("CESAR",  cor_cesar, xCesar, 142, tamTituloBase, COR_CONTORNO);
+        desenhar_palavra_colorida("WORLD",  cor_world, xWorld, 142, tamTituloBase, COR_CONTORNO);
         desenhar_texto_negrito("TM", xWorld + MeasureText("WORLD", tamTituloBase) + 4,
-                               168, (int)(24 * ESCALA_TEXTO_MENU), WHITE);
+                               150, (int)(24 * ESCALA_TEXTO_MENU), WHITE);
     }
 
 
