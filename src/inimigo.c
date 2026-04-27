@@ -51,8 +51,8 @@ void AdicionarInimigo(No **lista, int tipo, float x, float y) {
 /* Comportamentos internos                                              */
 /* ------------------------------------------------------------------ */
 
-static void mover_caminhador(Inimigo *ini, float delta) {
-    ini->x += ini->vx * delta;
+static void mover_caminhador(Inimigo *ini, float dt) {
+    ini->x += ini->vx * dt;
 
     /* inverte direcao ao sair do alcance de patrulha */
     if (ini->x < ini->origemX - PATROL_RANGE) {
@@ -65,23 +65,23 @@ static void mover_caminhador(Inimigo *ini, float delta) {
     }
 }
 
-static void mover_perseguidor(Inimigo *ini, Jogador *j, float delta) {
+static void mover_perseguidor(Inimigo *ini, Jogador *j, float dt) {
     /* segue o jogador horizontalmente */
     if (j->x > ini->x) ini->vx =  VEL_PERSEGUIDOR;
     else                ini->vx = -VEL_PERSEGUIDOR;
 
-    ini->x += ini->vx * delta;
+    ini->x += ini->vx * dt;
 }
 
-static void mover_boss(Inimigo *ini, Jogador *j, float delta) {
+static void mover_boss(Inimigo *ini, Jogador *j, float dt) {
     /* move-se lentamente em direcao ao jogador */
     if (j->x > ini->x) ini->vx =  VEL_BOSS;
     else                ini->vx = -VEL_BOSS;
 
-    ini->x += ini->vx * delta;
+    ini->x += ini->vx * dt;
 
     /* contagem regressiva para tiro */
-    ini->timerTiro -= delta;
+    ini->timerTiro -= dt;
     if (ini->timerTiro <= 0.0f) {
         ini->timerTiro = INTERVALO_TIRO;
         /* TODO: criar projetil na direcao do jogador */
@@ -90,7 +90,7 @@ static void mover_boss(Inimigo *ini, Jogador *j, float delta) {
 
 /* verifica colisao entre retangulos (usa VerificarColisao de fase.c) */
 static int colidiu(Inimigo *ini, Jogador *j) {
-    Rectangle retJog = { j->x,    j->y,    JOGADOR_LARGURA, JOGADOR_ALTURA };
+    Rectangle retJog = { j->x,    j->y,    JOGADOR_LARGURA, (float)j->alturaAtual };
     Rectangle retIni = { ini->x,  ini->y,  (float)ini->largura, (float)ini->altura };
     return VerificarColisao(retJog, retIni);
 }
@@ -99,8 +99,7 @@ static int colidiu(Inimigo *ini, Jogador *j) {
 /* AtualizarInimigos — percorre lista, move cada inimigo               */
 /* ------------------------------------------------------------------ */
 
-void AtualizarInimigos(No *lista, Jogador *j) {
-    float delta = GetFrameTime();
+void AtualizarInimigos(No *lista, Jogador *j, float dt) {
     No *atual = lista;
 
     while (atual != NULL) {
@@ -108,15 +107,15 @@ void AtualizarInimigos(No *lista, Jogador *j) {
 
         if (ini->ativo) {
             /* movimento por tipo */
-            if      (ini->tipo == CAMINHADOR)  mover_caminhador(ini, delta);
-            else if (ini->tipo == PERSEGUIDOR) mover_perseguidor(ini, j, delta);
-            else if (ini->tipo == BOSS)        mover_boss(ini, j, delta);
+            if      (ini->tipo == CAMINHADOR)  mover_caminhador(ini, dt);
+            else if (ini->tipo == PERSEGUIDOR) mover_perseguidor(ini, j, dt);
+            else if (ini->tipo == BOSS)        mover_boss(ini, j, dt);
 
             /* colisao com o jogador */
             if (j->estado != MORTO && colidiu(ini, j)) {
                 /* jogador pulou em cima? vy > 0 e base do jogador acima do centro do inimigo */
                 int pisou = (j->vy > 0.0f &&
-                             j->y + JOGADOR_ALTURA < ini->y + ini->altura * 0.6f);
+                             j->y + j->alturaAtual < ini->y + ini->altura * 0.6f);
 
                 if (pisou) {
                     ini->vida--;

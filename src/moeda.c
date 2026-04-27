@@ -3,7 +3,7 @@
 
 // verifica colisao entre o retangulo da moeda e do jogador
 static int colidiu_moeda_jogador(NoMoeda *m, Jogador *j) {
-    Rectangle retJog = { j->x, j->y, JOGADOR_LARGURA, JOGADOR_ALTURA };
+    Rectangle retJog = { j->x, j->y, JOGADOR_LARGURA, (float)j->alturaAtual };
     Rectangle retMoeda = { m->x, m->y, (float)TILE, (float)TILE };
     return VerificarColisao(retJog, retMoeda);
 }

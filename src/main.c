@@ -89,6 +89,9 @@ int main(void) {
 	InitWindow(LARGURA_TELA, ALTURA_TELA, "Super Cesar World");
 	SetTargetFPS(60);
 
+	const float FIXED_DT = 1.0f / 60.0f;
+	float acumulador = 0.0f;
+
 	EstadoJogo estado = MENU;
 
 	Fase fase;
@@ -108,6 +111,10 @@ int main(void) {
 	IniciarMenu(&menu);
 
 	while (!WindowShouldClose()) {
+		float frameTime = GetFrameTime();
+		if (frameTime > 0.25f) frameTime = 0.25f;
+		acumulador += frameTime;
+
 		if (estado == MENU) {
 			int opcao = AtualizarMenu(&menu);
 			if (opcao == OPCAO_COMECAR ||
@@ -119,33 +126,6 @@ int main(void) {
 				preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 0);
 				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
 				estado = JOGANDO;
-			}
-		} else if (estado == JOGANDO) {
-			AtualizarJogador(&jogador, &fase);
-			AtualizarInimigos(listaInimigos, &jogador);
-			AtualizarMoedas(listaMoedas, &jogador);
-
-			AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
-
-			if (jogador.estado == MORTO) {
-				estado = GAME_OVER;
-				scoreRegistrado = 0;
-			} else {
-				float fimDaFase = (float)((COLUNAS - 2) * TILE);
-
-				if (jogador.x >= fimDaFase) {
-					if (faseAtual < 3) {
-						jogador.pontos += BONUS_COMPLETAR_FASE;
-						faseAtual++;
-						preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
-						AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
-					} else if (!boss_ativo(listaInimigos)) {
-						jogador.pontos += BONUS_COMPLETAR_FASE;
-						AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
-						estado = VITORIA;
-						scoreRegistrado = 0;
-					}
-				}
 			}
 		} else if (estado == GAME_OVER) {
 			if (!scoreRegistrado) {
@@ -167,6 +147,39 @@ int main(void) {
 			if (IsKeyPressed(KEY_ENTER)) {
 				estado = MENU;
 			}
+		}
+
+		while (acumulador >= FIXED_DT) {
+			if (estado == JOGANDO) {
+				AtualizarJogador(&jogador, &fase);
+				AtualizarInimigos(listaInimigos, &jogador, FIXED_DT);
+				AtualizarMoedas(listaMoedas, &jogador);
+
+				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
+
+				if (jogador.estado == MORTO) {
+					estado = GAME_OVER;
+					scoreRegistrado = 0;
+				} else {
+					float fimDaFase = (float)((COLUNAS - 2) * TILE);
+
+					if (jogador.x >= fimDaFase) {
+						if (faseAtual < 3) {
+							jogador.pontos += BONUS_COMPLETAR_FASE;
+							faseAtual++;
+							preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
+							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
+						} else if (!boss_ativo(listaInimigos)) {
+							jogador.pontos += BONUS_COMPLETAR_FASE;
+							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
+							estado = VITORIA;
+							scoreRegistrado = 0;
+						}
+					}
+				}
+			}
+
+			acumulador -= FIXED_DT;
 		}
 
 		BeginDrawing();

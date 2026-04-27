@@ -32,7 +32,7 @@ typedef struct No {        // NO DA LISTA ENCADEADA
 
 No  *CriarInimigo(int tipo, float x, float y);
 void AdicionarInimigo(No **lista, int tipo, float x, float y);
-void AtualizarInimigos(No *lista, Jogador *j);
+void AtualizarInimigos(No *lista, Jogador *j, float dt);
 void DesenharInimigos(No *lista, float cameraX);
 void LiberarInimigos(No *lista);
 
