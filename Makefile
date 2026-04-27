@@ -22,7 +22,7 @@ build:
 	mkdir -p build
 
 run: all
-	./$(TARGET)
+	cmd /c start "" "$(TARGET)"
 
 clean:
 	rm -f build/*.o $(TARGET)

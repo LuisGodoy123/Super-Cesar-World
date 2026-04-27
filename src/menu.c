@@ -295,6 +295,53 @@ static void desenhar_fundo_programatico(void) {
                       (Color){0, 0, 0, (unsigned char)(i * 8)});
 }
 
+/* moldura de madeira ao redor da tela (estilo retro) */
+static void desenhar_borda_madeira(void) {
+    const int t = 36;
+    Color cEscuro = (Color){58, 31, 10, 255};
+    Color cMedio  = (Color){102, 60, 23, 255};
+    Color cClaro  = (Color){160, 106, 56, 255};
+    Color cSombra = (Color){36, 18, 6, 255};
+    Color cPrego  = (Color){196, 178, 122, 255};
+
+    /* faixa externa */
+    DrawRectangle(0, 0, LARGURA, t, cEscuro);
+    DrawRectangle(0, ALTURA - t, LARGURA, t, cEscuro);
+    DrawRectangle(0, t, t, ALTURA - 2 * t, cEscuro);
+    DrawRectangle(LARGURA - t, t, t, ALTURA - 2 * t, cEscuro);
+
+    /* faixa interna para dar volume */
+    DrawRectangle(6, 6, LARGURA - 12, t - 12, cMedio);
+    DrawRectangle(6, ALTURA - t + 6, LARGURA - 12, t - 12, cMedio);
+    DrawRectangle(6, t, t - 12, ALTURA - 2 * t, cMedio);
+    DrawRectangle(LARGURA - t + 6, t, t - 12, ALTURA - 2 * t, cMedio);
+
+    /* brilho/sombra chanfrados (topo/esquerda claros, base/direita escuros) */
+    DrawLine(8, 8, LARGURA - 9, 8, cClaro);
+    DrawLine(8, 8, 8, ALTURA - 9, cClaro);
+    DrawLine(9, ALTURA - 9, LARGURA - 8, ALTURA - 9, cSombra);
+    DrawLine(LARGURA - 9, 9, LARGURA - 9, ALTURA - 8, cSombra);
+
+    /* veios horizontais na madeira */
+    for (int x = 20; x < LARGURA - 20; x += 54) {
+        DrawLine(x, 16, x + 26, 16, cClaro);
+        DrawLine(x + 4, 23, x + 30, 23, cSombra);
+        DrawLine(x, ALTURA - 17, x + 28, ALTURA - 17, cClaro);
+        DrawLine(x + 3, ALTURA - 24, x + 31, ALTURA - 24, cSombra);
+    }
+
+    /* pregos */
+    int px[] = { 22, LARGURA / 2, LARGURA - 22 };
+    int pyTop = 18;
+    int pyBot = ALTURA - 18;
+    for (int i = 0; i < 3; i++) {
+        DrawCircle(px[i], pyTop, 4, cPrego);
+        DrawCircle(px[i], pyBot, 4, cPrego);
+    }
+    DrawCircle(18, ALTURA / 2, 4, cPrego);
+    DrawCircle(LARGURA - 18, ALTURA / 2, 4, cPrego);
+}
+
 /* ------------------------------------------------------------------ */
 /* IniciarMenu                                                          */
 /* ------------------------------------------------------------------ */
@@ -376,6 +423,8 @@ void DesenharMenu(Menu *m, Placar *p) {
     } else {
         desenhar_fundo_programatico();
     }
+
+    desenhar_borda_madeira();
 
     /* --- titulo --- */
 
