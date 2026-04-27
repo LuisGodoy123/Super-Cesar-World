@@ -16,8 +16,10 @@ void IniciarJogador(Jogador *j) {
     j->vidas          = 3;
     j->pontos         = 0;
     j->estado         = VIVO;
-    j->noChao         = 0;
+    j->noChao          = 0;
     j->timerInvencivel = 0.0f;
+    j->timerCoyote     = 0.0f;
+    j->timerJumpBuffer = 0.0f;
     j->cameraX        = 0.0f;
     j->temSprite      = 0;
 }
@@ -28,7 +30,11 @@ void AtualizarJogador(Jogador *j, Fase *f) {
 
     float delta = GetFrameTime();
 
-    // --- Input horizontal ---
+    // Timers de coyote e jump buffer
+    if (j->timerCoyote     > 0.0f) j->timerCoyote     -= delta;
+    if (j->timerJumpBuffer > 0.0f) j->timerJumpBuffer -= delta;
+
+    // Input horizontal
     if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
         j->vx = -VELOCIDADE_X;
     else if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
@@ -36,14 +42,21 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     else
         j->vx = 0.0f;
 
-    // Pulo
-    if ((IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) && j->noChao) {
-        j->vy = FORCA_PULO;
-        j->noChao = 0;
+    // Registra intencao de pulo (jump buffer)
+    if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W))
+        j->timerJumpBuffer = JUMP_BUFFER;
+
+    // Pula se buffer ativo e esta no chao ou dentro do coyote time
+    if (j->timerJumpBuffer > 0.0f && (j->noChao || j->timerCoyote > 0.0f)) {
+        j->vy              = FORCA_PULO;
+        j->noChao          = 0;
+        j->timerCoyote     = 0.0f;
+        j->timerJumpBuffer = 0.0f;
     }
 
-    // Gravidade
-    j->vy += GRAVIDADE * delta;
+    // Gravidade maior na queda para sensacao mais responsiva
+    float grav = (j->vy > 0.0f) ? GRAVIDADE * MULT_QUEDA : GRAVIDADE;
+    j->vy += grav * delta;
 
     // Movimento e colisao no eixo X
     j->x += j->vx * delta;
@@ -63,6 +76,7 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     }
 
     // Movimento e colisao no eixo Y
+    int noChaoAnterior = j->noChao;
     j->y += j->vy * delta;
     j->noChao = 0;
 
@@ -80,6 +94,10 @@ void AtualizarJogador(Jogador *j, Fase *f) {
         j->y  = (float)((linTop + 1) * TILE);
         j->vy = 0.0f;
     }
+
+    // Coyote time: saiu do chao sem pular
+    if (noChaoAnterior && !j->noChao && j->vy > 0.0f)
+        j->timerCoyote = COYOTE_TIME;
 
     // Limites da fase
     if (j->x < 0) j->x = 0;
