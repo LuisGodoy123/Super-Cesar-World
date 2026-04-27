@@ -68,23 +68,29 @@ static void desenhar_palavra_colorida_fonte(const char *palavra, Color *cores,
     }
 }
 
-/* logo CESAR: engrenagem com 12 dentes, pre-calculados a r=65 */
+/* logo CESAR real: disco plano + oval do corpo + letra C como anel parcial */
 static void desenhar_logo_cesar(int cx, int cy, int r, Color cFundo) {
-    static const int DX12[12] = { 65, 56, 32,  0,-32,-56,-65,-56,-32,  0, 32, 56 };
-    static const int DY12[12] = {  0, 32, 56, 65, 56, 32,  0,-32,-56,-65,-56,-32 };
-    Color cEscuro = {20, 16, 12, 255};
-    int dente = r * 11 / 65; /* escala o dente proporcionalmente */
-    /* dentes */
-    for (int i = 0; i < 12; i++) {
-        int tx = cx + DX12[i] * r / 65;
-        int ty = cy + DY12[i] * r / 65;
-        DrawCircle(tx, ty, dente, cEscuro);
-    }
-    /* corpo da engrenagem */
-    DrawCircle(cx, cy, r,       cEscuro); /* aro externo         */
-    DrawCircle(cx, cy, r - 12,  cFundo);  /* anel da cor do fundo*/
-    DrawCircle(cx, cy, r - 25,  cEscuro); /* disco interno escuro*/
-    DrawCircle(cx, cy, r - 36,  cFundo);  /* centro da cor fundo */
+    Color cD = {16, 12, 8, 255};
+
+    /* 1. Disco plano na base — oval muito larga e achatada */
+    DrawEllipse(cx, cy + r * 55 / 58, r,          r * 16 / 58, cD);
+
+    /* 2. Corpo oval principal (externo) */
+    DrawEllipse(cx, cy + r * 10 / 58, r * 54 / 58, r * 44 / 58, cD);
+
+    /* 3. Buraco interno do corpo (cor do fundo) */
+    DrawEllipse(cx, cy + r * 14 / 58, r * 32 / 58, r * 26 / 58, cFundo);
+
+    /* 4. Letra "C" — anel parcial (abertura para a direita ~70 graus) */
+    float outerC = (float)(r * 28 / 58);
+    float innerC = (float)(r * 16 / 58);
+    int   ccx    = cx;
+    int   ccy    = cy - r * 16 / 58;
+    DrawRing((Vector2){ccx, ccy}, innerC, outerC, 45.0f, 315.0f, 40, cD);
+
+    /* 5. Sombra/espessura do disco (borda inferior da base) */
+    DrawEllipse(cx, cy + r * 60 / 58, r * 95 / 100, r * 12 / 58,
+                (Color){10, 8, 5, 255});
 }
 
 /* preenche uma area com padrao de tijolos (running bond) */
