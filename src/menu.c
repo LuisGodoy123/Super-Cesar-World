@@ -62,15 +62,9 @@ static void desenhar_palavra_colorida_fonte(const char *palavra, Color *cores,
     int curX = x;
     for (int i = 0; palavra[i] != '\0'; i++) {
         buf[0] = palavra[i];
-        Vector2 tam = MeasureTextEx(fonte, buf, tamanho, 1);
-        /* contorno grosso */
-        for (int dx = -3; dx <= 3; dx++)
-            for (int dy = -3; dy <= 3; dy++)
-                if (dx != 0 || dy != 0)
-                    DrawTextEx(fonte, buf, (Vector2){curX + dx, y + dy},
-                               tamanho, 1, contorno);
-        DrawTextEx(fonte, buf, (Vector2){curX, y}, tamanho, 1, cores[i]);
-        curX += (int)tam.x - 1;
+        Vector2 tam = MeasureTextEx(fonte, buf, tamanho, 0);
+        DrawTextEx(fonte, buf, (Vector2){curX, y}, tamanho, 0, cores[i]);
+        curX += (int)tam.x - 3;
     }
 }
 
@@ -272,29 +266,29 @@ void DesenharMenu(Menu *m, Placar *p) {
     int xWorld  = xCesar + lCesar + MeasureText(" ", 96) - 10;
 
     if (m->temFonte) {
-        /* usa fonte Super Mario 256 */
-        float tSuper = 80.0f;
-        float tTit   = 108.0f;
+        float tSuper = 58.0f;
+        float tTit   = 80.0f;
+        int   gap    = 10;   /* espaco fixo entre CESAR e WORLD */
 
-        Vector2 szSuper = MeasureTextEx(m->fonte, "SUPER",      tSuper, 1);
-        Vector2 szCesar = MeasureTextEx(m->fonte, "CESAR",      tTit,   1);
-        Vector2 szWorld = MeasureTextEx(m->fonte, " WORLD",     tTit,   1);
-        int totalTit = (int)(szCesar.x + szWorld.x);
+        Vector2 szSuper = MeasureTextEx(m->fonte, "SUPER", tSuper, 0);
+        Vector2 szCesar = MeasureTextEx(m->fonte, "CESAR", tTit,   0);
+        Vector2 szWorld = MeasureTextEx(m->fonte, "WORLD", tTit,   0);
+        int totalTit = (int)(szCesar.x + gap + szWorld.x);
 
-        int fxSuper = LARGURA / 2 - (int)szSuper.x / 2 + 30;
+        int fxSuper = LARGURA / 2 - (int)szSuper.x / 2 + 20;
         int fxCesar = LARGURA / 2 - totalTit / 2;
-        int fxWorld = fxCesar + (int)szCesar.x;
+        int fxWorld = fxCesar + (int)szCesar.x + gap;
 
         desenhar_palavra_colorida_fonte("SUPER", cor_super, m->fonte,
-                                        fxSuper, 88, tSuper, (Color){80, 35, 0, 255});
+                                        fxSuper, 92, tSuper, (Color){80, 35, 0, 255});
         desenhar_palavra_colorida_fonte("CESAR", cor_cesar, m->fonte,
-                                        fxCesar, 162, tTit, WHITE);
-        desenhar_palavra_colorida_fonte(" WORLD", cor_world, m->fonte,
-                                        fxWorld, 162, tTit, WHITE);
+                                        fxCesar, 155, tTit, WHITE);
+        desenhar_palavra_colorida_fonte("WORLD", cor_world, m->fonte,
+                                        fxWorld, 155, tTit, WHITE);
 
-        Vector2 szTM = MeasureTextEx(m->fonte, "WORLD", tTit, 1);
+        Vector2 szTM = MeasureTextEx(m->fonte, "WORLD", tTit, 0);
         DrawTextEx(m->fonte, "TM",
-                   (Vector2){fxWorld + (int)szTM.x + 4, 168}, 26, 1, WHITE);
+                   (Vector2){fxWorld + (int)szTM.x + 4, 160}, 22, 0, WHITE);
     } else {
         /* fallback: fonte padrao */
         desenhar_palavra_colorida("SUPER",  cor_super, xSuper, 95,  72, (Color){80, 35, 0, 255});
@@ -305,42 +299,70 @@ void DesenharMenu(Menu *m, Placar *p) {
 
 
     /* --- itens do menu --- */
+    float tItem   = m->temFonte ? 18.0f : 28.0f;
+    float tCursor = m->temFonte ? 18.0f : 30.0f;
+    int   espaco  = m->temFonte ? 48    : MENU_ESPACO;
+
     for (int i = 0; i < OPCAO_TOTAL; i++) {
-        int y = MENU_Y_INICIO + i * MENU_ESPACO;
+        int y = MENU_Y_INICIO + i * espaco;
         int selecionado = (i == m->selecionado);
 
-        Color cor = WHITE;
-        int tamanho = selecionado ? 30 : 28;
+        if (m->temFonte) {
+            DrawTextEx(m->fonte, LABELS[i],
+                       (Vector2){MENU_X, y}, tItem, 1, WHITE);
 
-        DrawText(LABELS[i], MENU_X, y, tamanho, cor);
-
-        /* cursor piscante no item selecionado */
-        if (selecionado) {
-            int visivel = (int)(m->tempoCursor * 4) % 2;
-            if (visivel) DrawText(">", CURSOR_X, y, 30, YELLOW);
+            /* cursor piscante */
+            if (selecionado) {
+                int visivel = (int)(m->tempoCursor * 4) % 2;
+                if (visivel)
+                    DrawTextEx(m->fonte, ">",
+                               (Vector2){CURSOR_X, y}, tCursor, 1, YELLOW);
+            }
+        } else {
+            DrawText(LABELS[i], MENU_X, y, (int)tItem, WHITE);
+            if (selecionado) {
+                int visivel = (int)(m->tempoCursor * 4) % 2;
+                if (visivel)
+                    DrawText(">", CURSOR_X, y, (int)tCursor, YELLOW);
+            }
         }
     }
 
     /* --- top scores (so aparece se PLACAR selecionado) --- */
     if (m->selecionado == OPCAO_PLACAR && p != NULL) {
-        int px = LARGURA / 2 - 80;
-        int py = MENU_Y_INICIO + OPCAO_TOTAL * MENU_ESPACO + 20;
-        DrawText("TOP 5:", px, py, 22, YELLOW);
-        for (int i = 0; i < TOP_SCORES; i++) {
-            DrawText(TextFormat("%d. %07d", i + 1, p->topScores[i]),
-                     px, py + 28 + i * 26, 20, WHITE);
+        int px = LARGURA / 2 - 120;
+        int py = MENU_Y_INICIO + OPCAO_TOTAL * espaco + 16;
+        if (m->temFonte) {
+            DrawTextEx(m->fonte, "TOP 5:", (Vector2){px, py}, 16, 1, YELLOW);
+            for (int i = 0; i < TOP_SCORES; i++)
+                DrawTextEx(m->fonte,
+                           TextFormat("%d. %07d", i + 1, p->topScores[i]),
+                           (Vector2){px, py + 24 + i * 24}, 14, 1, WHITE);
+        } else {
+            DrawText("TOP 5:", px, py, 22, YELLOW);
+            for (int i = 0; i < TOP_SCORES; i++)
+                DrawText(TextFormat("%d. %07d", i + 1, p->topScores[i]),
+                         px, py + 28 + i * 26, 20, WHITE);
         }
     }
 
     /* --- rodape --- */
     const char *rodape = "(c) 2026 CESAR ESTUDIOS";
-    int lRodape = MeasureText(rodape, 20);
-    DrawText(rodape, LARGURA / 2 - lRodape / 2, ALTURA - 36, 20,
-             (Color){140, 140, 140, 255});
+    if (m->temFonte) {
+        Vector2 szRodape = MeasureTextEx(m->fonte, rodape, 12, 1);
+        DrawTextEx(m->fonte, rodape,
+                   (Vector2){LARGURA / 2 - szRodape.x / 2, ALTURA - 34},
+                   12, 1, (Color){140, 140, 140, 255});
+    } else {
+        int lRodape = MeasureText(rodape, 20);
+        DrawText(rodape, LARGURA / 2 - lRodape / 2, ALTURA - 36, 20,
+                 (Color){140, 140, 140, 255});
+    }
 
     /* icone de engrenagem simples */
-    DrawCircleLines(LARGURA / 2 - lRodape / 2 - 32, ALTURA - 22, 14,
+    int lRodapeGear = MeasureText(rodape, 20);
+    DrawCircleLines(LARGURA / 2 - lRodapeGear / 2 - 32, ALTURA - 22, 14,
                     (Color){140, 140, 140, 255});
-    DrawText("C", LARGURA / 2 - lRodape / 2 - 38, ALTURA - 30, 18,
+    DrawText("C", LARGURA / 2 - lRodapeGear / 2 - 38, ALTURA - 30, 18,
              (Color){140, 140, 140, 255});
 }
