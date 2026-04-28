@@ -139,6 +139,23 @@ int main(void) {
 	Menu menu;
 	IniciarMenu(&menu);
 
+	const char *spritesJogador[] = {
+		"assets/sprites/personagem1.png",
+		"assets/sprites/personagem2.png",
+		"assets/sprites/personagem3.png",
+	};
+
+	jogador.numSprites = 0;
+	jogador.temSprites = 0;
+	for (int i = 0; i < 3; i++) {
+		if (FileExists(spritesJogador[i])) {
+			jogador.sprites[jogador.numSprites] = LoadTexture(spritesJogador[i]);
+			SetTextureFilter(jogador.sprites[jogador.numSprites], TEXTURE_FILTER_POINT);
+			jogador.numSprites++;
+		}
+	}
+	if (jogador.numSprites > 0) jogador.temSprites = 1;
+
 	while (!WindowShouldClose()) {
 		float frameTime = GetFrameTime();
 		if (frameTime > 0.25f) frameTime = 0.25f;
@@ -250,6 +267,11 @@ int main(void) {
 	LiberarMoedas(listaMoedas);
 	LiberarMenu(&menu);
 	if (temFonteUI) UnloadFont(fonteUI);
+	if (jogador.temSprites) {
+		for (int i = 0; i < jogador.numSprites; i++) {
+			UnloadTexture(jogador.sprites[i]);
+		}
+	}
 	CloseWindow();
 	return 0;
 }

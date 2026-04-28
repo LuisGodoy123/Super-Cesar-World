@@ -36,6 +36,12 @@ static int pode_ficar_em_pe(Jogador *j, Fase *f) {
 
 // IniciarJogador — inicializa posicao, vidas e pontos
 void IniciarJogador(Jogador *j) {
+    Texture2D sprites[3];
+    int numSprites = j->numSprites;
+    int temSprites = j->temSprites;
+
+    for (int i = 0; i < 3; i++) sprites[i] = j->sprites[i];
+
     j->x              = 100.0f;
     j->y              = 300.0f;
     j->vx             = 0.0f;
@@ -60,7 +66,10 @@ void IniciarJogador(Jogador *j) {
     j->animTimer       = 0.0f;
     j->animFrame       = 0;
     j->cameraX         = 0.0f;
-    j->temSprite       = 0;
+    j->temSprites      = temSprites;
+    j->numSprites      = numSprites;
+
+    for (int i = 0; i < 3; i++) j->sprites[i] = sprites[i];
 }
 
 // AtualizarJogador — input, gravidade, movimento, colisao com mapa
@@ -294,7 +303,7 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     if (j->estadoMov == MOV_CAMINHANDO || j->estadoMov == MOV_CORRENDO) {
         float speed = fabsf(j->vx);
         float ratio = (VELOCIDADE_CORRIDA > 0.0f) ? (speed / VELOCIDADE_CORRIDA) : 0.0f;
-        float step = 0.15f + 0.85f * ratio;
+        float step = 0.08f + 0.55f * ratio;
         int frames = 4;
 
         j->animTimer += step;
@@ -335,40 +344,55 @@ void DesenharJogador(Jogador *j) {
     // Piscar quando INVENCIVEL: some nos frames impares
     if (j->estado == INVENCIVEL && (int)(GetTime() * 10) % 2 == 0) return;
 
-    int screenX = (int)(j->x - j->cameraX);
-    int screenY = (int)(j->y);
+    float screenX = j->x - j->cameraX;
+    float screenY = j->y;
     int largura = JOGADOR_LARGURA;
     int altura  = j->alturaAtual;
 
-    if (j->temSprite) {
-        Rectangle src  = { 0.0f, 0.0f, (float)j->sprite.width, (float)j->sprite.height };
-        Rectangle dest = { (float)screenX, (float)screenY,
-                           (float)j->sprite.width, (float)j->sprite.height };
-        if (j->direcao < 0) {
-            dest.x += dest.width;
-            dest.width *= -1.0f;
+    if (j->temSprites && j->numSprites > 0) {
+        int frame = 0;
+        if (j->estadoMov == MOV_CAMINHANDO || j->estadoMov == MOV_CORRENDO) {
+            frame = j->animFrame % j->numSprites;
+        } else if (j->estadoMov == MOV_PULANDO || j->estadoMov == MOV_CAINDO) {
+            frame = (j->numSprites > 1) ? 1 : 0;
+        } else if (j->estadoMov == MOV_DERRAPANDO) {
+            frame = (j->numSprites > 2) ? 2 : 0;
+        } else {
+            frame = 0;
         }
-        DrawTexturePro(j->sprite, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+
+        Texture2D tex = j->sprites[frame];
+        Rectangle src  = { 0.0f, 0.0f, (float)tex.width, (float)tex.height };
+        Rectangle dest = { screenX + (float)JOGADOR_LARGURA / 2.0f,
+                           screenY + (float)altura,
+                           (float)JOGADOR_LARGURA, (float)altura };
+        Vector2 origin = { (float)JOGADOR_LARGURA / 2.0f, (float)altura };
+
+        if (j->direcao < 0) {
+            src.x += src.width;
+            src.width *= -1.0f;
+        }
+        DrawTexturePro(tex, src, dest, origin, 0.0f, WHITE);
     } else {
         Color corpo = (j->estadoMov == MOV_CORRENDO) ? ORANGE : RED;
         if (j->estadoMov == MOV_AGACHADO) corpo = MAROON;
         if (j->estadoMov == MOV_DERRAPANDO) corpo = DARKGRAY;
 
-        DrawRectangle(screenX, screenY, largura, altura, corpo);
+        DrawRectangle((int)screenX, (int)screenY, largura, altura, corpo);
 
         /* olhos simples para indicar direcao */
-        int olhoY = screenY + altura / 4;
-        int olhoX1 = (j->direcao >= 0) ? (screenX + largura - 12) : (screenX + 6);
-        int olhoX2 = (j->direcao >= 0) ? (screenX + largura - 6)  : (screenX + 12);
+        int olhoY = (int)screenY + altura / 4;
+        int olhoX1 = (j->direcao >= 0) ? ((int)screenX + largura - 12) : ((int)screenX + 6);
+        int olhoX2 = (j->direcao >= 0) ? ((int)screenX + largura - 6)  : ((int)screenX + 12);
         DrawRectangle(olhoX1, olhoY, 4, 4, WHITE);
         DrawRectangle(olhoX2, olhoY, 4, 4, WHITE);
 
         /* pezinhos simples para animacao */
         if (j->estadoMov == MOV_CAMINHANDO || j->estadoMov == MOV_CORRENDO) {
-            int footY = screenY + altura - 5;
+            int footY = (int)screenY + altura - 5;
             int off = (j->animFrame % 2 == 0) ? 3 : 7;
-            DrawRectangle(screenX + off, footY, 6, 4, DARKGRAY);
-            DrawRectangle(screenX + largura - off - 6, footY, 6, 4, DARKGRAY);
+            DrawRectangle((int)screenX + off, footY, 6, 4, DARKGRAY);
+            DrawRectangle((int)screenX + largura - off - 6, footY, 6, 4, DARKGRAY);
         }
     }
 }

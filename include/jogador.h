@@ -4,8 +4,8 @@
 #include "raylib.h"
 #include "fase.h"
 
-#define JOGADOR_LARGURA    32
-#define JOGADOR_ALTURA     48
+#define JOGADOR_LARGURA    80
+#define JOGADOR_ALTURA     120
 
 /* constantes de fisica (por frame @60fps) */
 #define GRAVIDADE                   0.5f
@@ -68,8 +68,9 @@ typedef struct {
     float animTimer;
     int animFrame;
     float cameraX;        // offset da camera (seguindo o jogador)
-    Texture2D sprite;
-    int temSprite;
+    Texture2D sprites[3];
+    int numSprites;
+    int temSprites;
 } Jogador;
 
 void IniciarJogador(Jogador *j);
