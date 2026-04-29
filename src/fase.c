@@ -243,7 +243,7 @@ static void desenhar_nuvens(int faseNum, float cameraX) {
 
 //DesenharFase
 
-void DesenharFase(Fase *f, Texture2D texBloco) {
+void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
     ClearBackground(f->corFundo);
     desenhar_nuvens(f->numero, f->cameraX);
 
@@ -298,35 +298,53 @@ void DesenharFase(Fase *f, Texture2D texBloco) {
                     }
                 } else {
                     // bloco de powerup ja usado — tijolo cinza
-                    Color tijoloBase   = (Color){ 150, 150, 150, 255 };
-                    Color tijoloBorda  = (Color){  90,  90,  90, 255 };
-                    Color tijoloLuz    = (Color){ 175, 175, 175, 255 };
-                    Color tijoloSombra = (Color){ 110, 110, 110, 255 };
+                    if (texTijoloCinza.id > 0) {
+                        float tw = (float)texTijoloCinza.width;
+                        float th = (float)texTijoloCinza.height;
+                        float sq = tw < th ? tw : th;
+                        Rectangle src  = { (tw - sq) / 2.0f, (th - sq) / 2.0f, sq, sq };
+                        Rectangle dest = { (float)x, (float)y, (float)tileSize, (float)tileSize };
+                        DrawTexturePro(texTijoloCinza, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                    } else {
+                        Color tijoloBase   = (Color){ 150, 150, 150, 255 };
+                        Color tijoloBorda  = (Color){  90,  90,  90, 255 };
+                        Color tijoloLuz    = (Color){ 175, 175, 175, 255 };
+                        Color tijoloSombra = (Color){ 110, 110, 110, 255 };
 
-                    DrawRectangle(x, y, tileSize, tileSize, tijoloBase);
-                    DrawRectangleLines(x, y, tileSize, tileSize, tijoloBorda);
-                    DrawLine(x + 1, y + 1, x + tileSize - 2, y + 1, tijoloLuz);
-                    DrawLine(x + 1, y + 1, x + 1, y + tileSize - 2, tijoloLuz);
-                    DrawLine(x + 1, y + tileSize - 2, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
-                    DrawLine(x + tileSize - 2, y + 1, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
-                    DrawLine(x + 1, y + tileSize / 2, x + tileSize - 2, y + tileSize / 2, tijoloSombra);
+                        DrawRectangle(x, y, tileSize, tileSize, tijoloBase);
+                        DrawRectangleLines(x, y, tileSize, tileSize, tijoloBorda);
+                        DrawLine(x + 1, y + 1, x + tileSize - 2, y + 1, tijoloLuz);
+                        DrawLine(x + 1, y + 1, x + 1, y + tileSize - 2, tijoloLuz);
+                        DrawLine(x + 1, y + tileSize - 2, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
+                        DrawLine(x + tileSize - 2, y + 1, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
+                        DrawLine(x + 1, y + tileSize / 2, x + tileSize - 2, y + tileSize / 2, tijoloSombra);
+                    }
                 }
             } else {
                 // bloco normal — plataforma
                 int topo = (i == 0 || f->mapa[i - 1][j] != BLOCO);
                 if (topo) {
-                    Color tijoloBase   = (Color){ 150, 150, 150, 255 };
-                    Color tijoloBorda  = (Color){  90,  90,  90, 255 };
-                    Color tijoloLuz    = (Color){ 175, 175, 175, 255 };
-                    Color tijoloSombra = (Color){ 110, 110, 110, 255 };
+                    if (texTijoloCinza.id > 0) {
+                        float tw = (float)texTijoloCinza.width;
+                        float th = (float)texTijoloCinza.height;
+                        float sq = tw < th ? tw : th;
+                        Rectangle src  = { (tw - sq) / 2.0f, (th - sq) / 2.0f, sq, sq };
+                        Rectangle dest = { (float)x, (float)y, (float)tileSize, (float)tileSize };
+                        DrawTexturePro(texTijoloCinza, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                    } else {
+                        Color tijoloBase   = (Color){ 150, 150, 150, 255 };
+                        Color tijoloBorda  = (Color){  90,  90,  90, 255 };
+                        Color tijoloLuz    = (Color){ 175, 175, 175, 255 };
+                        Color tijoloSombra = (Color){ 110, 110, 110, 255 };
 
-                    DrawRectangle(x, y, tileSize, tileSize, tijoloBase);
-                    DrawRectangleLines(x, y, tileSize, tileSize, tijoloBorda);
-                    DrawLine(x + 1, y + 1, x + tileSize - 2, y + 1, tijoloLuz);
-                    DrawLine(x + 1, y + 1, x + 1, y + tileSize - 2, tijoloLuz);
-                    DrawLine(x + 1, y + tileSize - 2, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
-                    DrawLine(x + tileSize - 2, y + 1, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
-                    DrawLine(x + 1, y + tileSize / 2, x + tileSize - 2, y + tileSize / 2, tijoloSombra);
+                        DrawRectangle(x, y, tileSize, tileSize, tijoloBase);
+                        DrawRectangleLines(x, y, tileSize, tileSize, tijoloBorda);
+                        DrawLine(x + 1, y + 1, x + tileSize - 2, y + 1, tijoloLuz);
+                        DrawLine(x + 1, y + 1, x + 1, y + tileSize - 2, tijoloLuz);
+                        DrawLine(x + 1, y + tileSize - 2, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
+                        DrawLine(x + tileSize - 2, y + 1, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
+                        DrawLine(x + 1, y + tileSize / 2, x + tileSize - 2, y + tileSize / 2, tijoloSombra);
+                    }
                 } else {
                     Color terra       = (Color){ 120,  95,  60, 255 };
                     Color terraBorda  = (Color){  80,  65,  45, 255 };

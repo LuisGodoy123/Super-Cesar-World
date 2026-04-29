@@ -197,6 +197,12 @@ int main(void) {
 		SetTextureFilter(texBloco, TEXTURE_FILTER_POINT);
 	}
 
+	Texture2D texTijoloCinza = {0};
+	if (FileExists("assets/sprites/tijolocinza.png")) {
+		texTijoloCinza = LoadTexture("assets/sprites/tijolocinza.png");
+		SetTextureFilter(texTijoloCinza, TEXTURE_FILTER_POINT);
+	}
+
 	while (!WindowShouldClose()) {
 		float frameTime = GetFrameTime();
 		if (frameTime > 0.25f) frameTime = 0.25f;
@@ -275,7 +281,7 @@ int main(void) {
 		if (estado == MENU) {
 			DesenharMenu(&menu, &placar);
 		} else if (estado == JOGANDO) {
-			DesenharFase(&fase, texBloco);
+			DesenharFase(&fase, texBloco, texTijoloCinza);
 			DesenharMoedas(listaMoedas, fase.cameraX, texMoeda);
 			DesenharInimigos(listaInimigos, fase.cameraX);
 			DesenharJogador(&jogador);
@@ -316,6 +322,7 @@ int main(void) {
 	}
 	if (texMoeda.id > 0) UnloadTexture(texMoeda);
 	if (texBloco.id > 0) UnloadTexture(texBloco);
+	if (texTijoloCinza.id > 0) UnloadTexture(texTijoloCinza);
 	CloseWindow();
 	return 0;
 }
