@@ -2,6 +2,7 @@
 #define FASE_H
 
 #include "raylib.h"
+#include "bloco.h"
 
 #define TILE     32
 #define LINHAS   23
@@ -10,17 +11,16 @@
 #define CAMERA_Y_OFFSET 128.0f
 
 //valores do mapa
-#define VAZIO              0
-#define PLATAFORMA         1
-#define MOEDA              2
-#define BLOCO_INTERROGACAO 3
-#define BLOCO_USADO        4
+#define VAZIO  0
+#define BLOCO  1
+#define MOEDA  2
 
 typedef struct {
-    int mapa[LINHAS][COLUNAS]; // 0=vazio  1=plataforma  2=moeda
-    int numero;                // 1, 2 ou 3
+    int   mapa[LINHAS][COLUNAS];
+    Bloco blocos[LINHAS][COLUNAS];
+    int numero;
     Color corFundo;
-    float cameraX;             // scroll horizontal
+    float cameraX;
 } Fase;
 
 void CarregarFase(Fase *f, int n);

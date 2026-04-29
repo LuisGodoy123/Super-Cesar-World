@@ -48,8 +48,8 @@ static float y_superficie_chao(Fase *fase, float x, int altura, float fallback) 
 	if (col >= COLUNAS) col = COLUNAS - 1;
 
 	for (int l = 0; l < LINHAS; l++) {
-		if (fase->mapa[l][col] == PLATAFORMA) {
-			if (l == LINHAS - 1 || fase->mapa[l + 1][col] == PLATAFORMA) {
+		if (fase->mapa[l][col] == BLOCO) {
+			if (l == LINHAS - 1 || fase->mapa[l + 1][col] == BLOCO) {
 				return (float)(l * TILE - altura);
 			}
 		}

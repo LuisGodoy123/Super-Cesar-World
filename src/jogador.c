@@ -5,8 +5,7 @@
 static int tile_solido(Fase *f, int col, int linha) {
     if (col < 0 || col >= COLUNAS || linha < 0 || linha >= LINHAS)
         return 0;
-    int t = f->mapa[linha][col];
-    return t == PLATAFORMA || t == BLOCO_INTERROGACAO || t == BLOCO_USADO;
+    return f->mapa[linha][col] == BLOCO;
 }
 
 static int sinal(float v) {
@@ -250,8 +249,10 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     }
     if (j->vy < 0 && (tile_solido(f, colEsq, linTop) || tile_solido(f, colDir, linTop))) {
         for (int c = colEsq; c <= colDir; c++) {
-            if (c >= 0 && c < COLUNAS && f->mapa[linTop][c] == BLOCO_INTERROGACAO) {
-                f->mapa[linTop][c] = BLOCO_USADO;
+            if (c >= 0 && c < COLUNAS &&
+                f->blocos[linTop][c].tipo  == BLOCO_TIPO_POWERUP &&
+                f->blocos[linTop][c].estado == BLOCO_ESTADO_ATIVO) {
+                f->blocos[linTop][c].estado = BLOCO_ESTADO_USADO;
                 j->pontos += PONTOS_BLOCO;
             }
         }

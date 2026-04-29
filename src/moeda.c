@@ -3,7 +3,7 @@
 
 // verifica colisao entre o retangulo da moeda e do jogador
 static int colidiu_moeda_jogador(NoMoeda *m, Jogador *j) {
-    Rectangle retJog = { j->x, j->y, JOGADOR_LARGURA, (float)j->alturaAtual };
+    Rectangle retJog = { j->x + JOGADOR_HITBOX_OFFSET_X, j->y, JOGADOR_HITBOX_LARGURA, (float)j->alturaAtual };
     Rectangle retMoeda = { m->x, m->y, (float)TILE, (float)TILE };
     return VerificarColisao(retJog, retMoeda);
 }
@@ -79,9 +79,13 @@ void DesenharMoedas(NoMoeda *lista, float cameraX, Texture2D texMoeda) {
             if (screenX + tileSize >= 0 && screenX <= GetScreenWidth()) {
                 if (texMoeda.id > 0) {
                     float coinSize = tileSize * 1.6f;
-                    float ox = (coinSize - tileSize) / 2.0f;
+                    float aspect = (texMoeda.height > 0) ? (float)texMoeda.width / (float)texMoeda.height : 1.0f;
+                    float destH = coinSize;
+                    float destW = coinSize * aspect;
+                    float oxW = (destW - tileSize) / 2.0f;
+                    float oxH = (destH - tileSize) / 2.0f;
                     Rectangle src  = { 0, 0, (float)texMoeda.width, (float)texMoeda.height };
-                    Rectangle dest = { (float)screenX - ox, (float)screenY - ox, coinSize, coinSize };
+                    Rectangle dest = { (float)screenX - oxW, (float)screenY - oxH, destW, destH };
                     DrawTexturePro(texMoeda, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
                 } else {
                     int cx = screenX + tileSize / 2;
