@@ -106,7 +106,7 @@ static void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
 
 /* verifica colisao entre retangulos (usa VerificarColisao de fase.c) */
 static int colidiu(Inimigo *ini, Jogador *j) {
-    Rectangle retJog = { j->x,    j->y,    JOGADOR_LARGURA, (float)j->alturaAtual };
+    Rectangle retJog = { j->x + JOGADOR_HITBOX_OFFSET_X, j->y, JOGADOR_HITBOX_LARGURA, (float)j->alturaAtual };
     Rectangle retIni = { ini->x,  ini->y,  (float)ini->largura, (float)ini->altura };
     return VerificarColisao(retJog, retIni);
 }

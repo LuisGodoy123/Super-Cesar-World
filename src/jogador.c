@@ -25,8 +25,8 @@ static int pode_ficar_em_pe(Jogador *j, Fase *f) {
     int alturaCheia = JOGADOR_ALTURA;
     float novoY = j->y - (float)(alturaCheia - j->alturaAtual);
 
-    int colEsq = (int)(j->x) / TILE;
-    int colDir = (int)(j->x + JOGADOR_LARGURA - 1) / TILE;
+    int colEsq = (int)(j->x + JOGADOR_HITBOX_OFFSET_X) / TILE;
+    int colDir = (int)(j->x + JOGADOR_HITBOX_OFFSET_X + JOGADOR_HITBOX_LARGURA - 1) / TILE;
     int linTop = (int)(novoY) / TILE;
     int linBot = (int)(novoY + alturaCheia - 1) / TILE;
 
@@ -195,18 +195,18 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     /* movimento e colisao no eixo X */
     j->x += j->vx;
 
-    int colEsq = (int)(j->x) / TILE;
-    int colDir = (int)(j->x + JOGADOR_LARGURA - 1) / TILE;
+    int colEsq = (int)(j->x + JOGADOR_HITBOX_OFFSET_X) / TILE;
+    int colDir = (int)(j->x + JOGADOR_HITBOX_OFFSET_X + JOGADOR_HITBOX_LARGURA - 1) / TILE;
     int linTop = (int)(j->y) / TILE;
     int linBot = (int)(j->y + j->alturaAtual - 1) / TILE;
 
     if (j->vx < 0 && (tile_solido(f, colEsq, linTop) || tile_solido(f, colEsq, linBot))) {
-        j->x  = (float)((colEsq + 1) * TILE);
+        j->x  = (float)((colEsq + 1) * TILE) - JOGADOR_HITBOX_OFFSET_X;
         j->vx = 0.0f;
         j->emDerrapagem = 0;
     }
     if (j->vx > 0 && (tile_solido(f, colDir, linTop) || tile_solido(f, colDir, linBot))) {
-        j->x  = (float)(colDir * TILE - JOGADOR_LARGURA);
+        j->x  = (float)(colDir * TILE - JOGADOR_HITBOX_LARGURA) - JOGADOR_HITBOX_OFFSET_X;
         j->vx = 0.0f;
         j->emDerrapagem = 0;
     }
@@ -238,8 +238,8 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     j->y += j->vy;
     j->noChao = 0;
 
-    colEsq = (int)(j->x) / TILE;
-    colDir = (int)(j->x + JOGADOR_LARGURA - 1) / TILE;
+    colEsq = (int)(j->x + JOGADOR_HITBOX_OFFSET_X) / TILE;
+    colDir = (int)(j->x + JOGADOR_HITBOX_OFFSET_X + JOGADOR_HITBOX_LARGURA - 1) / TILE;
     linTop = (int)(j->y) / TILE;
     linBot = (int)(j->y + j->alturaAtual - 1) / TILE;
 
@@ -279,8 +279,8 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     }
 
     /* limites da fase */
-    if (j->x < 0) j->x = 0;
-    float limDir = (float)((COLUNAS - 1) * TILE - JOGADOR_LARGURA);
+    if (j->x + JOGADOR_HITBOX_OFFSET_X < 0) j->x = -(float)JOGADOR_HITBOX_OFFSET_X;
+    float limDir = (float)((COLUNAS - 1) * TILE - JOGADOR_HITBOX_LARGURA) - JOGADOR_HITBOX_OFFSET_X;
     if (j->x > limDir) j->x = limDir;
 
     /* camera segue o jogador */

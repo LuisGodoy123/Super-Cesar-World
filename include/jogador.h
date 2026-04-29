@@ -4,9 +4,11 @@
 #include "raylib.h"
 #include "fase.h"
 
-#define JOGADOR_LARGURA    80
-#define JOGADOR_ALTURA     55
-#define PONTOS_BLOCO      200
+#define JOGADOR_LARGURA         80
+#define JOGADOR_ALTURA          55
+#define JOGADOR_HITBOX_LARGURA  50
+#define JOGADOR_HITBOX_OFFSET_X 15
+#define PONTOS_BLOCO           200
 
 /* constantes de fisica (por frame @60fps) */
 #define GRAVIDADE                   0.25f
