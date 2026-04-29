@@ -5,7 +5,7 @@
 #include "fase.h"
 
 #define JOGADOR_LARGURA    80
-#define JOGADOR_ALTURA     120
+#define JOGADOR_ALTURA     70
 
 /* constantes de fisica (por frame @60fps) */
 #define GRAVIDADE                   0.5f
