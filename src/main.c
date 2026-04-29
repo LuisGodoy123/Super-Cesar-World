@@ -191,6 +191,12 @@ int main(void) {
 		SetTextureFilter(texMoeda, TEXTURE_FILTER_POINT);
 	}
 
+	Texture2D texBloco = {0};
+	if (FileExists("assets/sprites/blocoPoder.png")) {
+		texBloco = LoadTexture("assets/sprites/blocoPoder.png");
+		SetTextureFilter(texBloco, TEXTURE_FILTER_POINT);
+	}
+
 	while (!WindowShouldClose()) {
 		float frameTime = GetFrameTime();
 		if (frameTime > 0.25f) frameTime = 0.25f;
@@ -268,7 +274,7 @@ int main(void) {
 		if (estado == MENU) {
 			DesenharMenu(&menu, &placar);
 		} else if (estado == JOGANDO) {
-			DesenharFase(&fase);
+			DesenharFase(&fase, texBloco);
 			DesenharMoedas(listaMoedas, fase.cameraX, texMoeda);
 			DesenharInimigos(listaInimigos, fase.cameraX);
 			DesenharJogador(&jogador);
@@ -308,6 +314,7 @@ int main(void) {
 		}
 	}
 	if (texMoeda.id > 0) UnloadTexture(texMoeda);
+	if (texBloco.id > 0) UnloadTexture(texBloco);
 	CloseWindow();
 	return 0;
 }

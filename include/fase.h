@@ -10,9 +10,11 @@
 #define CAMERA_Y_OFFSET 128.0f
 
 //valores do mapa
-#define VAZIO      0
-#define PLATAFORMA 1
-#define MOEDA      2
+#define VAZIO              0
+#define PLATAFORMA         1
+#define MOEDA              2
+#define BLOCO_INTERROGACAO 3
+#define BLOCO_USADO        4
 
 typedef struct {
     int mapa[LINHAS][COLUNAS]; // 0=vazio  1=plataforma  2=moeda
@@ -22,7 +24,7 @@ typedef struct {
 } Fase;
 
 void CarregarFase(Fase *f, int n);
-void DesenharFase(Fase *f);
+void DesenharFase(Fase *f, Texture2D texBloco);
 int  VerificarColisao(Rectangle a, Rectangle b);
 
 #endif

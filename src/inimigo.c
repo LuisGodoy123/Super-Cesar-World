@@ -56,7 +56,8 @@ static int tile_solido(Fase *f, int col, int linha) {
     if (f == NULL) return 0;
     if (col < 0 || col >= COLUNAS || linha < 0 || linha >= LINHAS)
         return 0;
-    return f->mapa[linha][col] == PLATAFORMA;
+    int t = f->mapa[linha][col];
+    return t == PLATAFORMA || t == BLOCO_INTERROGACAO || t == BLOCO_USADO;
 }
 
 static float velocidade_por_tipo(int tipo) {

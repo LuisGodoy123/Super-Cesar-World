@@ -6,6 +6,7 @@
 
 #define JOGADOR_LARGURA    80
 #define JOGADOR_ALTURA     55
+#define PONTOS_BLOCO      200
 
 /* constantes de fisica (por frame @60fps) */
 #define GRAVIDADE                   0.25f
