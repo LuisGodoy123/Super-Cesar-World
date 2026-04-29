@@ -3,27 +3,29 @@
 
 // Mapas das fases
 
+static void preencher_chao(int mapa[LINHAS][COLUNAS], int cIni, int cFim, int linhaTopo) {
+    if (cIni < 0) cIni = 0;
+    if (cFim >= COLUNAS) cFim = COLUNAS - 1;
+    if (linhaTopo < 0) linhaTopo = 0;
+    if (linhaTopo >= LINHAS) linhaTopo = LINHAS - 1;
+
+    for (int c = cIni; c <= cFim; c++)
+        for (int l = linhaTopo; l < LINHAS; l++)
+            mapa[l][c] = PLATAFORMA;
+}
+
 static void preencher_fase1(int mapa[LINHAS][COLUNAS]) {
-    //chao continuo
-    for (int c = 0; c < COLUNAS; c++)
-        mapa[21][c] = PLATAFORMA;
-
-    //plataformas
-    for (int c =  4; c <=  8; c++) mapa[17][c] = PLATAFORMA;
-    for (int c = 12; c <= 17; c++) mapa[15][c] = PLATAFORMA;
-    for (int c = 22; c <= 27; c++) mapa[17][c] = PLATAFORMA;
-    for (int c = 31; c <= 37; c++) mapa[14][c] = PLATAFORMA;
-    for (int c = 41; c <= 47; c++) mapa[16][c] = PLATAFORMA;
-    for (int c = 51; c <= 57; c++) mapa[18][c] = PLATAFORMA;
-    for (int c = 62; c <= 67; c++) mapa[15][c] = PLATAFORMA;
-    for (int c = 72; c <= 78; c++) mapa[17][c] = PLATAFORMA;
-
-    //moedas (linha acima de cada plataforma)
-    for (int c =  5; c <=  7; c++) mapa[16][c] = MOEDA;
-    for (int c = 13; c <= 16; c++) mapa[14][c] = MOEDA;
-    for (int c = 32; c <= 36; c++) mapa[13][c] = MOEDA;
-    for (int c = 42; c <= 46; c++) mapa[15][c] = MOEDA;
-    for (int c = 63; c <= 66; c++) mapa[14][c] = MOEDA;
+    // terreno em planaltos e depressões, sem blocos empilhados
+    preencher_chao(mapa,  0, 14, 14);
+    preencher_chao(mapa, 15, 22, 16);
+    preencher_chao(mapa, 23, 30, 14);
+    preencher_chao(mapa, 31, 38, 18);
+    preencher_chao(mapa, 39, 52, 14);
+    preencher_chao(mapa, 53, 60, 16);
+    preencher_chao(mapa, 61, 68, 14);
+    preencher_chao(mapa, 69, 78, 20);
+    preencher_chao(mapa, 79, 86, 19);
+    preencher_chao(mapa, 87, 99, 20);
 }
 
 static void preencher_fase2(int mapa[LINHAS][COLUNAS]) {

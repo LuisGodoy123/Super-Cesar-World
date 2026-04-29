@@ -42,9 +42,9 @@ static int boss_ativo(No *listaInimigos) {
 
 static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual) {
 	if (faseAtual == 1) {
-		AdicionarInimigo(listaInimigos, CAMINHADOR,  420.0f, 480.0f);
-		AdicionarInimigo(listaInimigos, CAMINHADOR,  980.0f, 320.0f);
-		AdicionarInimigo(listaInimigos, CAMINHADOR, 1520.0f, 512.0f);
+		AdicionarInimigo(listaInimigos, CAMINHADOR,  384.0f, 480.0f);
+		AdicionarInimigo(listaInimigos, CAMINHADOR, 1184.0f, 480.0f);
+		AdicionarInimigo(listaInimigos, CAMINHADOR, 1984.0f, 608.0f);
 	} else if (faseAtual == 2) {
 		AdicionarInimigo(listaInimigos, CAMINHADOR,  350.0f, 448.0f);
 		AdicionarInimigo(listaInimigos, CAMINHADOR, 1150.0f, 352.0f);
