@@ -127,26 +127,53 @@ void DesenharFase(Fase *f) {
             //ignora tiles fora da tela
             if (screenX + TILE < 0 || screenX > GetScreenWidth()) continue;
 
-            Color tijoloBase = (Color){ 150, 150, 150, 255 };
-            Color tijoloBorda = (Color){ 90, 90, 90, 255 };
-            Color tijoloLuz = (Color){ 175, 175, 175, 255 };
-            Color tijoloSombra = (Color){ 110, 110, 110, 255 };
-
             int x = screenX;
             int y = i * TILE;
 
-            DrawRectangle(x, y, TILE, TILE, tijoloBase);
-            DrawRectangleLines(x, y, TILE, TILE, tijoloBorda);
+            int topo = (i == 0 || f->mapa[i - 1][j] == VAZIO);
+            if (topo) {
+                Color tijoloBase = (Color){ 150, 150, 150, 255 };
+                Color tijoloBorda = (Color){ 90, 90, 90, 255 };
+                Color tijoloLuz = (Color){ 175, 175, 175, 255 };
+                Color tijoloSombra = (Color){ 110, 110, 110, 255 };
 
-            DrawLine(x + 1, y + 1, x + TILE - 2, y + 1, tijoloLuz);
-            DrawLine(x + 1, y + 1, x + 1, y + TILE - 2, tijoloLuz);
-            DrawLine(x + 1, y + TILE - 2, x + TILE - 2, y + TILE - 2, tijoloSombra);
-            DrawLine(x + TILE - 2, y + 1, x + TILE - 2, y + TILE - 2, tijoloSombra);
+                DrawRectangle(x, y, TILE, TILE, tijoloBase);
+                DrawRectangleLines(x, y, TILE, TILE, tijoloBorda);
 
-            int midY = y + TILE / 2;
-            DrawLine(x + 1, midY, x + TILE - 2, midY, tijoloSombra);
+                DrawLine(x + 1, y + 1, x + TILE - 2, y + 1, tijoloLuz);
+                DrawLine(x + 1, y + 1, x + 1, y + TILE - 2, tijoloLuz);
+                DrawLine(x + 1, y + TILE - 2, x + TILE - 2, y + TILE - 2, tijoloSombra);
+                DrawLine(x + TILE - 2, y + 1, x + TILE - 2, y + TILE - 2, tijoloSombra);
 
-            // sem divisao vertical para evitar blocos lado a lado
+                int midY = y + TILE / 2;
+                DrawLine(x + 1, midY, x + TILE - 2, midY, tijoloSombra);
+            } else {
+                Color terra = (Color){ 120, 95, 60, 255 };
+                Color terraBorda = (Color){ 80, 65, 45, 255 };
+                Color terraLuz = (Color){ 145, 115, 75, 255 };
+                Color terraSombra = (Color){ 90, 70, 50, 255 };
+
+                DrawRectangle(x, y, TILE, TILE, terra);
+                DrawRectangleLines(x, y, TILE, TILE, terraBorda);
+
+                DrawPixel(x + 4,  y + 6,  terraSombra);
+                DrawPixel(x + 10, y + 4,  terraSombra);
+                DrawPixel(x + 16, y + 7,  terraSombra);
+                DrawPixel(x + 22, y + 5,  terraSombra);
+                DrawPixel(x + 7,  y + 14, terraSombra);
+                DrawPixel(x + 13, y + 12, terraSombra);
+                DrawPixel(x + 20, y + 15, terraSombra);
+                DrawPixel(x + 5,  y + 20, terraSombra);
+                DrawPixel(x + 11, y + 19, terraSombra);
+                DrawPixel(x + 18, y + 21, terraSombra);
+
+                DrawPixel(x + 3,  y + 9,  terraLuz);
+                DrawPixel(x + 12, y + 8,  terraLuz);
+                DrawPixel(x + 19, y + 10, terraLuz);
+                DrawPixel(x + 8,  y + 17, terraLuz);
+                DrawPixel(x + 15, y + 16, terraLuz);
+                DrawPixel(x + 23, y + 18, terraLuz);
+            }
         }
     }
 }
