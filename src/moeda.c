@@ -67,7 +67,7 @@ void AtualizarMoedas(NoMoeda *lista, Jogador *j) {
 // DesenharMoedas — percorre lista e renderiza
 
 
-void DesenharMoedas(NoMoeda *lista, float cameraX) {
+void DesenharMoedas(NoMoeda *lista, float cameraX, Texture2D texMoeda) {
     NoMoeda *atual = lista;
     float zoom = CAMERA_ZOOM;
     int tileSize = (int)(TILE * zoom);
@@ -77,11 +77,17 @@ void DesenharMoedas(NoMoeda *lista, float cameraX) {
             int screenY = (int)((atual->y - CAMERA_Y_OFFSET) * zoom);
 
             if (screenX + tileSize >= 0 && screenX <= GetScreenWidth()) {
-                int cx = screenX + tileSize / 2;
-                int cy = screenY + tileSize / 2;
-                float raio = (float)TILE * 0.30f * zoom;
-                DrawCircle(cx, cy, raio, GOLD);
-                DrawCircleLines(cx, cy, raio, ORANGE);
+                if (texMoeda.id > 0) {
+                    Rectangle src  = { 0, 0, (float)texMoeda.width, (float)texMoeda.height };
+                    Rectangle dest = { (float)screenX, (float)screenY, (float)tileSize, (float)tileSize };
+                    DrawTexturePro(texMoeda, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                } else {
+                    int cx = screenX + tileSize / 2;
+                    int cy = screenY + tileSize / 2;
+                    float raio = (float)TILE * 0.30f * zoom;
+                    DrawCircle(cx, cy, raio, GOLD);
+                    DrawCircleLines(cx, cy, raio, ORANGE);
+                }
             }
         }
 

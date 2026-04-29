@@ -185,6 +185,12 @@ int main(void) {
 	}
 	if (jogador.numSprites > 0) jogador.temSprites = 1;
 
+	Texture2D texMoeda = {0};
+	if (FileExists("assets/sprites/moeda.png")) {
+		texMoeda = LoadTexture("assets/sprites/moeda.png");
+		SetTextureFilter(texMoeda, TEXTURE_FILTER_POINT);
+	}
+
 	while (!WindowShouldClose()) {
 		float frameTime = GetFrameTime();
 		if (frameTime > 0.25f) frameTime = 0.25f;
@@ -263,7 +269,7 @@ int main(void) {
 			DesenharMenu(&menu, &placar);
 		} else if (estado == JOGANDO) {
 			DesenharFase(&fase);
-			DesenharMoedas(listaMoedas, fase.cameraX);
+			DesenharMoedas(listaMoedas, fase.cameraX, texMoeda);
 			DesenharInimigos(listaInimigos, fase.cameraX);
 			DesenharJogador(&jogador);
 			DesenharPlacar(&placar, &fonteUI, temFonteUI);
@@ -301,6 +307,7 @@ int main(void) {
 			UnloadTexture(jogador.sprites[i]);
 		}
 	}
+	if (texMoeda.id > 0) UnloadTexture(texMoeda);
 	CloseWindow();
 	return 0;
 }
