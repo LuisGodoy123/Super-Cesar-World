@@ -2,6 +2,7 @@
 #define INIMIGO_H
 
 #include "raylib.h"
+#include "fase.h"
 #include "jogador.h"
 
 #define CAMINHADOR  0

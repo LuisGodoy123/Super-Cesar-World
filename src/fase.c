@@ -122,13 +122,17 @@ void DesenharFase(Fase *f) {
         for (int j = 0; j < COLUNAS; j++) {
             if (f->mapa[i][j] != PLATAFORMA) continue;
 
-            int screenX = j * TILE - (int)f->cameraX;
+            float zoom = CAMERA_ZOOM;
+            int screenX = (int)((j * TILE - (int)f->cameraX) * zoom);
+            int screenY = (int)(((i * TILE) - CAMERA_Y_OFFSET) * zoom);
+            int tileSize = (int)(TILE * zoom);
 
             //ignora tiles fora da tela
-            if (screenX + TILE < 0 || screenX > GetScreenWidth()) continue;
+            if (screenX + tileSize < 0 || screenX > GetScreenWidth()) continue;
+            if (screenY + tileSize < 0 || screenY > GetScreenHeight()) continue;
 
             int x = screenX;
-            int y = i * TILE;
+            int y = screenY;
 
             int topo = (i == 0 || f->mapa[i - 1][j] == VAZIO);
             if (topo) {
@@ -137,29 +141,29 @@ void DesenharFase(Fase *f) {
                 Color tijoloLuz = (Color){ 175, 175, 175, 255 };
                 Color tijoloSombra = (Color){ 110, 110, 110, 255 };
 
-                DrawRectangle(x, y, TILE, TILE, tijoloBase);
-                DrawRectangleLines(x, y, TILE, TILE, tijoloBorda);
+                DrawRectangle(x, y, tileSize, tileSize, tijoloBase);
+                DrawRectangleLines(x, y, tileSize, tileSize, tijoloBorda);
 
-                DrawLine(x + 1, y + 1, x + TILE - 2, y + 1, tijoloLuz);
-                DrawLine(x + 1, y + 1, x + 1, y + TILE - 2, tijoloLuz);
-                DrawLine(x + 1, y + TILE - 2, x + TILE - 2, y + TILE - 2, tijoloSombra);
-                DrawLine(x + TILE - 2, y + 1, x + TILE - 2, y + TILE - 2, tijoloSombra);
+                DrawLine(x + 1, y + 1, x + tileSize - 2, y + 1, tijoloLuz);
+                DrawLine(x + 1, y + 1, x + 1, y + tileSize - 2, tijoloLuz);
+                DrawLine(x + 1, y + tileSize - 2, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
+                DrawLine(x + tileSize - 2, y + 1, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
 
-                int midY = y + TILE / 2;
-                DrawLine(x + 1, midY, x + TILE - 2, midY, tijoloSombra);
+                int midY = y + tileSize / 2;
+                DrawLine(x + 1, midY, x + tileSize - 2, midY, tijoloSombra);
             } else {
                 Color terra = (Color){ 120, 95, 60, 255 };
                 Color terraBorda = (Color){ 80, 65, 45, 255 };
                 Color terraLuz = (Color){ 145, 115, 75, 255 };
                 Color terraSombra = (Color){ 90, 70, 50, 255 };
 
-                DrawRectangle(x, y, TILE, TILE, terra);
-                DrawRectangleLines(x, y, TILE, TILE, terraBorda);
+                DrawRectangle(x, y, tileSize, tileSize, terra);
+                DrawRectangleLines(x, y, tileSize, tileSize, terraBorda);
 
-                DrawLine(x + 2, y + 4,  x + TILE - 3, y + 4,  terraSombra);
-                DrawLine(x + 3, y + 9,  x + TILE - 4, y + 9,  terraSombra);
-                DrawLine(x + 2, y + 15, x + TILE - 3, y + 15, terraSombra);
-                DrawLine(x + 3, y + 20, x + TILE - 4, y + 20, terraSombra);
+                DrawLine(x + 2, y + 4,  x + tileSize - 3, y + 4,  terraSombra);
+                DrawLine(x + 3, y + 9,  x + tileSize - 4, y + 9,  terraSombra);
+                DrawLine(x + 2, y + 15, x + tileSize - 3, y + 15, terraSombra);
+                DrawLine(x + 3, y + 20, x + tileSize - 4, y + 20, terraSombra);
 
                 DrawPixel(x + 4,  y + 6,  terraSombra);
                 DrawPixel(x + 10, y + 4,  terraSombra);

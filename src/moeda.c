@@ -69,16 +69,19 @@ void AtualizarMoedas(NoMoeda *lista, Jogador *j) {
 
 void DesenharMoedas(NoMoeda *lista, float cameraX) {
     NoMoeda *atual = lista;
+    float zoom = CAMERA_ZOOM;
+    int tileSize = (int)(TILE * zoom);
     while (atual != NULL) {
         if (!atual->coletada) {
-            int screenX = (int)(atual->x - cameraX);
-            int screenY = (int)(atual->y);
+            int screenX = (int)((atual->x - cameraX) * zoom);
+            int screenY = (int)((atual->y - CAMERA_Y_OFFSET) * zoom);
 
-            if (screenX + TILE >= 0 && screenX <= GetScreenWidth()) {
-                int cx = screenX + TILE / 2;
-                int cy = screenY + TILE / 2;
-                DrawCircle(cx, cy, (float)TILE * 0.30f, GOLD);
-                DrawCircleLines(cx, cy, (float)TILE * 0.30f, ORANGE);
+            if (screenX + tileSize >= 0 && screenX <= GetScreenWidth()) {
+                int cx = screenX + tileSize / 2;
+                int cy = screenY + tileSize / 2;
+                float raio = (float)TILE * 0.30f * zoom;
+                DrawCircle(cx, cy, raio, GOLD);
+                DrawCircleLines(cx, cy, raio, ORANGE);
             }
         }
 

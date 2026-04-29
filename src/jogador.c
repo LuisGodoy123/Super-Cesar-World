@@ -277,8 +277,9 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     if (j->x > limDir) j->x = limDir;
 
     /* camera segue o jogador */
-    float maxCam = (float)(COLUNAS * TILE - GetScreenWidth());
-    f->cameraX = j->x - GetScreenWidth() / 2.0f + JOGADOR_LARGURA / 2.0f;
+    float viewWidth = GetScreenWidth() / CAMERA_ZOOM;
+    float maxCam = (float)(COLUNAS * TILE - viewWidth);
+    f->cameraX = j->x - viewWidth / 2.0f + JOGADOR_LARGURA / 2.0f;
     if (f->cameraX < 0)       f->cameraX = 0;
     if (f->cameraX > maxCam)  f->cameraX = maxCam;
     j->cameraX = f->cameraX;
@@ -344,10 +345,11 @@ void DesenharJogador(Jogador *j) {
     // Piscar quando INVENCIVEL: some nos frames impares
     if (j->estado == INVENCIVEL && (int)(GetTime() * 10) % 2 == 0) return;
 
-    float screenX = j->x - j->cameraX;
-    float screenY = j->y;
-    int largura = JOGADOR_LARGURA;
-    int altura  = j->alturaAtual;
+    float zoom = CAMERA_ZOOM;
+    float screenX = (j->x - j->cameraX) * zoom;
+    float screenY = (j->y - CAMERA_Y_OFFSET) * zoom;
+    float largura = (float)JOGADOR_LARGURA * zoom;
+    float altura  = (float)j->alturaAtual * zoom;
 
     if (j->temSprites && j->numSprites > 0) {
         int frame = 0;
@@ -363,10 +365,10 @@ void DesenharJogador(Jogador *j) {
 
         Texture2D tex = j->sprites[frame];
         Rectangle src  = { 0.0f, 0.0f, (float)tex.width, (float)tex.height };
-        Rectangle dest = { screenX + (float)JOGADOR_LARGURA / 2.0f,
-                           screenY + (float)altura,
-                           (float)JOGADOR_LARGURA, (float)altura };
-        Vector2 origin = { (float)JOGADOR_LARGURA / 2.0f, (float)altura };
+        Rectangle dest = { screenX + largura / 2.0f,
+                   screenY + altura,
+                   largura, altura };
+        Vector2 origin = { largura / 2.0f, altura };
 
         if (j->direcao < 0) {
             src.x += src.width;
@@ -378,21 +380,21 @@ void DesenharJogador(Jogador *j) {
         if (j->estadoMov == MOV_AGACHADO) corpo = MAROON;
         if (j->estadoMov == MOV_DERRAPANDO) corpo = DARKGRAY;
 
-        DrawRectangle((int)screenX, (int)screenY, largura, altura, corpo);
+        DrawRectangle((int)screenX, (int)screenY, (int)largura, (int)altura, corpo);
 
         /* olhos simples para indicar direcao */
-        int olhoY = (int)screenY + altura / 4;
-        int olhoX1 = (j->direcao >= 0) ? ((int)screenX + largura - 12) : ((int)screenX + 6);
-        int olhoX2 = (j->direcao >= 0) ? ((int)screenX + largura - 6)  : ((int)screenX + 12);
+        int olhoY = (int)screenY + (int)(altura / 4.0f);
+        int olhoX1 = (j->direcao >= 0) ? ((int)screenX + (int)largura - 12) : ((int)screenX + 6);
+        int olhoX2 = (j->direcao >= 0) ? ((int)screenX + (int)largura - 6)  : ((int)screenX + 12);
         DrawRectangle(olhoX1, olhoY, 4, 4, WHITE);
         DrawRectangle(olhoX2, olhoY, 4, 4, WHITE);
 
         /* pezinhos simples para animacao */
         if (j->estadoMov == MOV_CAMINHANDO || j->estadoMov == MOV_CORRENDO) {
-            int footY = (int)screenY + altura - 5;
+            int footY = (int)screenY + (int)altura - 5;
             int off = (j->animFrame % 2 == 0) ? 3 : 7;
             DrawRectangle((int)screenX + off, footY, 6, 4, DARKGRAY);
-            DrawRectangle((int)screenX + largura - off - 6, footY, 6, 4, DARKGRAY);
+            DrawRectangle((int)screenX + (int)largura - off - 6, footY, 6, 4, DARKGRAY);
         }
     }
 }

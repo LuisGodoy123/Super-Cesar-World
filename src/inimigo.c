@@ -163,24 +163,27 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
 
 void DesenharInimigos(No *lista, float cameraX) {
     No *atual = lista;
+    float zoom = CAMERA_ZOOM;
 
     while (atual != NULL) {
         Inimigo *ini = &atual->dados;
 
         if (ini->ativo) {
-            int screenX = (int)(ini->x - cameraX);
-            int screenY = (int)(ini->y);
+            int screenX = (int)((ini->x - cameraX) * zoom);
+            int screenY = (int)((ini->y - CAMERA_Y_OFFSET) * zoom);
+            int largura = (int)((float)ini->largura * zoom);
+            int altura = (int)((float)ini->altura * zoom);
 
             if (ini->tipo == BOSS) {
-                DrawRectangle(screenX, screenY, ini->largura, ini->altura, PURPLE);
+                DrawRectangle(screenX, screenY, largura, altura, PURPLE);
                 /* barra de vida do boss */
-                DrawRectangle(screenX, screenY - 10, ini->largura, 6, DARKGRAY);
-                DrawRectangle(screenX, screenY - 10,
-                              ini->largura * ini->vida / 5, 6, RED);
+                DrawRectangle(screenX, screenY - (int)(10 * zoom), largura, (int)(6 * zoom), DARKGRAY);
+                DrawRectangle(screenX, screenY - (int)(10 * zoom),
+                              largura * ini->vida / 5, (int)(6 * zoom), RED);
             } else if (ini->tipo == PERSEGUIDOR) {
-                DrawRectangle(screenX, screenY, ini->largura, ini->altura, ORANGE);
+                DrawRectangle(screenX, screenY, largura, altura, ORANGE);
             } else {
-                DrawRectangle(screenX, screenY, ini->largura, ini->altura, BROWN);
+                DrawRectangle(screenX, screenY, largura, altura, BROWN);
             }
         }
 
