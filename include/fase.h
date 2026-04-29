@@ -4,7 +4,7 @@
 #include "raylib.h"
 
 #define TILE     32
-#define LINHAS   22
+#define LINHAS   23
 #define COLUNAS  100
 
 //valores do mapa

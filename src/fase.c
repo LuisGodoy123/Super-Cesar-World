@@ -30,10 +30,8 @@ static void preencher_fase1(int mapa[LINHAS][COLUNAS]) {
 
 static void preencher_fase2(int mapa[LINHAS][COLUNAS]) {
     //chao com uma lacuna
-    for (int c = 0; c < COLUNAS; c++)
-        mapa[21][c] = PLATAFORMA;
-    for (int c = 35; c <= 39; c++)
-        mapa[21][c] = VAZIO;
+    preencher_chao(mapa, 0, 34, 21);
+    preencher_chao(mapa, 40, COLUNAS - 1, 21);
 
     //plataformas intermediarias
     for (int c =  3; c <=  8; c++) mapa[16][c] = PLATAFORMA;
@@ -58,11 +56,10 @@ static void preencher_fase2(int mapa[LINHAS][COLUNAS]) {
 
 static void preencher_fase3(int mapa[LINHAS][COLUNAS]) {
     //chao com multiplos buracos
-    for (int c = 0; c < COLUNAS; c++)
-        mapa[21][c] = PLATAFORMA;
-    for (int c = 14; c <= 18; c++) mapa[21][c] = VAZIO;
-    for (int c = 34; c <= 40; c++) mapa[21][c] = VAZIO;
-    for (int c = 54; c <= 61; c++) mapa[21][c] = VAZIO;
+    preencher_chao(mapa, 0, 13, 21);
+    preencher_chao(mapa, 19, 33, 21);
+    preencher_chao(mapa, 41, 53, 21);
+    preencher_chao(mapa, 62, COLUNAS - 1, 21);
 
     //plataformas complexas
     for (int c =  2; c <=  6; c++) mapa[17][c] = PLATAFORMA;
