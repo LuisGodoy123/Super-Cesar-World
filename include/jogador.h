@@ -8,20 +8,20 @@
 #define JOGADOR_ALTURA     70
 
 /* constantes de fisica (por frame @60fps) */
-#define GRAVIDADE                   0.5f
-#define VELOCIDADE_QUEDA_MAXIMA    12.0f
+#define GRAVIDADE                   0.25f
+#define VELOCIDADE_QUEDA_MAXIMA     8.0f
 #define VELOCIDADE_CAMINHADA        2.5f
-#define VELOCIDADE_CORRIDA          5.0f
-#define ACELERACAO                  0.3f
-#define DESACELERACAO               0.35f
-#define ACELERACAO_AR               0.2f
-#define DESACELERACAO_AR            0.15f
-#define FORCA_PULO                -10.5f
-#define FORCA_SEGURAR_PULO         -0.4f
+#define VELOCIDADE_CORRIDA          3.8f
+#define ACELERACAO                  0.15f
+#define DESACELERACAO               0.12f
+#define ACELERACAO_AR               0.12f
+#define DESACELERACAO_AR            0.08f
+#define FORCA_PULO                 -6.0f
+#define FORCA_SEGURAR_PULO         -0.20f
 #define TEMPO_MAXIMO_SEGURAR_PULO   12
 #define CORTE_PULO_CURTO             6
-#define FORCA_PULO_CORRENDO       -12.0f
-#define FORCA_SEGURAR_PULO_CORRENDO -0.45f
+#define FORCA_PULO_CORRENDO        -6.8f
+#define FORCA_SEGURAR_PULO_CORRENDO -0.25f
 #define DESACELERACAO_DERRAPAGEM    0.6f
 #define LIMITE_DERRAPAGEM           2.0f
 #define COYOTE_FRAMES                6
