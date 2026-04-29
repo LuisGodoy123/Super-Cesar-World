@@ -123,8 +123,31 @@ void DesenharFase(Fase *f) {
             //ignora tiles fora da tela
             if (screenX + TILE < 0 || screenX > GetScreenWidth()) continue;
 
-            DrawRectangle(screenX, i * TILE, TILE, TILE, BROWN);
-            DrawRectangleLines(screenX, i * TILE, TILE, TILE, DARKBROWN);
+            Color tijoloBase = (Color){ 150, 150, 150, 255 };
+            Color tijoloBorda = (Color){ 90, 90, 90, 255 };
+            Color tijoloLuz = (Color){ 175, 175, 175, 255 };
+            Color tijoloSombra = (Color){ 110, 110, 110, 255 };
+
+            int x = screenX;
+            int y = i * TILE;
+
+            DrawRectangle(x, y, TILE, TILE, tijoloBase);
+            DrawRectangleLines(x, y, TILE, TILE, tijoloBorda);
+
+            DrawLine(x + 1, y + 1, x + TILE - 2, y + 1, tijoloLuz);
+            DrawLine(x + 1, y + 1, x + 1, y + TILE - 2, tijoloLuz);
+            DrawLine(x + 1, y + TILE - 2, x + TILE - 2, y + TILE - 2, tijoloSombra);
+            DrawLine(x + TILE - 2, y + 1, x + TILE - 2, y + TILE - 2, tijoloSombra);
+
+            int midY = y + TILE / 2;
+            DrawLine(x + 1, midY, x + TILE - 2, midY, tijoloSombra);
+
+            int midX = x + TILE / 2;
+            if ((i + j) % 2 == 0) {
+                DrawLine(midX, y + 1, midX, midY - 1, tijoloSombra);
+            } else {
+                DrawLine(midX, midY + 1, midX, y + TILE - 2, tijoloSombra);
+            }
         }
     }
 }
