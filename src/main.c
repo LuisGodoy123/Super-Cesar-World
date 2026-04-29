@@ -249,8 +249,9 @@ int main(void) {
 					scoreRegistrado = 0;
 				} else {
 					float fimDaFase = (float)((COLUNAS - 2) * TILE);
+					float bordaDirJogador = jogador.x + JOGADOR_HITBOX_OFFSET_X + JOGADOR_HITBOX_LARGURA;
 
-					if (jogador.x >= fimDaFase) {
+					if (bordaDirJogador >= fimDaFase) {
 						if (faseAtual < 3) {
 							jogador.pontos += BONUS_COMPLETAR_FASE;
 							faseAtual++;
