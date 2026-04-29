@@ -156,6 +156,11 @@ void DesenharFase(Fase *f) {
                 DrawRectangle(x, y, TILE, TILE, terra);
                 DrawRectangleLines(x, y, TILE, TILE, terraBorda);
 
+                DrawLine(x + 2, y + 4,  x + TILE - 3, y + 4,  terraSombra);
+                DrawLine(x + 3, y + 9,  x + TILE - 4, y + 9,  terraSombra);
+                DrawLine(x + 2, y + 15, x + TILE - 3, y + 15, terraSombra);
+                DrawLine(x + 3, y + 20, x + TILE - 4, y + 20, terraSombra);
+
                 DrawPixel(x + 4,  y + 6,  terraSombra);
                 DrawPixel(x + 10, y + 4,  terraSombra);
                 DrawPixel(x + 16, y + 7,  terraSombra);
@@ -173,6 +178,15 @@ void DesenharFase(Fase *f) {
                 DrawPixel(x + 8,  y + 17, terraLuz);
                 DrawPixel(x + 15, y + 16, terraLuz);
                 DrawPixel(x + 23, y + 18, terraLuz);
+
+                DrawPixel(x + 2,  y + 12, terraLuz);
+                DrawPixel(x + 9,  y + 22, terraLuz);
+                DrawPixel(x + 17, y + 13, terraLuz);
+                DrawPixel(x + 24, y + 8,  terraLuz);
+
+                DrawPixel(x + 6,  y + 2,  terraSombra);
+                DrawPixel(x + 14, y + 3,  terraSombra);
+                DrawPixel(x + 21, y + 2,  terraSombra);
             }
         }
     }
