@@ -15,21 +15,68 @@ static void preencher_chao(int mapa[LINHAS][COLUNAS], int cIni, int cFim, int li
 }
 
 static void preencher_fase1(int mapa[LINHAS][COLUNAS]) {
-    // terreno em planaltos e depressões, sem blocos empilhados
-    preencher_chao(mapa,  0, 14, 14);
-    preencher_chao(mapa, 15, 22, 16);
-    preencher_chao(mapa, 23, 30, 14);
-    preencher_chao(mapa, 31, 38, 18);
-    preencher_chao(mapa, 39, 52, 14);
-    preencher_chao(mapa, 53, 60, 16);
-    preencher_chao(mapa, 61, 68, 14);
-    preencher_chao(mapa, 69, 78, 20);
-    preencher_chao(mapa, 79, 86, 19);
-    preencher_chao(mapa, 87, 99, 20);
-    preencher_chao(mapa, 100, 108, 18);
-    preencher_chao(mapa, 109, 116, 16);
-    preencher_chao(mapa, 117, 123, 20);
-    preencher_chao(mapa, 124, 129, 18);
+    // Inspirado em Yoshi's Island 1 (Super Mario World)
+    // Ritmo: plano → subida leve → plano → vale raso → plano
+    // Linha base: 17 | elevacao: 15-16 | vale raso: 18
+
+    // Inicio totalmente plano
+    preencher_chao(mapa,   0,  15, 17);
+
+    // Subida leve de 1 bloco
+    preencher_chao(mapa,  16,  26, 16);
+
+    // Retorno ao plano
+    preencher_chao(mapa,  27,  35, 17);
+
+    // Vale raso (exige salto simples para subir de volta)
+    preencher_chao(mapa,  36,  39, 18);
+
+    // Espaco de respiro
+    preencher_chao(mapa,  40,  51, 17);
+
+    // Degraus naturais: subida progressiva (2 degraus)
+    preencher_chao(mapa,  52,  53, 16);
+    preencher_chao(mapa,  54,  61, 15);
+
+    // Descida suave e retorno ao plano
+    preencher_chao(mapa,  62,  67, 16);
+    preencher_chao(mapa,  68,  78, 17);
+
+    // Vale raso
+    preencher_chao(mapa,  79,  82, 18);
+
+    // Longo espaco de respiro
+    preencher_chao(mapa,  83,  95, 17);
+
+    // Subida leve
+    preencher_chao(mapa,  96, 103, 16);
+
+    // Pequeno vale
+    preencher_chao(mapa, 104, 107, 18);
+
+    // Plano
+    preencher_chao(mapa, 108, 116, 17);
+
+    // Elevacao leve antes do fim
+    preencher_chao(mapa, 117, 122, 16);
+
+    // Chegada final plana
+    preencher_chao(mapa, 123, 129, 17);
+
+    // Plataformas elevadas simples
+    for (int c =  8; c <= 12; c++) mapa[14][c] = PLATAFORMA; // intro ao salto
+    for (int c = 44; c <= 49; c++) mapa[14][c] = PLATAFORMA; // respiro mid-fase
+    for (int c = 70; c <= 75; c++) mapa[14][c] = PLATAFORMA; // apos vale central
+    for (int c = 85; c <= 90; c++) mapa[13][c] = PLATAFORMA; // plataforma mais alta
+
+    // Moedas guiando o jogador
+    for (int c =  3; c <=  7; c++) mapa[16][c] = MOEDA;   // arco inicial no chao
+    for (int c =  9; c <= 11; c++) mapa[13][c] = MOEDA;   // acima da plataforma inicial
+    for (int c = 41; c <= 46; c++) mapa[16][c] = MOEDA;   // guia no espaco de respiro
+    for (int c = 55; c <= 59; c++) mapa[14][c] = MOEDA;   // sobre a elevacao maxima
+    for (int c = 71; c <= 74; c++) mapa[13][c] = MOEDA;   // acima da plataforma central
+    for (int c = 86; c <= 89; c++) mapa[12][c] = MOEDA;   // sobre a plataforma alta
+    for (int c = 109; c <= 113; c++) mapa[16][c] = MOEDA; // perto do fim
 }
 
 static void preencher_fase2(int mapa[LINHAS][COLUNAS]) {
