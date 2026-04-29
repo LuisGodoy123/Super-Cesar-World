@@ -5,7 +5,7 @@
 
 #define TILE     32
 #define LINHAS   23
-#define COLUNAS  100
+#define COLUNAS  130
 
 //valores do mapa
 #define VAZIO      0

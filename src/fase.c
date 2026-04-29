@@ -26,6 +26,10 @@ static void preencher_fase1(int mapa[LINHAS][COLUNAS]) {
     preencher_chao(mapa, 69, 78, 20);
     preencher_chao(mapa, 79, 86, 19);
     preencher_chao(mapa, 87, 99, 20);
+    preencher_chao(mapa, 100, 108, 18);
+    preencher_chao(mapa, 109, 116, 16);
+    preencher_chao(mapa, 117, 123, 20);
+    preencher_chao(mapa, 124, 129, 18);
 }
 
 static void preencher_fase2(int mapa[LINHAS][COLUNAS]) {
