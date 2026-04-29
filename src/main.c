@@ -40,21 +40,50 @@ static int boss_ativo(No *listaInimigos) {
 	return 0;
 }
 
-static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual) {
+static float y_superficie_chao(Fase *fase, float x, int altura, float fallback) {
+	if (fase == NULL) return fallback;
+
+	int col = (int)(x / TILE);
+	if (col < 0) col = 0;
+	if (col >= COLUNAS) col = COLUNAS - 1;
+
+	for (int l = 0; l < LINHAS; l++) {
+		if (fase->mapa[l][col] == PLATAFORMA) {
+			if (l == LINHAS - 1 || fase->mapa[l + 1][col] == PLATAFORMA) {
+				return (float)(l * TILE - altura);
+			}
+		}
+	}
+
+	return fallback;
+}
+
+static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *fase) {
 	if (faseAtual == 1) {
-		AdicionarInimigo(listaInimigos, CAMINHADOR,  384.0f, 480.0f);
-		AdicionarInimigo(listaInimigos, CAMINHADOR, 1184.0f, 480.0f);
-		AdicionarInimigo(listaInimigos, CAMINHADOR, 1984.0f, 608.0f);
+		float x1 =  384.0f;
+		float x2 = 1184.0f;
+		float x3 = 1984.0f;
+		AdicionarInimigo(listaInimigos, CAMINHADOR, x1, y_superficie_chao(fase, x1, 32, 480.0f));
+		AdicionarInimigo(listaInimigos, CAMINHADOR, x2, y_superficie_chao(fase, x2, 32, 480.0f));
+		AdicionarInimigo(listaInimigos, CAMINHADOR, x3, y_superficie_chao(fase, x3, 32, 608.0f));
 	} else if (faseAtual == 2) {
-		AdicionarInimigo(listaInimigos, CAMINHADOR,  350.0f, 448.0f);
-		AdicionarInimigo(listaInimigos, CAMINHADOR, 1150.0f, 352.0f);
-		AdicionarInimigo(listaInimigos, PERSEGUIDOR, 1700.0f, 416.0f);
-		AdicionarInimigo(listaInimigos, PERSEGUIDOR, 2200.0f, 320.0f);
+		float x1 =  350.0f;
+		float x2 = 1150.0f;
+		float x3 = 1700.0f;
+		float x4 = 2200.0f;
+		AdicionarInimigo(listaInimigos, CAMINHADOR, x1, y_superficie_chao(fase, x1, 32, 448.0f));
+		AdicionarInimigo(listaInimigos, CAMINHADOR, x2, y_superficie_chao(fase, x2, 32, 352.0f));
+		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x3, y_superficie_chao(fase, x3, 32, 416.0f));
+		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x4, y_superficie_chao(fase, x4, 32, 320.0f));
 	} else if (faseAtual == 3) {
-		AdicionarInimigo(listaInimigos, CAMINHADOR,  380.0f, 480.0f);
-		AdicionarInimigo(listaInimigos, PERSEGUIDOR, 1100.0f, 352.0f);
-		AdicionarInimigo(listaInimigos, PERSEGUIDOR, 1680.0f, 416.0f);
-		AdicionarInimigo(listaInimigos, BOSS,       2360.0f, 576.0f);
+		float x1 =  380.0f;
+		float x2 = 1100.0f;
+		float x3 = 1680.0f;
+		float x4 = 2360.0f;
+		AdicionarInimigo(listaInimigos, CAMINHADOR, x1, y_superficie_chao(fase, x1, 32, 480.0f));
+		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x2, y_superficie_chao(fase, x2, 32, 352.0f));
+		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x3, y_superficie_chao(fase, x3, 32, 416.0f));
+		AdicionarInimigo(listaInimigos, BOSS,       x4, y_superficie_chao(fase, x4, 64, 576.0f));
 	}
 }
 
@@ -80,7 +109,7 @@ static void preparar_fase(Fase *fase,
 	else                        IniciarJogador(jogador);
 
 	CarregarMoedasDaFase(listaMoedas, fase);
-	carregar_inimigos_da_fase(listaInimigos, faseAtual);
+	carregar_inimigos_da_fase(listaInimigos, faseAtual, fase);
 }
 
 static int carregar_fonte_ui(Font *fonte) {
@@ -198,7 +227,7 @@ int main(void) {
 		while (acumulador >= FIXED_DT) {
 			if (estado == JOGANDO) {
 				AtualizarJogador(&jogador, &fase);
-				AtualizarInimigos(listaInimigos, &jogador, FIXED_DT);
+				AtualizarInimigos(listaInimigos, &jogador, &fase, FIXED_DT);
 				AtualizarMoedas(listaMoedas, &jogador);
 
 				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);

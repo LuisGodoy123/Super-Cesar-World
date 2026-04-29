@@ -142,12 +142,7 @@ void DesenharFase(Fase *f) {
             int midY = y + TILE / 2;
             DrawLine(x + 1, midY, x + TILE - 2, midY, tijoloSombra);
 
-            int midX = x + TILE / 2;
-            if ((i + j) % 2 == 0) {
-                DrawLine(midX, y + 1, midX, midY - 1, tijoloSombra);
-            } else {
-                DrawLine(midX, midY + 1, midX, y + TILE - 2, tijoloSombra);
-            }
+            // sem divisao vertical para evitar blocos lado a lado
         }
     }
 }

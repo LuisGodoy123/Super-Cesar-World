@@ -1,4 +1,5 @@
 #include "inimigo.h"
+#include "fase.h"
 #include <stdlib.h>
 
 /* pontos concedidos ao eliminar cada tipo */
@@ -48,43 +49,57 @@ void AdicionarInimigo(No **lista, int tipo, float x, float y) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Comportamentos internos                                              */
+/* Comportamentos internos                                             */
 /* ------------------------------------------------------------------ */
 
-static void mover_caminhador(Inimigo *ini, float dt) {
-    ini->x += ini->vx * dt;
-
-    /* inverte direcao ao sair do alcance de patrulha */
-    if (ini->x < ini->origemX - PATROL_RANGE) {
-        ini->x  = ini->origemX - PATROL_RANGE;
-        ini->vx = VEL_CAMINHADOR;
-    }
-    if (ini->x > ini->origemX + PATROL_RANGE) {
-        ini->x  = ini->origemX + PATROL_RANGE;
-        ini->vx = -VEL_CAMINHADOR;
-    }
+static int tile_solido(Fase *f, int col, int linha) {
+    if (f == NULL) return 0;
+    if (col < 0 || col >= COLUNAS || linha < 0 || linha >= LINHAS)
+        return 0;
+    return f->mapa[linha][col] == PLATAFORMA;
 }
 
-static void mover_perseguidor(Inimigo *ini, Jogador *j, float dt) {
-    /* segue o jogador horizontalmente */
-    if (j->x > ini->x) ini->vx =  VEL_PERSEGUIDOR;
-    else                ini->vx = -VEL_PERSEGUIDOR;
-
-    ini->x += ini->vx * dt;
+static float velocidade_por_tipo(int tipo) {
+    if (tipo == BOSS) return VEL_BOSS;
+    if (tipo == PERSEGUIDOR) return VEL_PERSEGUIDOR;
+    return VEL_CAMINHADOR;
 }
 
-static void mover_boss(Inimigo *ini, Jogador *j, float dt) {
-    /* move-se lentamente em direcao ao jogador */
-    if (j->x > ini->x) ini->vx =  VEL_BOSS;
-    else                ini->vx = -VEL_BOSS;
+static void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
+    if (ini->vx == 0.0f) ini->vx = velocidade_por_tipo(ini->tipo);
 
     ini->x += ini->vx * dt;
 
-    /* contagem regressiva para tiro */
-    ini->timerTiro -= dt;
-    if (ini->timerTiro <= 0.0f) {
-        ini->timerTiro = INTERVALO_TIRO;
-        /* TODO: criar projetil na direcao do jogador */
+    int colEsq = (int)(ini->x) / TILE;
+    int colDir = (int)(ini->x + ini->largura - 1) / TILE;
+    int linTop = (int)(ini->y) / TILE;
+    int linBot = (int)(ini->y + ini->altura - 1) / TILE;
+
+    if (ini->vx < 0 && (tile_solido(f, colEsq, linTop) || tile_solido(f, colEsq, linBot))) {
+        ini->x  = (float)((colEsq + 1) * TILE);
+        ini->vx = -ini->vx;
+    }
+    if (ini->vx > 0 && (tile_solido(f, colDir, linTop) || tile_solido(f, colDir, linBot))) {
+        ini->x  = (float)(colDir * TILE - ini->largura);
+        ini->vx = -ini->vx;
+    }
+
+    float grav = GRAVIDADE * 60.0f * 60.0f;
+    ini->vy += grav * dt;
+    ini->y += ini->vy * dt;
+
+    colEsq = (int)(ini->x) / TILE;
+    colDir = (int)(ini->x + ini->largura - 1) / TILE;
+    linTop = (int)(ini->y) / TILE;
+    linBot = (int)(ini->y + ini->altura - 1) / TILE;
+
+    if (ini->vy > 0.0f && (tile_solido(f, colEsq, linBot) || tile_solido(f, colDir, linBot))) {
+        ini->y  = (float)(linBot * TILE - ini->altura);
+        ini->vy = 0.0f;
+    }
+    if (ini->vy < 0.0f && (tile_solido(f, colEsq, linTop) || tile_solido(f, colDir, linTop))) {
+        ini->y  = (float)((linTop + 1) * TILE);
+        ini->vy = 0.0f;
     }
 }
 
@@ -99,17 +114,23 @@ static int colidiu(Inimigo *ini, Jogador *j) {
 /* AtualizarInimigos — percorre lista, move cada inimigo               */
 /* ------------------------------------------------------------------ */
 
-void AtualizarInimigos(No *lista, Jogador *j, float dt) {
+void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
     No *atual = lista;
 
     while (atual != NULL) {
         Inimigo *ini = &atual->dados;
 
         if (ini->ativo) {
-            /* movimento por tipo */
-            if      (ini->tipo == CAMINHADOR)  mover_caminhador(ini, dt);
-            else if (ini->tipo == PERSEGUIDOR) mover_perseguidor(ini, j, dt);
-            else if (ini->tipo == BOSS)        mover_boss(ini, j, dt);
+            /* movimento e colisao com o terreno */
+            aplicar_fisica_inimigo(ini, f, dt);
+
+            if (ini->tipo == BOSS) {
+                ini->timerTiro -= dt;
+                if (ini->timerTiro <= 0.0f) {
+                    ini->timerTiro = INTERVALO_TIRO;
+                    /* TODO: criar projetil na direcao do jogador */
+                }
+            }
 
             /* colisao com o jogador */
             if (j->estado != MORTO && colidiu(ini, j)) {
