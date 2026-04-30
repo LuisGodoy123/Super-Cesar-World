@@ -21,6 +21,7 @@ typedef struct {
     int numero;
     Color corFundo;
     float cameraX;
+    float cameraYOffset;
 } Fase;
 
 void CarregarFase(Fase *f, int n);

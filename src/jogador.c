@@ -356,7 +356,7 @@ void AtualizarJogador(Jogador *j, Fase *f) {
 }
 
 // DesenharJogador — renderiza sprite com Raylib
-void DesenharJogador(Jogador *j) {
+void DesenharJogador(Jogador *j, float cameraYOffset) {
     if (j->estado == MORTO) return;
 
     // Piscar quando INVENCIVEL: some nos frames impares
@@ -364,7 +364,7 @@ void DesenharJogador(Jogador *j) {
 
     float zoom = CAMERA_ZOOM;
     float screenX = (j->x - j->cameraX) * zoom;
-    float screenY = (j->y - CAMERA_Y_OFFSET) * zoom;
+    float screenY = (j->y - cameraYOffset) * zoom;
     float largura = (float)JOGADOR_LARGURA * zoom;
     float altura  = (float)j->alturaAtual * zoom;
 

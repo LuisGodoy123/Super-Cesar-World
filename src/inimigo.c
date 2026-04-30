@@ -161,7 +161,7 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
 /* DesenharInimigos — percorre lista e renderiza                        */
 /* ------------------------------------------------------------------ */
 
-void DesenharInimigos(No *lista, float cameraX) {
+void DesenharInimigos(No *lista, float cameraX, float cameraYOffset) {
     No *atual = lista;
     float zoom = CAMERA_ZOOM;
 
@@ -170,7 +170,7 @@ void DesenharInimigos(No *lista, float cameraX) {
 
         if (ini->ativo) {
             int screenX = (int)((ini->x - cameraX) * zoom);
-            int screenY = (int)((ini->y - CAMERA_Y_OFFSET) * zoom);
+            int screenY = (int)((ini->y - cameraYOffset) * zoom);
             int largura = (int)((float)ini->largura * zoom);
             int altura = (int)((float)ini->altura * zoom);
 

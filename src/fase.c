@@ -169,15 +169,18 @@ void CarregarFase(Fase *f, int n) {
 
     switch (n) {
         case 1:
-            f->corFundo = (Color){  92, 148, 252, 255 }; //azul claro
+            f->corFundo      = (Color){  92, 148, 252, 255 }; //azul claro
+            f->cameraYOffset = 128.0f;
             preencher_fase1(f);
             break;
         case 2:
-            f->corFundo = (Color){ 255, 140,  60, 255 }; //laranja
+            f->corFundo      = (Color){ 255, 140,  60, 255 }; //laranja
+            f->cameraYOffset = 196.0f;
             preencher_fase2(f);
             break;
         case 3:
-            f->corFundo = (Color){  30,  10,  60, 255 }; //roxo escuro
+            f->corFundo      = (Color){  30,  10,  60, 255 }; //roxo escuro
+            f->cameraYOffset = 196.0f;
             preencher_fase3(f);
             break;
     }
@@ -187,11 +190,11 @@ void CarregarFase(Fase *f, int n) {
 
 typedef struct { float x, y, escala; } NuvemDeco;
 
-static void desenhar_nuvem_deco(float wx, float wy, float escala, float cameraX) {
+static void desenhar_nuvem_deco(float wx, float wy, float escala, float cameraX, float cameraYOffset) {
     float zoom = CAMERA_ZOOM;
     // parallax: nuvens se movem a 50% da camera para dar sensacao de profundidade
     float sx = (wx - cameraX * 0.5f) * zoom;
-    float sy = (wy - CAMERA_Y_OFFSET) * zoom;
+    float sy = (wy - cameraYOffset) * zoom;
 
     float r  = 22.0f * escala * zoom;
     float r2 = 16.0f * escala * zoom;
@@ -216,7 +219,7 @@ static void desenhar_nuvem_deco(float wx, float wy, float escala, float cameraX)
                   (int)(r2 * 0.7f + r + r3 * 0.7f), (int)(r * 0.22f), somb);
 }
 
-static void desenhar_nuvens(int faseNum, float cameraX) {
+static void desenhar_nuvens(int faseNum, float cameraX, float cameraYOffset) {
     static const NuvemDeco n1[] = {
         {  180,  60, 1.00f }, {  640,  38, 1.20f }, { 1090,  72, 0.85f },
         { 1570,  46, 1.10f }, { 2060,  66, 0.95f }, { 2510,  36, 1.15f },
@@ -238,14 +241,14 @@ static void desenhar_nuvens(int faseNum, float cameraX) {
     else if (faseNum == 3) { nuvens = n3; n = 4; }
 
     for (int i = 0; i < n; i++)
-        desenhar_nuvem_deco(nuvens[i].x, nuvens[i].y, nuvens[i].escala, cameraX);
+        desenhar_nuvem_deco(nuvens[i].x, nuvens[i].y, nuvens[i].escala, cameraX, cameraYOffset);
 }
 
 //DesenharFase
 
 void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
     ClearBackground(f->corFundo);
-    desenhar_nuvens(f->numero, f->cameraX);
+    desenhar_nuvens(f->numero, f->cameraX, f->cameraYOffset);
 
     for (int i = 0; i < LINHAS; i++) {
         for (int j = 0; j < COLUNAS; j++) {
@@ -254,7 +257,7 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
 
             float zoom = CAMERA_ZOOM;
             int screenX = (int)((j * TILE - (int)f->cameraX) * zoom);
-            int screenY = (int)(((i * TILE) - CAMERA_Y_OFFSET) * zoom);
+            int screenY = (int)(((i * TILE) - f->cameraYOffset) * zoom);
             int tileSize = (int)(TILE * zoom);
 
             if (screenX + tileSize < 0 || screenX > GetScreenWidth()) continue;

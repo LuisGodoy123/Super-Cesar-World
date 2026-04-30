@@ -67,14 +67,14 @@ void AtualizarMoedas(NoMoeda *lista, Jogador *j) {
 // DesenharMoedas — percorre lista e renderiza
 
 
-void DesenharMoedas(NoMoeda *lista, float cameraX, Texture2D texMoeda) {
+void DesenharMoedas(NoMoeda *lista, float cameraX, float cameraYOffset, Texture2D texMoeda) {
     NoMoeda *atual = lista;
     float zoom = CAMERA_ZOOM;
     int tileSize = (int)(TILE * zoom);
     while (atual != NULL) {
         if (!atual->coletada) {
             int screenX = (int)((atual->x - cameraX) * zoom);
-            int screenY = (int)((atual->y - CAMERA_Y_OFFSET) * zoom);
+            int screenY = (int)((atual->y - cameraYOffset) * zoom);
 
             if (screenX + tileSize >= 0 && screenX <= GetScreenWidth()) {
                 if (texMoeda.id > 0) {

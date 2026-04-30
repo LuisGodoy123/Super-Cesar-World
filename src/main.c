@@ -293,7 +293,7 @@ int main(void) {
 			}
 
 			float playerSX = (jogador.x - jogador.cameraX) * CAMERA_ZOOM + JOGADOR_LARGURA * CAMERA_ZOOM / 2.0f;
-			float playerSY = (jogador.y - CAMERA_Y_OFFSET) * CAMERA_ZOOM + jogador.alturaAtual * CAMERA_ZOOM / 2.0f;
+			float playerSY = (jogador.y - fase.cameraYOffset) * CAMERA_ZOOM + jogador.alturaAtual * CAMERA_ZOOM / 2.0f;
 			Camera2D cam = { 0 };
 			cam.offset   = (Vector2){ playerSX, playerSY };
 			cam.target   = (Vector2){ playerSX, playerSY };
@@ -301,9 +301,9 @@ int main(void) {
 
 			BeginMode2D(cam);
 			DesenharFase(&fase, texBloco, texTijoloCinza);
-			DesenharMoedas(listaMoedas, fase.cameraX, texMoeda);
-			DesenharInimigos(listaInimigos, fase.cameraX);
-			DesenharJogador(&jogador);
+			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoeda);
+			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset);
+			DesenharJogador(&jogador, fase.cameraYOffset);
 			EndMode2D();
 
 			DesenharPlacar(&placar, &fonteUI, temFonteUI);

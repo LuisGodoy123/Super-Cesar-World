@@ -78,6 +78,6 @@ typedef struct {
 
 void IniciarJogador(Jogador *j);
 void AtualizarJogador(Jogador *j, Fase *f);
-void DesenharJogador(Jogador *j);
+void DesenharJogador(Jogador *j, float cameraYOffset);
 
 #endif
