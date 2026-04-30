@@ -148,6 +148,7 @@ static void desenhar_texto_ui(Font *fonte, int temFonte, const char *txt,
 
 int main(void) {
 	InitWindow(LARGURA_TELA, ALTURA_TELA, "Super Cesar World");
+	InitAudioDevice();
 	SetTargetFPS(60);
 
 	const float FIXED_DT = 1.0f / 60.0f;
@@ -259,6 +260,15 @@ int main(void) {
 		SetTextureFilter(texIniRebaixado, TEXTURE_FILTER_POINT);
 	}
 
+	Sound sndCoin = {0};
+	if (FileExists("assets/sons/coin.wav"))  sndCoin  = LoadSound("assets/sons/coin.wav");
+	Sound sndJump = {0};
+	if (FileExists("assets/sons/jump.wav"))  sndJump  = LoadSound("assets/sons/jump.wav");
+	Sound snd1up  = {0};
+	if (FileExists("assets/sons/1up.wav"))   snd1up   = LoadSound("assets/sons/1up.wav");
+	Sound sndKick = {0};
+	if (FileExists("assets/sons/kick.wav"))  sndKick  = LoadSound("assets/sons/kick.wav");
+
 	while (!WindowShouldClose()) {
 		float frameTime = GetFrameTime();
 		if (frameTime > 0.25f) frameTime = 0.25f;
@@ -302,9 +312,9 @@ int main(void) {
 
 		while (acumulador >= FIXED_DT) {
 			if (estado == JOGANDO) {
-				AtualizarJogador(&jogador, &fase, introTimer > 0.0f);
-				AtualizarInimigos(listaInimigos, &jogador, &fase, FIXED_DT);
-				AtualizarMoedas(listaMoedas, &jogador);
+				AtualizarJogador(&jogador, &fase, introTimer > 0.0f, sndJump, snd1up);
+				AtualizarInimigos(listaInimigos, &jogador, &fase, FIXED_DT, sndKick);
+				AtualizarMoedas(listaMoedas, &jogador, sndCoin);
 
 				for (int l = 0; l < LINHAS; l++) {
 					for (int c = 0; c < COLUNAS; c++) {
@@ -432,6 +442,11 @@ int main(void) {
 	if (texIni1.id > 0) UnloadTexture(texIni1);
 	if (texIni2.id > 0) UnloadTexture(texIni2);
 	if (texIniRebaixado.id > 0) UnloadTexture(texIniRebaixado);
+	UnloadSound(sndCoin);
+	UnloadSound(sndJump);
+	UnloadSound(snd1up);
+	UnloadSound(sndKick);
+	CloseAudioDevice();
 	CloseWindow();
 	return 0;
 }

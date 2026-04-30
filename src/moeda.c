@@ -51,7 +51,7 @@ void CarregarMoedasDaFase(NoMoeda **lista, Fase *f) {
 
 // AtualizarMoedas — percorre lista e verifica coleta
 
-void AtualizarMoedas(NoMoeda *lista, Jogador *j) {
+void AtualizarMoedas(NoMoeda *lista, Jogador *j, Sound sndCoin) {
     if (j == NULL || j->estado == MORTO) return;
 
     NoMoeda *atual = lista;
@@ -59,6 +59,7 @@ void AtualizarMoedas(NoMoeda *lista, Jogador *j) {
         if (!atual->coletada && colidiu_moeda_jogador(atual, j)) {
             atual->coletada = 1;
             j->pontos += PONTOS_MOEDA;
+            PlaySound(sndCoin);
         }
         atual = atual->proximo;
     }
@@ -84,7 +85,7 @@ void DesenharMoedas(NoMoeda *lista, float cameraX, float cameraYOffset, Texture2
             if (screenX + tileSize >= 0 && screenX <= GetScreenWidth()) {
                 if (numFrames > 0 && texMoedas[frameAtual].id > 0) {
                     Texture2D tex = texMoedas[frameAtual];
-                    float coinSize = tileSize * 0.7f;
+                    float coinSize = tileSize * 0.5f;
                     float offset = (coinSize - tileSize) / 2.0f;
                     Rectangle src  = { 0, 0, (float)tex.width, (float)tex.height };
                     Rectangle dest = { (float)screenX - offset, (float)screenY - offset, coinSize, coinSize };

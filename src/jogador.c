@@ -77,7 +77,7 @@ void IniciarJogador(Jogador *j) {
 }
 
 // AtualizarJogador — input, gravidade, movimento, colisao com mapa
-void AtualizarJogador(Jogador *j, Fase *f, int bloqueado) {
+void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound snd1up) {
     if (j->estado == MORTO) {
         j->estadoMov = MOV_MORTO;
         return;
@@ -155,6 +155,7 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado) {
         j->jumpFrames = 0;
         j->jumpCutFeito = 0;
         j->emDerrapagem = 0;
+        PlaySound(sndJump);
     }
 
     /* movimento horizontal */
@@ -274,6 +275,7 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado) {
                 f->blocos[linTop][c].estado == BLOCO_ESTADO_ATIVO) {
                 f->blocos[linTop][c].estado = BLOCO_ESTADO_USADO;
                 j->pontos += PONTOS_BLOCO;
+                PlaySound(snd1up);
             }
         }
         j->y  = (float)((linTop + 1) * TILE);

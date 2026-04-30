@@ -150,7 +150,7 @@ static int colidiu(Inimigo *ini, Jogador *j) {
 /* AtualizarInimigos — percorre lista, move cada inimigo               */
 /* ------------------------------------------------------------------ */
 
-void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
+void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) {
     No *atual = lista;
 
     while (atual != NULL) {
@@ -185,6 +185,7 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
 
                 if (pisou_em_cima) {
                     /* pés do jogador na metade superior do inimigo = pulo em cima */
+                    PlaySound(sndKick);
                     ini->vida--;
                     if (ini->vida <= 0) {
                         ini->ativo = 0;
