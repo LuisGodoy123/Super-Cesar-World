@@ -179,9 +179,12 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
 
             /* colisao com o jogador */
             if (j->estado != MORTO && colidiu(ini, j)) {
-                /* usa vyAnterior: vy salvo ANTES do chao zerar a velocidade */
-                if (j->vyAnterior > 0.0f) {
-                    /* jogador estava caindo = pulo em cima, sem dano */
+                float jogadorBase = j->y + (float)j->alturaAtual;
+                float iniMeio     = ini->y + (float)ini->altura * 0.5f;
+                int pisou_em_cima = (j->vyAnterior > -3.0f) && (jogadorBase < iniMeio);
+
+                if (pisou_em_cima) {
+                    /* pés do jogador na metade superior do inimigo = pulo em cima */
                     ini->vida--;
                     if (ini->vida <= 0) {
                         ini->ativo = 0;
@@ -189,7 +192,7 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
                     }
                     j->vy = FORCA_PULO / 2.0f;
                 } else if (j->estado == VIVO) {
-                    /* colisao lateral = dano ao jogador */
+                    /* colisao lateral ou por baixo = dano ao jogador */
                     j->vidas--;
                     j->estado          = INVENCIVEL;
                     j->timerInvencivel = TEMPO_INVENCIVEL;
