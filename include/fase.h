@@ -25,7 +25,8 @@ typedef struct {
 } Fase;
 
 void CarregarFase(Fase *f, int n);
-void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture2D texTerra);
+void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture2D texTerra,
+                  Texture2D texNuvem1, Texture2D texNuvem2, Texture2D texNuvem3);
 int  VerificarColisao(Rectangle a, Rectangle b);
 
 #endif

@@ -217,6 +217,22 @@ int main(void) {
 		SetTextureFilter(texTerra, TEXTURE_FILTER_POINT);
 	}
 
+	Texture2D texNuvem1 = {0};
+	if (FileExists("assets/sprites/nuvem1.png")) {
+		texNuvem1 = LoadTexture("assets/sprites/nuvem1.png");
+		SetTextureFilter(texNuvem1, TEXTURE_FILTER_BILINEAR);
+	}
+	Texture2D texNuvem2 = {0};
+	if (FileExists("assets/sprites/nuvem2.png")) {
+		texNuvem2 = LoadTexture("assets/sprites/nuvem2.png");
+		SetTextureFilter(texNuvem2, TEXTURE_FILTER_BILINEAR);
+	}
+	Texture2D texNuvem3 = {0};
+	if (FileExists("assets/sprites/nuvem3.png")) {
+		texNuvem3 = LoadTexture("assets/sprites/nuvem3.png");
+		SetTextureFilter(texNuvem3, TEXTURE_FILTER_BILINEAR);
+	}
+
 	Texture2D texIni1 = {0};
 	if (FileExists("assets/sprites/inimigo1andando.png")) {
 		texIni1 = LoadTexture("assets/sprites/inimigo1andando.png");
@@ -343,7 +359,7 @@ int main(void) {
 			cam.zoom     = extraZoom;
 
 			BeginMode2D(cam);
-			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra);
+			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3);
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoeda);
 			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2);
 			DesenharJogador(&jogador, fase.cameraYOffset);
@@ -393,6 +409,9 @@ int main(void) {
 	if (texBloco.id > 0) UnloadTexture(texBloco);
 	if (texTijoloCinza.id > 0) UnloadTexture(texTijoloCinza);
 	if (texTerra.id > 0) UnloadTexture(texTerra);
+	if (texNuvem1.id > 0) UnloadTexture(texNuvem1);
+	if (texNuvem2.id > 0) UnloadTexture(texNuvem2);
+	if (texNuvem3.id > 0) UnloadTexture(texNuvem3);
 	if (texIni1.id > 0) UnloadTexture(texIni1);
 	if (texIni2.id > 0) UnloadTexture(texIni2);
 	CloseWindow();
