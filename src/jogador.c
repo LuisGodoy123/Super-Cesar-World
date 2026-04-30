@@ -76,7 +76,7 @@ void IniciarJogador(Jogador *j) {
 }
 
 // AtualizarJogador — input, gravidade, movimento, colisao com mapa
-void AtualizarJogador(Jogador *j, Fase *f) {
+void AtualizarJogador(Jogador *j, Fase *f, int bloqueado) {
     if (j->estado == MORTO) {
         j->estadoMov = MOV_MORTO;
         return;
@@ -84,19 +84,19 @@ void AtualizarJogador(Jogador *j, Fase *f) {
 
     const float dt = 1.0f / 60.0f;
 
-    if (IsKeyPressed(KEY_F1)) j->devMode = !j->devMode;
+    if (!bloqueado && IsKeyPressed(KEY_F1)) j->devMode = !j->devMode;
 
     float fator = (j->devMode ? 3.0f : 1.0f) * (j->cafeAtivo ? FATOR_CAFE : 1.0f);
     float vel_caminhada = VELOCIDADE_CAMINHADA * fator;
     float vel_corrida   = VELOCIDADE_CORRIDA   * fator;
 
-    int left  = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
-    int right = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
-    int down  = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
-    int run   = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
+    int left  = !bloqueado && (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A));
+    int right = !bloqueado && (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D));
+    int down  = !bloqueado && (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S));
+    int run   = !bloqueado && (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT));
 
-    int jumpPressed = IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W);
-    int jumpHeld    = IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_W);
+    int jumpPressed = !bloqueado && (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W));
+    int jumpHeld    = !bloqueado && (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_W));
 
     int dirInput = (right ? 1 : 0) - (left ? 1 : 0);
 

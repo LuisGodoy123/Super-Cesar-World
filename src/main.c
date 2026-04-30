@@ -253,7 +253,7 @@ int main(void) {
 
 		while (acumulador >= FIXED_DT) {
 			if (estado == JOGANDO) {
-				AtualizarJogador(&jogador, &fase);
+				AtualizarJogador(&jogador, &fase, introTimer > 0.0f);
 				AtualizarInimigos(listaInimigos, &jogador, &fase, FIXED_DT);
 				AtualizarMoedas(listaMoedas, &jogador);
 

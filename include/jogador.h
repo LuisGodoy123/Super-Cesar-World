@@ -82,7 +82,7 @@ typedef struct {
 } Jogador;
 
 void IniciarJogador(Jogador *j);
-void AtualizarJogador(Jogador *j, Fase *f);
+void AtualizarJogador(Jogador *j, Fase *f, int bloqueado);
 void DesenharJogador(Jogador *j, float cameraYOffset);
 
 #endif
