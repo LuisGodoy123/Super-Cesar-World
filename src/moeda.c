@@ -84,14 +84,10 @@ void DesenharMoedas(NoMoeda *lista, float cameraX, float cameraYOffset, Texture2
             if (screenX + tileSize >= 0 && screenX <= GetScreenWidth()) {
                 if (numFrames > 0 && texMoedas[frameAtual].id > 0) {
                     Texture2D tex = texMoedas[frameAtual];
-                    float coinSize = tileSize * 1.6f;
-                    float aspect = (tex.height > 0) ? (float)tex.width / (float)tex.height : 1.0f;
-                    float destH = coinSize;
-                    float destW = coinSize * aspect;
-                    float oxW = (destW - tileSize) / 2.0f;
-                    float oxH = (destH - tileSize) / 2.0f;
+                    float coinSize = tileSize * 0.7f;
+                    float offset = (coinSize - tileSize) / 2.0f;
                     Rectangle src  = { 0, 0, (float)tex.width, (float)tex.height };
-                    Rectangle dest = { (float)screenX - oxW, (float)screenY - oxH, destW, destH };
+                    Rectangle dest = { (float)screenX - offset, (float)screenY - offset, coinSize, coinSize };
                     DrawTexturePro(tex, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
                 } else {
                     int cx = screenX + tileSize / 2;
