@@ -160,6 +160,7 @@ int main(void) {
 
 	int faseAtual = 1;
 	int scoreRegistrado = 0;
+	float introTimer = 0.0f;
 
 	IniciarPlacar(&placar);
 	CarregarPlacar(&placar);
@@ -220,6 +221,7 @@ int main(void) {
 				preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 0);
 				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
 				estado = JOGANDO;
+				introTimer = 2.5f;
 			}
 		} else if (estado == GAME_OVER) {
 			if (!scoreRegistrado) {
@@ -264,6 +266,7 @@ int main(void) {
 							faseAtual++;
 							preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
 							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
+							introTimer = 2.5f;
 						} else if (!boss_ativo(listaInimigos)) {
 							jogador.pontos += BONUS_COMPLETAR_FASE;
 							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
@@ -282,10 +285,27 @@ int main(void) {
 		if (estado == MENU) {
 			DesenharMenu(&menu, &placar);
 		} else if (estado == JOGANDO) {
+			float extraZoom = 1.0f;
+			if (introTimer > 0.0f) {
+				extraZoom = 1.0f + 1.5f * introTimer;
+				introTimer -= frameTime;
+				if (introTimer < 0.0f) introTimer = 0.0f;
+			}
+
+			float playerSX = (jogador.x - jogador.cameraX) * CAMERA_ZOOM + JOGADOR_LARGURA * CAMERA_ZOOM / 2.0f;
+			float playerSY = (jogador.y - CAMERA_Y_OFFSET) * CAMERA_ZOOM + jogador.alturaAtual * CAMERA_ZOOM / 2.0f;
+			Camera2D cam = { 0 };
+			cam.offset   = (Vector2){ playerSX, playerSY };
+			cam.target   = (Vector2){ playerSX, playerSY };
+			cam.zoom     = extraZoom;
+
+			BeginMode2D(cam);
 			DesenharFase(&fase, texBloco, texTijoloCinza);
 			DesenharMoedas(listaMoedas, fase.cameraX, texMoeda);
 			DesenharInimigos(listaInimigos, fase.cameraX);
 			DesenharJogador(&jogador);
+			EndMode2D();
+
 			DesenharPlacar(&placar, &fonteUI, temFonteUI);
 
 			if (faseAtual == 3 && boss_ativo(listaInimigos)) {
