@@ -319,20 +319,22 @@ int main(void) {
 			}
 		} else if (estado == GAME_OVER) {
 			ClearBackground(BLACK);
-
-			desenhar_texto_ui(&fonteUI, temFonteUI, "GAME OVER", 500, 180, 72, RED);
-			desenhar_texto_ui(&fonteUI, temFonteUI,
-						  TextFormat("Pontuacao final: %d", jogador.pontos), 470, 300, 36, WHITE);
-			desenhar_texto_ui(&fonteUI, temFonteUI,
-						  "Pressione ENTER para voltar ao menu", 365, 380, 30, LIGHTGRAY);
+			Font fm = temFonteUI ? fonteUI : GetFontDefault();
+			const char *s1 = "GAME OVER";
+			const char *s2 = TextFormat("Pontuacao final: %d", jogador.pontos);
+			const char *s3 = "Pressione ENTER para voltar ao menu";
+			desenhar_texto_ui(&fonteUI, temFonteUI, s1, (LARGURA_TELA - (int)MeasureTextEx(fm, s1, 48, 1).x) / 2, 260, 48, RED);
+			desenhar_texto_ui(&fonteUI, temFonteUI, s2, (LARGURA_TELA - (int)MeasureTextEx(fm, s2, 26, 1).x) / 2, 340, 26, WHITE);
+			desenhar_texto_ui(&fonteUI, temFonteUI, s3, (LARGURA_TELA - (int)MeasureTextEx(fm, s3, 20, 1).x) / 2, 400, 20, LIGHTGRAY);
 		} else {
 			ClearBackground(DARKBLUE);
-
-			desenhar_texto_ui(&fonteUI, temFonteUI, "VITORIA!", 520, 180, 72, YELLOW);
-			desenhar_texto_ui(&fonteUI, temFonteUI,
-						  TextFormat("Pontuacao final: %d", jogador.pontos), 470, 300, 36, WHITE);
-			desenhar_texto_ui(&fonteUI, temFonteUI,
-						  "Recorde salvo! Pressione ENTER para voltar ao menu", 280, 380, 30, LIGHTGRAY);
+			Font fm = temFonteUI ? fonteUI : GetFontDefault();
+			const char *s1 = "VITORIA!";
+			const char *s2 = TextFormat("Pontuacao final: %d", jogador.pontos);
+			const char *s3 = "Recorde salvo! Pressione ENTER para voltar ao menu";
+			desenhar_texto_ui(&fonteUI, temFonteUI, s1, (LARGURA_TELA - (int)MeasureTextEx(fm, s1, 48, 1).x) / 2, 260, 48, YELLOW);
+			desenhar_texto_ui(&fonteUI, temFonteUI, s2, (LARGURA_TELA - (int)MeasureTextEx(fm, s2, 26, 1).x) / 2, 340, 26, WHITE);
+			desenhar_texto_ui(&fonteUI, temFonteUI, s3, (LARGURA_TELA - (int)MeasureTextEx(fm, s3, 20, 1).x) / 2, 400, 20, LIGHTGRAY);
 		}
 
 		EndDrawing();
