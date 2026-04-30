@@ -152,9 +152,7 @@ void AtualizarJogador(Jogador *j, Fase *f) {
         if (j->agachado) {
             j->vx = aproximar(j->vx, 0.0f, DESACELERACAO);
         } else if (j->emDerrapagem) {
-            int s = sinal(j->vx);
-            if (s != 0) j->vx -= (float)s * DESACELERACAO_DERRAPAGEM;
-            if (fabsf(j->vx) < 0.01f) j->vx = 0.0f;
+            j->vx = aproximar(j->vx, 0.0f, DESACELERACAO_DERRAPAGEM);
 
             if (j->vx == 0.0f) {
                 j->emDerrapagem = 0;
