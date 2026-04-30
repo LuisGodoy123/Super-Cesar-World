@@ -211,6 +211,24 @@ int main(void) {
 		SetTextureFilter(texTijoloCinza, TEXTURE_FILTER_POINT);
 	}
 
+	Texture2D texTerra = {0};
+	if (FileExists("assets/sprites/terra.png")) {
+		texTerra = LoadTexture("assets/sprites/terra.png");
+		SetTextureFilter(texTerra, TEXTURE_FILTER_POINT);
+	}
+
+	Texture2D texIni1 = {0};
+	if (FileExists("assets/sprites/inimigo1andando.png")) {
+		texIni1 = LoadTexture("assets/sprites/inimigo1andando.png");
+		SetTextureFilter(texIni1, TEXTURE_FILTER_POINT);
+	}
+
+	Texture2D texIni2 = {0};
+	if (FileExists("assets/sprites/inimigo1andando2.png")) {
+		texIni2 = LoadTexture("assets/sprites/inimigo1andando2.png");
+		SetTextureFilter(texIni2, TEXTURE_FILTER_POINT);
+	}
+
 	while (!WindowShouldClose()) {
 		float frameTime = GetFrameTime();
 		if (frameTime > 0.25f) frameTime = 0.25f;
@@ -325,9 +343,9 @@ int main(void) {
 			cam.zoom     = extraZoom;
 
 			BeginMode2D(cam);
-			DesenharFase(&fase, texBloco, texTijoloCinza);
+			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra);
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoeda);
-			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset);
+			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2);
 			DesenharJogador(&jogador, fase.cameraYOffset);
 			EndMode2D();
 
@@ -374,6 +392,9 @@ int main(void) {
 	if (texMoeda.id > 0) UnloadTexture(texMoeda);
 	if (texBloco.id > 0) UnloadTexture(texBloco);
 	if (texTijoloCinza.id > 0) UnloadTexture(texTijoloCinza);
+	if (texTerra.id > 0) UnloadTexture(texTerra);
+	if (texIni1.id > 0) UnloadTexture(texIni1);
+	if (texIni2.id > 0) UnloadTexture(texIni2);
 	CloseWindow();
 	return 0;
 }

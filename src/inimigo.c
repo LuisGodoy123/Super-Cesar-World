@@ -30,8 +30,10 @@ No *CriarInimigo(int tipo, float x, float y) {
     novo->dados.tipo    = tipo;
     novo->dados.vida    = (tipo == BOSS) ? 5 : 1;
     novo->dados.ativo   = 1;
-    novo->dados.origemX = x;
+    novo->dados.origemX   = x;
     novo->dados.timerTiro = INTERVALO_TIRO;
+    novo->dados.animTimer = 0.0f;
+    novo->dados.animFrame = 0;
     definir_dimensoes(&novo->dados);
 
     novo->proximo = NULL;
@@ -124,6 +126,15 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
             /* movimento e colisao com o terreno */
             aplicar_fisica_inimigo(ini, f, dt);
 
+            /* animacao de caminhada */
+            if (ini->tipo == CAMINHADOR || ini->tipo == PERSEGUIDOR) {
+                ini->animTimer += dt;
+                if (ini->animTimer >= 0.18f) {
+                    ini->animTimer = 0.0f;
+                    ini->animFrame = 1 - ini->animFrame;
+                }
+            }
+
             if (ini->tipo == BOSS) {
                 ini->timerTiro -= dt;
                 if (ini->timerTiro <= 0.0f) {
@@ -161,7 +172,7 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
 /* DesenharInimigos — percorre lista e renderiza                        */
 /* ------------------------------------------------------------------ */
 
-void DesenharInimigos(No *lista, float cameraX, float cameraYOffset) {
+void DesenharInimigos(No *lista, float cameraX, float cameraYOffset, Texture2D texIni1, Texture2D texIni2) {
     No *atual = lista;
     float zoom = CAMERA_ZOOM;
 
@@ -172,18 +183,29 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset) {
             int screenX = (int)((ini->x - cameraX) * zoom);
             int screenY = (int)((ini->y - cameraYOffset) * zoom);
             int largura = (int)((float)ini->largura * zoom);
-            int altura = (int)((float)ini->altura * zoom);
+            int altura  = (int)((float)ini->altura  * zoom);
 
             if (ini->tipo == BOSS) {
                 DrawRectangle(screenX, screenY, largura, altura, PURPLE);
-                /* barra de vida do boss */
                 DrawRectangle(screenX, screenY - (int)(10 * zoom), largura, (int)(6 * zoom), DARKGRAY);
                 DrawRectangle(screenX, screenY - (int)(10 * zoom),
                               largura * ini->vida / 5, (int)(6 * zoom), RED);
             } else if (ini->tipo == PERSEGUIDOR) {
                 DrawRectangle(screenX, screenY, largura, altura, ORANGE);
             } else {
-                DrawRectangle(screenX, screenY, largura, altura, BROWN);
+                /* CAMINHADOR — alterna entre os dois sprites de caminhada */
+                Texture2D tex = (ini->animFrame == 0) ? texIni1 : texIni2;
+                if (tex.id > 0) {
+                    float tw = (float)tex.width;
+                    float th = (float)tex.height;
+                    Rectangle src  = { 0, 0, tw, th };
+                    Rectangle dest = { (float)screenX, (float)screenY, (float)largura, (float)altura };
+                    /* espelha horizontalmente quando move para a esquerda */
+                    if (ini->vx < 0) { src.x = tw; src.width = -tw; }
+                    DrawTexturePro(tex, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                } else {
+                    DrawRectangle(screenX, screenY, largura, altura, BROWN);
+                }
             }
         }
 

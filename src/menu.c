@@ -370,11 +370,12 @@ void IniciarMenu(Menu *m) {
     m->temFonte    = 0;
 
     const char *fundos[] = {
+        "assets/sprites/menuDoJogo.png",
         "assets/sprites/fotocenario.png",
         "assets/sprites/menu_bg.png"
     };
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 3; i++) {
         if (FileExists(fundos[i])) {
             m->fundo = LoadTexture(fundos[i]);
             m->temFundo = 1;

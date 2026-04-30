@@ -246,7 +246,7 @@ static void desenhar_nuvens(int faseNum, float cameraX, float cameraYOffset) {
 
 //DesenharFase
 
-void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
+void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture2D texTerra) {
     ClearBackground(f->corFundo);
     desenhar_nuvens(f->numero, f->cameraX, f->cameraYOffset);
 
@@ -256,9 +256,12 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
             if (tipo == VAZIO || tipo == MOEDA) continue;
 
             float zoom = CAMERA_ZOOM;
-            int screenX = (int)((j * TILE - (int)f->cameraX) * zoom);
-            int screenY = (int)(((i * TILE) - f->cameraYOffset) * zoom);
-            int tileSize = (int)(TILE * zoom);
+            int screenX = (int)((j       * TILE - (int)f->cameraX) * zoom);
+            int screenY = (int)((i       * TILE - f->cameraYOffset) * zoom);
+            int nextX   = (int)(((j + 1) * TILE - (int)f->cameraX) * zoom);
+            int nextY   = (int)(((i + 1) * TILE - f->cameraYOffset) * zoom);
+            int tileSize = nextX - screenX;
+            int tileH    = nextY - screenY;
 
             if (screenX + tileSize < 0 || screenX > GetScreenWidth()) continue;
             if (screenY + tileSize < 0 || screenY > GetScreenHeight()) continue;
@@ -288,7 +291,7 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
                         Color amareloLuz    = (Color){ 255, 235, 110, 255 };
                         Color amareloSombra = (Color){ 185, 115,   0, 255 };
 
-                        DrawRectangle(x, y, tileSize, tileSize, amarelo);
+                        DrawRectangle(x, y, tileSize, tileH, amarelo);
                         DrawRectangleLines(x, y, tileSize, tileSize, amareloBorda);
                         DrawLine(x + 1, y + 1, x + tileSize - 2, y + 1, amareloLuz);
                         DrawLine(x + 1, y + 1, x + 1, y + tileSize - 2, amareloLuz);
@@ -306,7 +309,7 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
                         float th = (float)texTijoloCinza.height;
                         float sq = tw < th ? tw : th;
                         Rectangle src  = { (tw - sq) / 2.0f, (th - sq) / 2.0f, sq, sq };
-                        Rectangle dest = { (float)x, (float)y, (float)tileSize, (float)tileSize };
+                        Rectangle dest = { (float)x, (float)y, (float)tileSize, (float)tileH };
                         DrawTexturePro(texTijoloCinza, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
                     } else {
                         Color tijoloBase   = (Color){ 150, 150, 150, 255 };
@@ -314,7 +317,7 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
                         Color tijoloLuz    = (Color){ 175, 175, 175, 255 };
                         Color tijoloSombra = (Color){ 110, 110, 110, 255 };
 
-                        DrawRectangle(x, y, tileSize, tileSize, tijoloBase);
+                        DrawRectangle(x, y, tileSize, tileH, tijoloBase);
                         DrawRectangleLines(x, y, tileSize, tileSize, tijoloBorda);
                         DrawLine(x + 1, y + 1, x + tileSize - 2, y + 1, tijoloLuz);
                         DrawLine(x + 1, y + 1, x + 1, y + tileSize - 2, tijoloLuz);
@@ -339,7 +342,7 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
                         float th = (float)texTijoloCinza.height;
                         float sq = tw < th ? tw : th;
                         Rectangle src  = { (tw - sq) / 2.0f, (th - sq) / 2.0f, sq, sq };
-                        Rectangle dest = { (float)x, (float)y, (float)tileSize, (float)tileSize };
+                        Rectangle dest = { (float)x, (float)y, (float)tileSize, (float)tileH };
                         DrawTexturePro(texTijoloCinza, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
                     } else {
                         Color tijoloBase   = (Color){ 150, 150, 150, 255 };
@@ -347,7 +350,7 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
                         Color tijoloLuz    = (Color){ 175, 175, 175, 255 };
                         Color tijoloSombra = (Color){ 110, 110, 110, 255 };
 
-                        DrawRectangle(x, y, tileSize, tileSize, tijoloBase);
+                        DrawRectangle(x, y, tileSize, tileH, tijoloBase);
                         DrawRectangleLines(x, y, tileSize, tileSize, tijoloBorda);
                         DrawLine(x + 1, y + 1, x + tileSize - 2, y + 1, tijoloLuz);
                         DrawLine(x + 1, y + 1, x + 1, y + tileSize - 2, tijoloLuz);
@@ -356,12 +359,20 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
                         DrawLine(x + 1, y + tileSize / 2, x + tileSize - 2, y + tileSize / 2, tijoloSombra);
                     }
                 } else {
+                    if (texTerra.id > 0) {
+                        float tw = (float)texTerra.width;
+                        float th = (float)texTerra.height;
+                        float sq = tw < th ? tw : th;
+                        Rectangle src  = { (tw - sq) / 2.0f, (th - sq) / 2.0f, sq, sq };
+                        Rectangle dest = { (float)x, (float)y, (float)tileSize, (float)tileH };
+                        DrawTexturePro(texTerra, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                    } else {
                     Color terra       = (Color){ 120,  95,  60, 255 };
                     Color terraBorda  = (Color){  80,  65,  45, 255 };
                     Color terraLuz    = (Color){ 145, 115,  75, 255 };
                     Color terraSombra = (Color){  90,  70,  50, 255 };
 
-                    DrawRectangle(x, y, tileSize, tileSize, terra);
+                    DrawRectangle(x, y, tileSize, tileH, terra);
                     DrawRectangleLines(x, y, tileSize, tileSize, terraBorda);
                     DrawLine(x + 2, y + 4,  x + tileSize - 3, y + 4,  terraSombra);
                     DrawLine(x + 3, y + 9,  x + tileSize - 4, y + 9,  terraSombra);
@@ -379,6 +390,7 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
                     DrawPixel(x + 17, y + 13, terraLuz); DrawPixel(x + 24, y +  8, terraLuz);
                     DrawPixel(x +  6, y +  2, terraSombra); DrawPixel(x + 14, y +  3, terraSombra);
                     DrawPixel(x + 21, y +  2, terraSombra);
+                    }
                 }
             }
         }

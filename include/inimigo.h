@@ -24,6 +24,8 @@ typedef struct {
     int largura, altura;
     float origemX;     // centro da patrulha do CAMINHADOR
     float timerTiro;   // contador de tiro do BOSS
+    float animTimer;
+    int   animFrame;
 } Inimigo;
 
 typedef struct No {        // NO DA LISTA ENCADEADA
@@ -34,7 +36,7 @@ typedef struct No {        // NO DA LISTA ENCADEADA
 No  *CriarInimigo(int tipo, float x, float y);
 void AdicionarInimigo(No **lista, int tipo, float x, float y);
 void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt);
-void DesenharInimigos(No *lista, float cameraX, float cameraYOffset);
+void DesenharInimigos(No *lista, float cameraX, float cameraYOffset, Texture2D texIni1, Texture2D texIni2);
 void LiberarInimigos(No *lista);
 
 #endif
