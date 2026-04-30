@@ -85,7 +85,7 @@ void DesenharMoedas(NoMoeda *lista, float cameraX, float cameraYOffset, Texture2
             if (screenX + tileSize >= 0 && screenX <= GetScreenWidth()) {
                 if (numFrames > 0 && texMoedas[frameAtual].id > 0) {
                     Texture2D tex = texMoedas[frameAtual];
-                    float coinSize = tileSize * 0.5f;
+                    float coinSize = tileSize * 1.0f;
                     float offset = (coinSize - tileSize) / 2.0f;
                     Rectangle src  = { 0, 0, (float)tex.width, (float)tex.height };
                     Rectangle dest = { (float)screenX - offset, (float)screenY - offset, coinSize, coinSize };
