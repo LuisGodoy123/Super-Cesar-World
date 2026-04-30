@@ -17,7 +17,7 @@ NoMoeda *CriarMoeda(float x, float y);
 void AdicionarMoeda(NoMoeda **lista, float x, float y);
 void CarregarMoedasDaFase(NoMoeda **lista, Fase *f);
 void AtualizarMoedas(NoMoeda *lista, Jogador *j);
-void DesenharMoedas(NoMoeda *lista, float cameraX, float cameraYOffset, Texture2D texMoeda);
+void DesenharMoedas(NoMoeda *lista, float cameraX, float cameraYOffset, Texture2D *texMoedas, int numFrames, float tempoAnim);
 void LiberarMoedas(NoMoeda *lista);
 
 #endif

@@ -67,26 +67,32 @@ void AtualizarMoedas(NoMoeda *lista, Jogador *j) {
 // DesenharMoedas — percorre lista e renderiza
 
 
-void DesenharMoedas(NoMoeda *lista, float cameraX, float cameraYOffset, Texture2D texMoeda) {
+void DesenharMoedas(NoMoeda *lista, float cameraX, float cameraYOffset, Texture2D *texMoedas, int numFrames, float tempoAnim) {
     NoMoeda *atual = lista;
     float zoom = CAMERA_ZOOM;
     int tileSize = (int)(TILE * zoom);
+
+    int frameAtual = 0;
+    if (numFrames > 0)
+        frameAtual = (int)(tempoAnim * 10.0f) % numFrames;
+
     while (atual != NULL) {
         if (!atual->coletada) {
             int screenX = (int)((atual->x - cameraX) * zoom);
             int screenY = (int)((atual->y - cameraYOffset) * zoom);
 
             if (screenX + tileSize >= 0 && screenX <= GetScreenWidth()) {
-                if (texMoeda.id > 0) {
+                if (numFrames > 0 && texMoedas[frameAtual].id > 0) {
+                    Texture2D tex = texMoedas[frameAtual];
                     float coinSize = tileSize * 1.6f;
-                    float aspect = (texMoeda.height > 0) ? (float)texMoeda.width / (float)texMoeda.height : 1.0f;
+                    float aspect = (tex.height > 0) ? (float)tex.width / (float)tex.height : 1.0f;
                     float destH = coinSize;
                     float destW = coinSize * aspect;
                     float oxW = (destW - tileSize) / 2.0f;
                     float oxH = (destH - tileSize) / 2.0f;
-                    Rectangle src  = { 0, 0, (float)texMoeda.width, (float)texMoeda.height };
+                    Rectangle src  = { 0, 0, (float)tex.width, (float)tex.height };
                     Rectangle dest = { (float)screenX - oxW, (float)screenY - oxH, destW, destH };
-                    DrawTexturePro(texMoeda, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                    DrawTexturePro(tex, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
                 } else {
                     int cx = screenX + tileSize / 2;
                     int cy = screenY + tileSize / 2;
