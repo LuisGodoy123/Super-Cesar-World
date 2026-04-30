@@ -169,14 +169,15 @@ int main(void) {
 	IniciarMenu(&menu);
 
 	const char *spritesJogador[] = {
-		"assets/sprites/personagem1.png",
-		"assets/sprites/personagem2.png",
-		"assets/sprites/personagem3.png",
+		"assets/sprites/cesar.png",
+		"assets/sprites/cesar2.png",
+		"assets/sprites/cesar3.png",
 	};
 
 	jogador.numSprites = 0;
 	jogador.temSprites = 0;
-	for (int i = 0; i < 3; i++) {
+	int nSpritesJogador = sizeof(spritesJogador) / sizeof(spritesJogador[0]);
+	for (int i = 0; i < nSpritesJogador; i++) {
 		if (FileExists(spritesJogador[i])) {
 			jogador.sprites[jogador.numSprites] = LoadTexture(spritesJogador[i]);
 			SetTextureFilter(jogador.sprites[jogador.numSprites], TEXTURE_FILTER_POINT);

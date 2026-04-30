@@ -247,6 +247,17 @@ void AtualizarJogador(Jogador *j, Fase *f) {
         j->vy     = 0.0f;
         j->noChao = 1;
     }
+
+    /* verificacao secundaria: gravidade pequena pode nao penetrar o tile,
+       mas o chao ainda esta diretamente abaixo */
+    if (!j->noChao && j->vy >= 0.0f) {
+        int linBotRest = (int)(j->y + j->alturaAtual) / TILE;
+        if (tile_solido(f, colEsq, linBotRest) || tile_solido(f, colDir, linBotRest)) {
+            j->noChao = 1;
+            j->vy     = 0.0f;
+        }
+    }
+
     if (j->vy < 0 && (tile_solido(f, colEsq, linTop) || tile_solido(f, colDir, linTop))) {
         for (int c = colEsq; c <= colDir; c++) {
             if (c >= 0 && c < COLUNAS &&
@@ -312,8 +323,8 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     if (j->estadoMov == MOV_CAMINHANDO || j->estadoMov == MOV_CORRENDO) {
         float speed = fabsf(j->vx);
         float ratio = (VELOCIDADE_CORRIDA > 0.0f) ? (speed / VELOCIDADE_CORRIDA) : 0.0f;
-        float step = 0.08f + 0.55f * ratio;
-        int frames = 4;
+        float step = 0.10f + 0.15f * ratio;
+        int frames = (j->numSprites > 0) ? j->numSprites : 1;
 
         j->animTimer += step;
         if (j->animTimer >= (float)frames) j->animTimer -= (float)frames;
@@ -362,11 +373,9 @@ void DesenharJogador(Jogador *j) {
     if (j->temSprites && j->numSprites > 0) {
         int frame = 0;
         if (j->estadoMov == MOV_CAMINHANDO || j->estadoMov == MOV_CORRENDO) {
-            frame = j->animFrame % j->numSprites;
-        } else if (j->estadoMov == MOV_PULANDO || j->estadoMov == MOV_CAINDO) {
-            frame = (j->numSprites > 1) ? 1 : 0;
-        } else if (j->estadoMov == MOV_DERRAPANDO) {
-            frame = (j->numSprites > 2) ? 2 : 0;
+            frame = j->animFrame % (j->numSprites > 2 ? 2 : j->numSprites);
+        } else if ((j->estadoMov == MOV_PULANDO || j->estadoMov == MOV_CAINDO) && j->numSprites > 2) {
+            frame = 2;
         } else {
             frame = 0;
         }
@@ -378,7 +387,7 @@ void DesenharJogador(Jogador *j) {
                    largura, altura };
         Vector2 origin = { largura / 2.0f, altura };
 
-        if (j->direcao < 0) {
+        if (j->direcao > 0) {
             src.x += src.width;
             src.width *= -1.0f;
         }
