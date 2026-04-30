@@ -22,10 +22,11 @@ typedef enum {
 // Utilitarios internos
 
 static void resetar_posicao_jogador_preservando_status(Jogador *j) {
-	int vidas     = j->vidas;
-	int pontos    = j->pontos;
-	int devMode   = j->devMode;
-	int cafeAtivo = j->cafeAtivo;
+	int   vidas     = j->vidas;
+	int   pontos    = j->pontos;
+	int   devMode   = j->devMode;
+	int   cafeAtivo = j->cafeAtivo;
+	float timerCafe = j->timerCafe;
 
 	IniciarJogador(j);
 
@@ -33,6 +34,7 @@ static void resetar_posicao_jogador_preservando_status(Jogador *j) {
 	j->pontos    = pontos;
 	j->devMode   = devMode;
 	j->cafeAtivo = cafeAtivo;
+	j->timerCafe = timerCafe;
 }
 
 static int boss_ativo(No *listaInimigos) {
@@ -269,6 +271,7 @@ int main(void) {
 							jogador.y < cy + cs && jogador.y + jogador.alturaAtual > cy) {
 							b->cafeColetado = 1;
 							jogador.cafeAtivo = 1;
+							jogador.timerCafe = TEMPO_CAFE;
 						}
 					}
 				}
@@ -331,7 +334,7 @@ int main(void) {
 			DesenharPlacar(&placar, &fonteUI, temFonteUI);
 
 			if (jogador.devMode)   DrawText("[DEV] x3", LARGURA_TELA - 110,  8, 20, RED);
-			if (jogador.cafeAtivo) DrawText("[CAFE]",   LARGURA_TELA - 110, 32, 20, BROWN);
+			if (jogador.cafeAtivo) DrawText(TextFormat("[CAFE] %.1fs", jogador.timerCafe), LARGURA_TELA - 140, 32, 20, BROWN);
 
 			if (faseAtual == 3 && boss_ativo(listaInimigos)) {
 				DrawText("Derrote o boss para liberar a vitoria!", 340, 20, 24, GOLD);

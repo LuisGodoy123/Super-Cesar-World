@@ -68,6 +68,7 @@ void IniciarJogador(Jogador *j) {
     j->cameraX         = 0.0f;
     j->devMode         = 0;
     j->cafeAtivo       = 0;
+    j->timerCafe       = 0.0f;
     j->temSprites      = temSprites;
     j->numSprites      = numSprites;
 
@@ -350,6 +351,15 @@ void AtualizarJogador(Jogador *j, Fase *f) {
         if (j->timerInvencivel <= 0.0f) {
             j->estado         = VIVO;
             j->timerInvencivel = 0.0f;
+        }
+    }
+
+    /* timer do cafe */
+    if (j->cafeAtivo) {
+        j->timerCafe -= dt;
+        if (j->timerCafe <= 0.0f) {
+            j->cafeAtivo = 0;
+            j->timerCafe = 0.0f;
         }
     }
 
