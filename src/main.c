@@ -22,15 +22,17 @@ typedef enum {
 // Utilitarios internos
 
 static void resetar_posicao_jogador_preservando_status(Jogador *j) {
-	int vidas   = j->vidas;
-	int pontos  = j->pontos;
-	int devMode = j->devMode;
+	int vidas     = j->vidas;
+	int pontos    = j->pontos;
+	int devMode   = j->devMode;
+	int cafeAtivo = j->cafeAtivo;
 
 	IniciarJogador(j);
 
-	j->vidas   = vidas;
-	j->pontos  = pontos;
-	j->devMode = devMode;
+	j->vidas     = vidas;
+	j->pontos    = pontos;
+	j->devMode   = devMode;
+	j->cafeAtivo = cafeAtivo;
 }
 
 static int boss_ativo(No *listaInimigos) {
@@ -253,6 +255,24 @@ int main(void) {
 				AtualizarInimigos(listaInimigos, &jogador, &fase, FIXED_DT);
 				AtualizarMoedas(listaMoedas, &jogador);
 
+				for (int l = 0; l < LINHAS; l++) {
+					for (int c = 0; c < COLUNAS; c++) {
+						Bloco *b = &fase.blocos[l][c];
+						if (b->tipo != BLOCO_TIPO_POWERUP || b->estado != BLOCO_ESTADO_USADO || b->cafeColetado) continue;
+						if (b->cafeOffset > -(float)TILE) {
+							b->cafeOffset -= 1.5f;
+							if (b->cafeOffset < -(float)TILE) b->cafeOffset = -(float)TILE;
+						}
+						float cx = (float)(c * TILE) + 4, cy = (float)(l * TILE) + b->cafeOffset, cs = (float)(TILE - 8);
+						if (jogador.x + JOGADOR_HITBOX_OFFSET_X < cx + cs &&
+							jogador.x + JOGADOR_HITBOX_OFFSET_X + JOGADOR_HITBOX_LARGURA > cx &&
+							jogador.y < cy + cs && jogador.y + jogador.alturaAtual > cy) {
+							b->cafeColetado = 1;
+							jogador.cafeAtivo = 1;
+						}
+					}
+				}
+
 				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
 
 				if (jogador.estado == MORTO) {
@@ -310,9 +330,8 @@ int main(void) {
 
 			DesenharPlacar(&placar, &fonteUI, temFonteUI);
 
-			if (jogador.devMode) {
-				DrawText("[DEV] x3", LARGURA_TELA - 110, 8, 20, RED);
-			}
+			if (jogador.devMode)   DrawText("[DEV] x3", LARGURA_TELA - 110,  8, 20, RED);
+			if (jogador.cafeAtivo) DrawText("[CAFE]",   LARGURA_TELA - 110, 32, 20, BROWN);
 
 			if (faseAtual == 3 && boss_ativo(listaInimigos)) {
 				DrawText("Derrote o boss para liberar a vitoria!", 340, 20, 24, GOLD);

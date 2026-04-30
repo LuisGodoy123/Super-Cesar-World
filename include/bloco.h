@@ -14,6 +14,8 @@ typedef enum {
 typedef struct {
     TipoBloco   tipo;
     EstadoBloco estado;
+    float       cafeOffset;   // 0 = no topo do bloco, -TILE = acima do bloco
+    int         cafeColetado;
 } Bloco;
 
 #endif

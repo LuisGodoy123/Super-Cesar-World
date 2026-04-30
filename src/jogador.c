@@ -67,6 +67,7 @@ void IniciarJogador(Jogador *j) {
     j->animFrame       = 0;
     j->cameraX         = 0.0f;
     j->devMode         = 0;
+    j->cafeAtivo       = 0;
     j->temSprites      = temSprites;
     j->numSprites      = numSprites;
 
@@ -84,8 +85,9 @@ void AtualizarJogador(Jogador *j, Fase *f) {
 
     if (IsKeyPressed(KEY_F1)) j->devMode = !j->devMode;
 
-    float vel_caminhada = j->devMode ? VELOCIDADE_CAMINHADA * 3.0f : VELOCIDADE_CAMINHADA;
-    float vel_corrida   = j->devMode ? VELOCIDADE_CORRIDA   * 3.0f : VELOCIDADE_CORRIDA;
+    float fator = (j->devMode ? 3.0f : 1.0f) * (j->cafeAtivo ? FATOR_CAFE : 1.0f);
+    float vel_caminhada = VELOCIDADE_CAMINHADA * fator;
+    float vel_corrida   = VELOCIDADE_CORRIDA   * fator;
 
     int left  = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
     int right = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);

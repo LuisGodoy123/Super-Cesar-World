@@ -5,12 +5,12 @@
 
 static void colocar_bloco(Fase *f, int l, int c) {
     f->mapa[l][c] = BLOCO;
-    f->blocos[l][c] = (Bloco){ BLOCO_TIPO_NORMAL, BLOCO_ESTADO_ATIVO };
+    f->blocos[l][c] = (Bloco){ BLOCO_TIPO_NORMAL, BLOCO_ESTADO_ATIVO, 0.0f, 0 };
 }
 
 static void colocar_powerup(Fase *f, int l, int c) {
     f->mapa[l][c] = BLOCO;
-    f->blocos[l][c] = (Bloco){ BLOCO_TIPO_POWERUP, BLOCO_ESTADO_ATIVO };
+    f->blocos[l][c] = (Bloco){ BLOCO_TIPO_POWERUP, BLOCO_ESTADO_ATIVO, 0.0f, 0 };
 }
 
 static void preencher_chao(Fase *f, int cIni, int cFim, int linhaTopo) {
@@ -321,6 +321,13 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza) {
                         DrawLine(x + 1, y + tileSize - 2, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
                         DrawLine(x + tileSize - 2, y + 1, x + tileSize - 2, y + tileSize - 2, tijoloSombra);
                         DrawLine(x + 1, y + tileSize / 2, x + tileSize - 2, y + tileSize / 2, tijoloSombra);
+                    }
+
+                    if (!b.cafeColetado) {
+                        int pad   = (int)(4.0f * zoom);
+                        int cafeY = (int)(((float)(i * TILE) + b.cafeOffset - f->cameraYOffset) * zoom);
+                        DrawRectangle(x + pad, cafeY + pad, tileSize - 2*pad, tileSize - 2*pad, (Color){120, 70, 30, 255});
+                        DrawRectangleLines(x + pad, cafeY + pad, tileSize - 2*pad, tileSize - 2*pad, (Color){60, 30, 10, 255});
                     }
                 }
             } else {

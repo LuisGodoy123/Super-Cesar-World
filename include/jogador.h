@@ -9,6 +9,8 @@
 #define JOGADOR_HITBOX_LARGURA  38
 #define JOGADOR_HITBOX_OFFSET_X 11
 #define PONTOS_BLOCO           200
+#define FATOR_CAFE             2.0f
+#define TEMPO_CAFE             5.0f
 
 /* constantes de fisica (por frame @60fps) */
 #define GRAVIDADE                   0.25f
@@ -72,6 +74,8 @@ typedef struct {
     int animFrame;
     float cameraX;        // offset da camera (seguindo o jogador)
     int devMode;
+    int cafeAtivo;
+    float timerCafe;
     Texture2D sprites[3];
     int numSprites;
     int temSprites;
