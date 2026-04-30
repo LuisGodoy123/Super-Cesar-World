@@ -71,6 +71,7 @@ typedef struct {
     float animTimer;
     int animFrame;
     float cameraX;        // offset da camera (seguindo o jogador)
+    int devMode;
     Texture2D sprites[3];
     int numSprites;
     int temSprites;

@@ -22,13 +22,15 @@ typedef enum {
 // Utilitarios internos
 
 static void resetar_posicao_jogador_preservando_status(Jogador *j) {
-	int vidas = j->vidas;
-	int pontos = j->pontos;
+	int vidas   = j->vidas;
+	int pontos  = j->pontos;
+	int devMode = j->devMode;
 
 	IniciarJogador(j);
 
-	j->vidas = vidas;
-	j->pontos = pontos;
+	j->vidas   = vidas;
+	j->pontos  = pontos;
+	j->devMode = devMode;
 }
 
 static int boss_ativo(No *listaInimigos) {
@@ -307,6 +309,10 @@ int main(void) {
 			EndMode2D();
 
 			DesenharPlacar(&placar, &fonteUI, temFonteUI);
+
+			if (jogador.devMode) {
+				DrawText("[DEV] x3", LARGURA_TELA - 110, 8, 20, RED);
+			}
 
 			if (faseAtual == 3 && boss_ativo(listaInimigos)) {
 				DrawText("Derrote o boss para liberar a vitoria!", 340, 20, 24, GOLD);

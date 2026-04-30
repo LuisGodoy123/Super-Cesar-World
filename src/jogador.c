@@ -66,6 +66,7 @@ void IniciarJogador(Jogador *j) {
     j->animTimer       = 0.0f;
     j->animFrame       = 0;
     j->cameraX         = 0.0f;
+    j->devMode         = 0;
     j->temSprites      = temSprites;
     j->numSprites      = numSprites;
 
@@ -80,6 +81,11 @@ void AtualizarJogador(Jogador *j, Fase *f) {
     }
 
     const float dt = 1.0f / 60.0f;
+
+    if (IsKeyPressed(KEY_F1)) j->devMode = !j->devMode;
+
+    float vel_caminhada = j->devMode ? VELOCIDADE_CAMINHADA * 3.0f : VELOCIDADE_CAMINHADA;
+    float vel_corrida   = j->devMode ? VELOCIDADE_CORRIDA   * 3.0f : VELOCIDADE_CORRIDA;
 
     int left  = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
     int right = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
@@ -98,7 +104,7 @@ void AtualizarJogador(Jogador *j, Fase *f) {
 
     /* limite de velocidade no ar depende do estado no chao */
     if (j->noChao) {
-        j->limiteVelocidadeAr = run ? VELOCIDADE_CORRIDA : VELOCIDADE_CAMINHADA;
+        j->limiteVelocidadeAr = run ? vel_corrida : vel_caminhada;
     }
 
     /* atualiza direcao pelo input (fora da derrapagem) */
@@ -130,7 +136,7 @@ void AtualizarJogador(Jogador *j, Fase *f) {
 
     /* pulo (buffer + coyote) */
     if (!j->agachado && j->jumpBufferFrames > 0 && (j->noChao || j->coyoteFrames > 0)) {
-        float limiarCorrida = VELOCIDADE_CORRIDA * 0.8f;
+        float limiarCorrida = vel_corrida * 0.8f;
         if (fabsf(j->vx) >= limiarCorrida) {
             j->vy = FORCA_PULO_CORRENDO;
             j->puloCorrendo = 1;
@@ -161,7 +167,7 @@ void AtualizarJogador(Jogador *j, Fase *f) {
                     j->alturaAtual = alturaBaixa;
                     j->y += (float)(alturaCheia - alturaBaixa);
                 } else if (dirInput != 0) {
-                    float limite = run ? VELOCIDADE_CORRIDA : VELOCIDADE_CAMINHADA;
+                    float limite = run ? vel_corrida : vel_caminhada;
                     j->vx += (float)dirInput * ACELERACAO;
                     j->vx = fminf(fmaxf(j->vx, -limite), limite);
                 }
@@ -170,7 +176,7 @@ void AtualizarJogador(Jogador *j, Fase *f) {
             if (sinal(j->vx) != 0 && dirInput != sinal(j->vx) && fabsf(j->vx) > LIMITE_DERRAPAGEM) {
                 j->emDerrapagem = 1;
             } else {
-                float limite = run ? VELOCIDADE_CORRIDA : VELOCIDADE_CAMINHADA;
+                float limite = run ? vel_corrida : vel_caminhada;
                 j->vx += (float)dirInput * ACELERACAO;
                 j->vx = fminf(fmaxf(j->vx, -limite), limite);
             }
