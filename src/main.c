@@ -245,6 +245,13 @@ int main(void) {
 		SetTextureFilter(texIni2, TEXTURE_FILTER_POINT);
 	}
 
+	
+	Texture2D texIniRebaixado = {0};
+	if (FileExists("assets/sprites/inimigo1rebaixado.png")) {
+		texIniRebaixado = LoadTexture("assets/sprites/inimigo1rebaixado.png");
+		SetTextureFilter(texIniRebaixado, TEXTURE_FILTER_POINT);
+	}
+
 	while (!WindowShouldClose()) {
 		float frameTime = GetFrameTime();
 		if (frameTime > 0.25f) frameTime = 0.25f;
@@ -361,7 +368,7 @@ int main(void) {
 			BeginMode2D(cam);
 			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3);
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoeda);
-			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2);
+			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado);
 			DesenharJogador(&jogador, fase.cameraYOffset);
 			EndMode2D();
 
@@ -414,6 +421,7 @@ int main(void) {
 	if (texNuvem3.id > 0) UnloadTexture(texNuvem3);
 	if (texIni1.id > 0) UnloadTexture(texIni1);
 	if (texIni2.id > 0) UnloadTexture(texIni2);
+	if (texIniRebaixado.id > 0) UnloadTexture(texIniRebaixado);
 	CloseWindow();
 	return 0;
 }

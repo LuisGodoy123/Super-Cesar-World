@@ -53,6 +53,7 @@ typedef enum {
 typedef struct {
     float x, y;           // posicao
     float vx, vy;         // velocidade
+    float vyAnterior;     // vy antes da resolucao de colisao com chao
     int vidas;            // inicia com 3
     int pontos;
     int estado;           // VIVO | INVENCIVEL | MORTO

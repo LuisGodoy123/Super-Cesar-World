@@ -64,6 +64,7 @@ void IniciarJogador(Jogador *j) {
     j->alturaAtual     = JOGADOR_ALTURA;
     j->limiteVelocidadeAr = VELOCIDADE_CAMINHADA;
     j->animTimer       = 0.0f;
+    j->vyAnterior      = 0.0f;
     j->animFrame       = 0;
     j->cameraX         = 0.0f;
     j->devMode         = 0;
@@ -241,6 +242,7 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado) {
 
     /* movimento e colisao no eixo Y */
     int noChaoAnterior = j->noChao;
+    j->vyAnterior = j->vy;   /* salva antes do chao zerar vy */
     j->y += j->vy;
     j->noChao = 0;
 

@@ -28,7 +28,7 @@ No *CriarInimigo(int tipo, float x, float y) {
     novo->dados.vx      = (tipo == BOSS) ? VEL_BOSS : VEL_CAMINHADOR;
     novo->dados.vy      = 0.0f;
     novo->dados.tipo    = tipo;
-    novo->dados.vida    = (tipo == BOSS) ? 5 : 1;
+    novo->dados.vida    = (tipo == BOSS) ? 5 : (tipo == CAMINHADOR) ? 2 : 1;
     novo->dados.ativo   = 1;
     novo->dados.origemX   = x;
     novo->dados.timerTiro = INTERVALO_TIRO;
@@ -179,17 +179,17 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
 
             /* colisao com o jogador */
             if (j->estado != MORTO && colidiu(ini, j)) {
-                /* jogador pulou em cima? vy > 0 e base do jogador acima do centro do inimigo */
-                int pisou = (j->vy > 0.0f &&
-                             j->y + j->alturaAtual < ini->y + ini->altura * 0.6f);
-
-                if (pisou) {
+                /* usa vyAnterior: vy salvo ANTES do chao zerar a velocidade */
+                if (j->vyAnterior > 0.0f) {
+                    /* jogador estava caindo = pulo em cima, sem dano */
                     ini->vida--;
-                    if (ini->vida <= 0) ini->ativo = 0;
-
-                    j->vy      = FORCA_PULO / 2.0f;   /* pequeno quique */
-                    j->pontos += pontos_por_tipo(ini->tipo);
+                    if (ini->vida <= 0) {
+                        ini->ativo = 0;
+                        j->pontos += pontos_por_tipo(ini->tipo);
+                    }
+                    j->vy = FORCA_PULO / 2.0f;
                 } else if (j->estado == VIVO) {
+                    /* colisao lateral = dano ao jogador */
                     j->vidas--;
                     j->estado          = INVENCIVEL;
                     j->timerInvencivel = TEMPO_INVENCIVEL;
@@ -206,7 +206,7 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt) {
 /* DesenharInimigos — percorre lista e renderiza                        */
 /* ------------------------------------------------------------------ */
 
-void DesenharInimigos(No *lista, float cameraX, float cameraYOffset, Texture2D texIni1, Texture2D texIni2) {
+void DesenharInimigos(No *lista, float cameraX, float cameraYOffset, Texture2D texIni1, Texture2D texIni2, Texture2D texIniRebaixado) {
     No *atual = lista;
     float zoom = CAMERA_ZOOM;
 
@@ -227,14 +227,18 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset, Texture2D t
             } else if (ini->tipo == PERSEGUIDOR) {
                 DrawRectangle(screenX, screenY, largura, altura, ORANGE);
             } else {
-                /* CAMINHADOR — alterna entre os dois sprites de caminhada */
-                Texture2D tex = (ini->animFrame == 0) ? texIni1 : texIni2;
+                /* CAMINHADOR: rebaixado apos 1 pulo, animado no estado normal */
+                Texture2D tex;
+                if (ini->vida <= 1 && texIniRebaixado.id > 0)
+                    tex = texIniRebaixado;
+                else
+                    tex = (ini->animFrame == 0) ? texIni1 : texIni2;
+
                 if (tex.id > 0) {
                     float tw = (float)tex.width;
                     float th = (float)tex.height;
                     Rectangle src  = { 0, 0, tw, th };
                     Rectangle dest = { (float)screenX, (float)screenY, (float)largura, (float)altura };
-                    /* espelha horizontalmente quando move para a esquerda */
                     if (ini->vx < 0) { src.x = tw; src.width = -tw; }
                     DrawTexturePro(tex, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
                 } else {
