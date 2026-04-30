@@ -66,12 +66,12 @@ static float y_superficie_chao(Fase *fase, float x, int altura, float fallback) 
 
 static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *fase) {
 	if (faseAtual == 1) {
-		float x1 =  384.0f;
-		float x2 = 1184.0f;
-		float x3 = 1984.0f;
-		AdicionarInimigo(listaInimigos, CAMINHADOR, x1, y_superficie_chao(fase, x1, 32, 480.0f));
-		AdicionarInimigo(listaInimigos, CAMINHADOR, x2, y_superficie_chao(fase, x2, 32, 480.0f));
-		AdicionarInimigo(listaInimigos, CAMINHADOR, x3, y_superficie_chao(fase, x3, 32, 608.0f));
+		float xs[] = { 300.0f, 620.0f, 950.0f, 1380.0f, 1760.0f,
+		               2150.0f, 2530.0f, 2950.0f, 3400.0f };
+		int n = sizeof(xs) / sizeof(xs[0]);
+		for (int i = 0; i < n; i++)
+			AdicionarInimigo(listaInimigos, CAMINHADOR, xs[i],
+			                 y_superficie_chao(fase, xs[i], 32, 480.0f));
 	} else if (faseAtual == 2) {
 		float x1 =  350.0f;
 		float x2 = 1150.0f;

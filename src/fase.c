@@ -37,14 +37,8 @@ static void preencher_fase1(Fase *f) {
     // Subida leve de 1 bloco
     preencher_chao(f,  16,  26, 16);
 
-    // Retorno ao plano
-    preencher_chao(f,  27,  35, 17);
-
-    // Vale raso (exige salto simples para subir de volta)
-    preencher_chao(f,  36,  39, 18);
-
-    // Espaco de respiro
-    preencher_chao(f,  40,  51, 17);
+    // Retorno ao plano (extendido, sem depressao)
+    preencher_chao(f,  27,  51, 17);
 
     // Degraus naturais: subida progressiva (2 degraus)
     preencher_chao(f,  52,  53, 16);
@@ -63,11 +57,8 @@ static void preencher_fase1(Fase *f) {
     // Subida leve
     preencher_chao(f,  96, 103, 16);
 
-    // Pequeno vale
-    preencher_chao(f, 104, 107, 18);
-
-    // Plano
-    preencher_chao(f, 108, 116, 17);
+    // Plano (sem depressao)
+    preencher_chao(f, 104, 116, 17);
 
     // Elevacao leve antes do fim
     preencher_chao(f, 117, 122, 16);

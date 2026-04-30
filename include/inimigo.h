@@ -26,6 +26,7 @@ typedef struct {
     float timerTiro;   // contador de tiro do BOSS
     float animTimer;
     int   animFrame;
+    float stuckTimer;
 } Inimigo;
 
 typedef struct No {        // NO DA LISTA ENCADEADA

@@ -32,8 +32,9 @@ No *CriarInimigo(int tipo, float x, float y) {
     novo->dados.ativo   = 1;
     novo->dados.origemX   = x;
     novo->dados.timerTiro = INTERVALO_TIRO;
-    novo->dados.animTimer = 0.0f;
-    novo->dados.animFrame = 0;
+    novo->dados.animTimer  = 0.0f;
+    novo->dados.animFrame  = 0;
+    novo->dados.stuckTimer = 0.0f;
     definir_dimensoes(&novo->dados);
 
     novo->proximo = NULL;
@@ -78,12 +79,34 @@ static void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
     int linBot = (int)(ini->y + ini->altura - 1) / TILE;
 
     if (ini->vx < 0 && (tile_solido(f, colEsq, linTop) || tile_solido(f, colEsq, linBot))) {
-        ini->x  = (float)((colEsq + 1) * TILE);
-        ini->vx = -ini->vx;
+        /* empurra da parede primeiro, depois tenta subir 1 bloco */
+        ini->x = (float)((colEsq + 1) * TILE);
+        if (ini->vy >= 0.0f && linTop > 0 && !tile_solido(f, colEsq, linTop - 1)) {
+            ini->vy = -290.0f;
+            ini->stuckTimer = 0.0f;
+        } else {
+            ini->vx = -ini->vx;
+        }
     }
     if (ini->vx > 0 && (tile_solido(f, colDir, linTop) || tile_solido(f, colDir, linBot))) {
-        ini->x  = (float)(colDir * TILE - ini->largura);
-        ini->vx = -ini->vx;
+        ini->x = (float)(colDir * TILE - ini->largura);
+        if (ini->vy >= 0.0f && linTop > 0 && !tile_solido(f, colDir, linTop - 1)) {
+            ini->vy = -290.0f;
+            ini->stuckTimer = 0.0f;
+        } else {
+            ini->vx = -ini->vx;
+        }
+    }
+
+    /* stuck timer: se ficar no chao sem progredir, forca um pulo */
+    if (ini->vy >= 0.0f) {
+        ini->stuckTimer += dt;
+        if (ini->stuckTimer >= 1.2f) {
+            ini->vy = -290.0f;
+            ini->stuckTimer = 0.0f;
+        }
+    } else {
+        ini->stuckTimer = 0.0f;
     }
 
     float grav = GRAVIDADE * 60.0f * 60.0f;
@@ -102,6 +125,17 @@ static void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
     if (ini->vy < 0.0f && (tile_solido(f, colEsq, linTop) || tile_solido(f, colDir, linTop))) {
         ini->y  = (float)((linTop + 1) * TILE);
         ini->vy = 0.0f;
+    }
+
+    /* limites do mapa — impede o inimigo de sair pelos lados */
+    if (ini->x < 0.0f) {
+        ini->x  = 0.0f;
+        if (ini->vx < 0) ini->vx = -ini->vx;
+    }
+    float maxX = (float)((COLUNAS - 1) * TILE - ini->largura);
+    if (ini->x > maxX) {
+        ini->x  = maxX;
+        if (ini->vx > 0) ini->vx = -ini->vx;
     }
 }
 
