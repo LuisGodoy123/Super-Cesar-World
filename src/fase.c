@@ -24,6 +24,30 @@ static void preencher_chao(Fase *f, int cIni, int cFim, int linhaTopo) {
             colocar_bloco(f, l, c);
 }
 
+// Estrutura de parkour: degrau de entrada + prateleira longa + powerup isolado + bloco de saida
+// Estrutura de parkour: degrau de blocos comuns + prateleira alta + powerup isolado para bater de baixo
+static void estrutura_parkour(Fase *f, int cBase, int lDegrau, int lPrataleira) {
+    // degrau de entrada (esq): 3 blocos comuns — sem powerup aqui
+    colocar_bloco(f, lDegrau, cBase);
+    colocar_bloco(f, lDegrau, cBase + 1);
+    colocar_bloco(f, lDegrau, cBase + 2);
+
+    // prateleira longa flutuante: 7 blocos comuns
+    for (int c = cBase + 5; c <= cBase + 11; c++)
+        colocar_bloco(f, lPrataleira, c);
+
+    // powerup isolado flutuando (hit de baixo): gap de 2 tiles da prateleira
+    colocar_powerup(f, lPrataleira, cBase + 14);
+
+    // bloco unico de saida (dir, mesma altura do degrau)
+    colocar_bloco(f, lDegrau, cBase + 18);
+
+    // moedas acima da prateleira guiando o jogador
+    for (int c = cBase + 5; c <= cBase + 11; c++)
+        if (f->mapa[lPrataleira - 1][c] == VAZIO)
+            f->mapa[lPrataleira - 1][c] = MOEDA;
+}
+
 // Mapas das fases
 
 static void preencher_fase1(Fase *f) {
@@ -90,6 +114,11 @@ static void preencher_fase1(Fase *f) {
     colocar_powerup(f, 13, 83);   // pos segundo vale, espaco de respiro
     colocar_powerup(f, 13, 112);  // grupo de 2 perto do fim
     colocar_powerup(f, 13, 113);
+
+    // Estruturas de parkour (degrau row13 + prateleira row9 — bem acima do chao row17)
+    estrutura_parkour(f, 17, 13, 9);   // Zona A
+    estrutura_parkour(f, 63, 13, 9);   // Zona B
+    estrutura_parkour(f, 97, 13, 9);   // Zona C
 }
 
 static void preencher_fase2(Fase *f) {
@@ -116,6 +145,9 @@ static void preencher_fase2(Fase *f) {
     for (int c = 47; c <= 50; c++) f->mapa[10][c] = MOEDA;
     for (int c = 56; c <= 59; c++) f->mapa[13][c] = MOEDA;
     for (int c = 73; c <= 77; c++) f->mapa[12][c] = MOEDA;
+
+    // Estrutura de parkour apos a ultima plataforma (degrau row17, prateleira row13)
+    estrutura_parkour(f, 82, 17, 13);
 }
 
 static void preencher_fase3(Fase *f) {
@@ -148,6 +180,9 @@ static void preencher_fase3(Fase *f) {
     for (int c = 37; c <= 40; c++) f->mapa[ 8][c] = MOEDA;
     for (int c = 57; c <= 60; c++) f->mapa[ 9][c] = MOEDA;
     for (int c = 64; c <= 66; c++) f->mapa[13][c] = MOEDA;
+
+    // Estrutura de parkour na zona pos-lacuna, antes do boss (degrau row17, prateleira row13)
+    estrutura_parkour(f, 65, 17, 13);
 }
 
 //CarregarFase
