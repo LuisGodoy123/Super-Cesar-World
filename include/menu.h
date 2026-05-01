@@ -19,6 +19,8 @@ typedef struct {
     float tempoCursor;     /* animacao do cursor */
     Texture2D fundo;
     int temFundo;
+    Texture2D texNome;
+    int temNome;
     Font fonte;
     int temFonte;
 } Menu;

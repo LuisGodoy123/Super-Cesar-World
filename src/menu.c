@@ -367,6 +367,7 @@ void IniciarMenu(Menu *m) {
     m->selecionado = OPCAO_COMECAR;
     m->tempoCursor = 0.0f;
     m->temFundo    = 0;
+    m->temNome     = 0;
     m->temFonte    = 0;
 
     const char *fundos[] = {
@@ -381,6 +382,12 @@ void IniciarMenu(Menu *m) {
             m->temFundo = 1;
             break;
         }
+    }
+
+    if (FileExists("assets/sprites/nomedojogo.png")) {
+        m->texNome = LoadTexture("assets/sprites/nomedojogo.png");
+        SetTextureFilter(m->texNome, TEXTURE_FILTER_POINT);
+        m->temNome = 1;
     }
 
     /* tenta carregar fonte local sem antialiasing (pixel perfeito) */
@@ -403,6 +410,7 @@ void IniciarMenu(Menu *m) {
 
 void LiberarMenu(Menu *m) {
     if (m->temFundo) UnloadTexture(m->fundo);
+    if (m->temNome)  UnloadTexture(m->texNome);
     if (m->temFonte) UnloadFont(m->fonte);
 }
 
@@ -446,86 +454,31 @@ void DesenharMenu(Menu *m, Placar *p) {
 
     desenhar_borda_madeira();
 
-    /* --- titulo --- */
-
-    /* paleta do titulo: laranja, cinza escuro, amarelo escuro e branco */
-    const Color COR_BORGONHA       = (Color){255, 140,   0, 255}; /* agora laranja */
-    const Color COR_CINZA_ESCURO   = (Color){ 55,  55,  60, 255};
-    const Color COR_AMARELO_ESCURO = (Color){255, 200,  70, 255}; /* mais claro */
-    const Color COR_BRANCO         = (Color){255, 255, 255, 255};
-    const Color COR_CONTORNO = (Color){ 22,  55, 135, 255}; /* cobalto escuro */
-
-    /* sequencia repetida: laranja -> cinza escuro -> amarelo escuro -> branco */
-    Color cor_super[] = {
-        COR_BORGONHA,
-        COR_CINZA_ESCURO,
-        COR_AMARELO_ESCURO,
-        COR_BRANCO,
-        COR_BORGONHA,
-    };
-
-    /* mesma sequencia para CESAR */
-    Color cor_cesar[] = {
-        COR_BORGONHA,
-        COR_CINZA_ESCURO,
-        COR_AMARELO_ESCURO,
-        COR_BRANCO,
-        COR_BORGONHA,
-    };
-
-    /* mesma sequencia para WORLD */
-    Color cor_world[] = {
-        COR_BORGONHA,
-        COR_CINZA_ESCURO,
-        COR_AMARELO_ESCURO,
-        COR_BRANCO,
-        COR_BORGONHA,
-    };
-
-    /* calcula larguras para centralizar */
-    int tamSuperBase = (int)(72 * ESCALA_TEXTO_MENU);
-    int tamTituloBase = (int)(96 * ESCALA_TEXTO_MENU);
-    int lSuper = MeasureText("SUPER", tamSuperBase);
-    int lCesar = MeasureText("CESAR", tamTituloBase);
-    int lWorld = MeasureText(" WORLD", tamTituloBase);
-    int lTitulo = lCesar + MeasureText(" ", tamTituloBase) + lWorld;
-
-    int xSuper  = LARGURA / 2 - lSuper  / 2 + 30;
-    int xCesar  = LARGURA / 2 - lTitulo / 2;
-    int xWorld  = xCesar + lCesar + MeasureText(" ", tamTituloBase) - 10;
-
-    if (m->temFonte) {
-        float tSuper = 58.0f * ESCALA_TEXTO_MENU;
-        float tTit   = 80.0f * ESCALA_TEXTO_MENU;
-        int   gap    = 10;   /* espaco fixo entre CESAR e WORLD */
-
-        Vector2 szSuper = MeasureTextEx(m->fonte, "SUPER", tSuper, 0);
-        Vector2 szCesar = MeasureTextEx(m->fonte, "CESAR", tTit,   0);
-        Vector2 szWorld = MeasureTextEx(m->fonte, "WORLD", tTit,   0);
-        int totalTit = (int)(szCesar.x + gap + szWorld.x);
-
-        int fxSuper = LARGURA / 2 - (int)szSuper.x / 2 + 20;
-        int fxCesar = LARGURA / 2 - totalTit / 2;
-        int fxWorld = fxCesar + (int)szCesar.x + gap;
-
-        desenhar_palavra_colorida_fonte("SUPER", cor_super, m->fonte,
-                        fxSuper, 70, tSuper, COR_CONTORNO);
-        desenhar_palavra_colorida_fonte("CESAR", cor_cesar, m->fonte,
-                        fxCesar, 130, tTit, COR_CONTORNO);
-        desenhar_palavra_colorida_fonte("WORLD", cor_world, m->fonte,
-                        fxWorld, 130, tTit, COR_CONTORNO);
-
-        Vector2 szTM = MeasureTextEx(m->fonte, "WORLD", tTit, 0);
-        desenhar_texto_fonte_negrito(m->fonte, "TM",
-                                     (Vector2){fxWorld + (int)szTM.x + 4, 136},
-                                     22 * ESCALA_TEXTO_MENU, 0, WHITE);
+    /* --- titulo: imagem nomedojogo.png --- */
+    if (m->temNome) {
+        float nomeAltura  = 270.0f;
+        float nomeAspecto = (float)m->texNome.width / (float)m->texNome.height;
+        float nomeLargura = nomeAltura * nomeAspecto * 1.35f;
+        float nomeX = (LARGURA - nomeLargura) / 2.0f;
+        DrawTexturePro(m->texNome,
+            (Rectangle){0, 0, (float)m->texNome.width, (float)m->texNome.height},
+            (Rectangle){nomeX, 32.0f, nomeLargura, nomeAltura},
+            (Vector2){0, 0}, 0.0f, WHITE);
     } else {
-        /* fallback: fonte padrao */
-        desenhar_palavra_colorida("SUPER",  cor_super, xSuper, 74, tamSuperBase, COR_CONTORNO);
-        desenhar_palavra_colorida("CESAR",  cor_cesar, xCesar, 142, tamTituloBase, COR_CONTORNO);
-        desenhar_palavra_colorida("WORLD",  cor_world, xWorld, 142, tamTituloBase, COR_CONTORNO);
-        desenhar_texto_negrito("TM", xWorld + MeasureText("WORLD", tamTituloBase) + 4,
-                               150, (int)(24 * ESCALA_TEXTO_MENU), WHITE);
+        /* fallback: titulo em texto */
+        const Color COR_BORGONHA  = (Color){255, 140,  0, 255};
+        const Color COR_BRANCO    = (Color){255, 255, 255, 255};
+        const Color COR_CONTORNO  = (Color){ 22,  55, 135, 255};
+        Color cor5[] = { COR_BORGONHA, COR_BRANCO, COR_BORGONHA, COR_BRANCO, COR_BORGONHA };
+        int tS = (int)(72 * ESCALA_TEXTO_MENU);
+        int tT = (int)(96 * ESCALA_TEXTO_MENU);
+        int wS = MeasureText("SUPER", tS);
+        int wC = MeasureText("CESAR", tT);
+        int wSp = MeasureText(" ", tT);
+        int wW = MeasureText("WORLD", tT);
+        desenhar_palavra_colorida("SUPER", cor5, LARGURA/2 - wS/2 + 30,  74, tS, COR_CONTORNO);
+        desenhar_palavra_colorida("CESAR", cor5, LARGURA/2 - (wC+wSp+wW)/2, 142, tT, COR_CONTORNO);
+        desenhar_palavra_colorida("WORLD", cor5, LARGURA/2 - (wC+wSp+wW)/2 + wC + wSp, 142, tT, COR_CONTORNO);
     }
 
 
