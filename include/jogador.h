@@ -77,6 +77,7 @@ typedef struct {
     int devMode;
     int cafeAtivo;
     float timerCafe;
+    int moedas;
     Texture2D sprites[3];
     int numSprites;
     int temSprites;

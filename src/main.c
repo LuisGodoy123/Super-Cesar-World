@@ -24,6 +24,7 @@ typedef enum {
 static void resetar_posicao_jogador_preservando_status(Jogador *j) {
 	int   vidas     = j->vidas;
 	int   pontos    = j->pontos;
+	int   moedas    = j->moedas;
 	int   devMode   = j->devMode;
 	int   cafeAtivo = j->cafeAtivo;
 	float timerCafe = j->timerCafe;
@@ -32,6 +33,7 @@ static void resetar_posicao_jogador_preservando_status(Jogador *j) {
 
 	j->vidas     = vidas;
 	j->pontos    = pontos;
+	j->moedas    = moedas;
 	j->devMode   = devMode;
 	j->cafeAtivo = cafeAtivo;
 	j->timerCafe = timerCafe;
@@ -168,6 +170,7 @@ int main(void) {
 	int faseAtual = 1;
 	int scoreRegistrado = 0;
 	float introTimer = 0.0f;
+	float timerFase = 300.0f;
 
 	IniciarPlacar(&placar);
 	CarregarPlacar(&placar);
@@ -285,8 +288,9 @@ int main(void) {
 			    opcao == OPCAO_SLOT_C) {
 				faseAtual = 1;
 				scoreRegistrado = 0;
+				timerFase = 300.0f;
 				preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 0);
-				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
+				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 				estado = JOGANDO;
 				introTimer = 2.5f;
 			}
@@ -309,6 +313,15 @@ int main(void) {
 
 			if (IsKeyPressed(KEY_ENTER)) {
 				estado = MENU;
+			}
+		}
+
+		if (estado == JOGANDO && introTimer <= 0.0f) {
+			timerFase -= frameTime;
+			if (timerFase < 0.0f) timerFase = 0.0f;
+			if (timerFase == 0.0f) {
+				estado = GAME_OVER;
+				scoreRegistrado = 0;
 			}
 		}
 
@@ -338,7 +351,7 @@ int main(void) {
 					}
 				}
 
-				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
+				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 
 				if (jogador.estado == MORTO) {
 					estado = GAME_OVER;
@@ -351,12 +364,13 @@ int main(void) {
 						if (faseAtual < 3) {
 							jogador.pontos += BONUS_COMPLETAR_FASE;
 							faseAtual++;
+							timerFase = 300.0f;
 							preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
-							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
+							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 							introTimer = 2.5f;
 						} else if (!boss_ativo(listaInimigos)) {
 							jogador.pontos += BONUS_COMPLETAR_FASE;
-							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, faseAtual);
+							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 							estado = VITORIA;
 							scoreRegistrado = 0;
 						}
@@ -393,7 +407,10 @@ int main(void) {
 			DesenharJogador(&jogador, fase.cameraYOffset);
 			EndMode2D();
 
-			DesenharPlacar(&placar, &fonteUI, temFonteUI);
+			int frameAtual = (numFramesMoeda > 0) ? ((int)(tempoAnimMoeda * 10.0f) % numFramesMoeda) : 0;
+			DesenharPlacar(&placar, &fonteUI, temFonteUI,
+			               (numFramesMoeda > 0) ? texMoedas[frameAtual] : (Texture2D){0},
+			               numFramesMoeda > 0);
 
 			if (jogador.devMode)   DrawText("[DEV] x3", LARGURA_TELA - 110,  8, 20, RED);
 			if (jogador.cafeAtivo) DrawText(TextFormat("[CAFE] %.1fs", jogador.timerCafe), LARGURA_TELA - 140, 32, 20, BROWN);

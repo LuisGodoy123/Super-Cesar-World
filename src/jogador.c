@@ -46,7 +46,7 @@ void IniciarJogador(Jogador *j) {
     j->y              = 300.0f;
     j->vx             = 0.0f;
     j->vy             = 0.0f;
-    j->vidas          = 3;
+    j->vidas          = 5;
     j->pontos         = 0;
     j->estado         = VIVO;
     j->estadoMov       = MOV_PARADO;
@@ -70,6 +70,7 @@ void IniciarJogador(Jogador *j) {
     j->devMode         = 0;
     j->cafeAtivo       = 0;
     j->timerCafe       = 0.0f;
+    j->moedas          = 0;
     j->temSprites      = temSprites;
     j->numSprites      = numSprites;
 

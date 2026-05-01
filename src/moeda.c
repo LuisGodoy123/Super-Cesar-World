@@ -59,6 +59,7 @@ void AtualizarMoedas(NoMoeda *lista, Jogador *j, Sound sndCoin) {
         if (!atual->coletada && colidiu_moeda_jogador(atual, j)) {
             atual->coletada = 1;
             j->pontos += PONTOS_MOEDA;
+            j->moedas++;
             PlaySound(sndCoin);
         }
         atual = atual->proximo;
