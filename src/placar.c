@@ -107,8 +107,8 @@ void DesenharPlacar(Placar *p, Font *fonte, int temFonte, Texture2D texMoeda, in
 	const char *nomeTxt  = "CESAR";
 	const char *vidasTxt = TextFormat("x%d", p->vidas);
 
-	desenhar_texto_ui(fonte, temFonte, nomeTxt,  lx, 8,  20, YELLOW);
-	desenhar_texto_ui(fonte, temFonte, vidasTxt, lx, 36, 22, WHITE);
+	desenhar_texto_ui(fonte, temFonte, nomeTxt,  lx, 8,  26, ORANGE);
+	desenhar_texto_ui(fonte, temFonte, vidasTxt, lx, 40, 26, WHITE);
 
 	// ==============================
 	// CENTRO: "TIME" + valor
@@ -120,11 +120,11 @@ void DesenharPlacar(Placar *p, Font *fonte, int temFonte, Texture2D texMoeda, in
 
 	Color corTempo = (p->tempo <= 60) ? RED : WHITE;
 
-	int timeLblW = medir_texto(fonte, temFonte, timeLbl, 20);
-	int timeValW = medir_texto(fonte, temFonte, timeVal, 24);
+	int timeLblW = medir_texto(fonte, temFonte, timeLbl, 26);
+	int timeValW = medir_texto(fonte, temFonte, timeVal, 28);
 
-	desenhar_texto_ui(fonte, temFonte, timeLbl, cx - timeLblW / 2, 8,  20, YELLOW);
-	desenhar_texto_ui(fonte, temFonte, timeVal, cx - timeValW / 2, 34, 24, corTempo);
+	desenhar_texto_ui(fonte, temFonte, timeLbl, cx - timeLblW / 2, 8,  26, YELLOW);
+	desenhar_texto_ui(fonte, temFonte, timeVal, cx - timeValW / 2, 36, 28, corTempo);
 
 	// ==============================
 	// DIREITA: icone moeda + "x{n}" + pontuacao
@@ -146,8 +146,8 @@ void DesenharPlacar(Placar *p, Font *fonte, int temFonte, Texture2D texMoeda, in
 	const char *moedasTxt = TextFormat("x%d", p->moedas);
 	const char *pontosTxt = TextFormat("%d", p->pontuacao);
 
-	desenhar_texto_ui(fonte, temFonte, moedasTxt, txtX, 8,  20, WHITE);
-	desenhar_texto_ui(fonte, temFonte, pontosTxt, txtX, 34, 20, WHITE);
+	desenhar_texto_ui(fonte, temFonte, moedasTxt, txtX, 8,  26, WHITE);
+	desenhar_texto_ui(fonte, temFonte, pontosTxt, txtX, 36, 26, WHITE);
 }
 
 // DesenharTopScores — mostra ranking de pontuacoes
