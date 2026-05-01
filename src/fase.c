@@ -312,7 +312,7 @@ static void desenhar_nuvens(int faseNum, float cameraX, float cameraYOffset) {
 //DesenharFase
 
 void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture2D texTerra,
-                  Texture2D texNuvem1, Texture2D texNuvem2, Texture2D texNuvem3) {
+                  Texture2D texNuvem1, Texture2D texNuvem2, Texture2D texNuvem3, Texture2D texCafe) {
     ClearBackground(f->corFundo);
     if (f->numero == 1)
         desenhar_nuvens_sprite(f->cameraX, f->cameraYOffset, texNuvem1, texNuvem2, texNuvem3);
@@ -398,8 +398,17 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture
                     if (!b.cafeColetado) {
                         int pad   = (int)(4.0f * zoom);
                         int cafeY = (int)(((float)(i * TILE) + b.cafeOffset - f->cameraYOffset) * zoom);
-                        DrawRectangle(x + pad, cafeY + pad, tileSize - 2*pad, tileSize - 2*pad, (Color){120, 70, 30, 255});
-                        DrawRectangleLines(x + pad, cafeY + pad, tileSize - 2*pad, tileSize - 2*pad, (Color){60, 30, 10, 255});
+                        if (texCafe.id > 0) {
+                            int cafeSize = (int)(tileSize * 0.9f);
+                            int cOff     = (tileSize - cafeSize) / 2;
+                            Rectangle src  = { 0, 0, (float)texCafe.width, (float)texCafe.height };
+                            Rectangle dest = { (float)(x + cOff), (float)(cafeY + cOff),
+                                               (float)cafeSize, (float)cafeSize };
+                            DrawTexturePro(texCafe, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                        } else {
+                            DrawRectangle(x + pad, cafeY + pad, tileSize - 2*pad, tileSize - 2*pad, (Color){120, 70, 30, 255});
+                            DrawRectangleLines(x + pad, cafeY + pad, tileSize - 2*pad, tileSize - 2*pad, (Color){60, 30, 10, 255});
+                        }
                     }
                 }
             } else {

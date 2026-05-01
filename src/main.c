@@ -216,6 +216,12 @@ int main(void) {
 		SetTextureFilter(texBloco, TEXTURE_FILTER_POINT);
 	}
 
+	Texture2D texCafe = {0};
+	if (FileExists("assets/sprites/Cafe.png")) {
+		texCafe = LoadTexture("assets/sprites/Cafe.png");
+		SetTextureFilter(texCafe, TEXTURE_FILTER_POINT);
+	}
+
 	Texture2D texTijoloCinza = {0};
 	if (FileExists("assets/sprites/blocos/tijolocinza.png")) {
 		texTijoloCinza = LoadTexture("assets/sprites/blocos/tijolocinza.png");
@@ -401,7 +407,7 @@ int main(void) {
 			cam.zoom     = extraZoom;
 
 			BeginMode2D(cam);
-			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3);
+			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3, texCafe);
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoedas, numFramesMoeda, tempoAnimMoeda);
 			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado);
 			DesenharJogador(&jogador, fase.cameraYOffset);
@@ -453,6 +459,7 @@ int main(void) {
 	for (int i = 0; i < numFramesMoeda; i++) {
 		if (texMoedas[i].id > 0) UnloadTexture(texMoedas[i]);
 	}
+	if (texCafe.id > 0) UnloadTexture(texCafe);
 	if (texBloco.id > 0) UnloadTexture(texBloco);
 	if (texTijoloCinza.id > 0) UnloadTexture(texTijoloCinza);
 	if (texTerra.id > 0) UnloadTexture(texTerra);
