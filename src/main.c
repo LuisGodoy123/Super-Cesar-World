@@ -268,6 +268,8 @@ int main(void) {
 	if (FileExists("assets/sons/1up.wav"))   snd1up   = LoadSound("assets/sons/1up.wav");
 	Sound sndKick = {0};
 	if (FileExists("assets/sons/kick.wav"))  sndKick  = LoadSound("assets/sons/kick.wav");
+	Sound sndPowerup = {0};
+	if (FileExists("assets/sons/powerup.wav")) sndPowerup = LoadSound("assets/sons/powerup.wav");
 
 	while (!WindowShouldClose()) {
 		float frameTime = GetFrameTime();
@@ -331,6 +333,7 @@ int main(void) {
 							b->cafeColetado = 1;
 							jogador.cafeAtivo = 1;
 							jogador.timerCafe = TEMPO_CAFE;
+							PlaySound(sndPowerup);
 						}
 					}
 				}
@@ -446,6 +449,7 @@ int main(void) {
 	UnloadSound(sndJump);
 	UnloadSound(snd1up);
 	UnloadSound(sndKick);
+	UnloadSound(sndPowerup);
 	CloseAudioDevice();
 	CloseWindow();
 	return 0;
