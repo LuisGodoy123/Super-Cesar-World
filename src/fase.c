@@ -105,15 +105,21 @@ static void preencher_fase1(Fase *f) {
     for (int c = 86; c <= 89; c++) f->mapa[12][c] = MOEDA;   // sobre a plataforma alta
     for (int c = 109; c <= 113; c++) f->mapa[16][c] = MOEDA; // perto do fim
 
-    // Blocos de powerup (?) — ensinam o jogador e recompensam saltos
-    colocar_powerup(f, 13,  5);   // intro: primeiro bloco facil de achar
-    colocar_powerup(f, 13, 31);   // grupo de 3 antes do primeiro vale
-    colocar_powerup(f, 13, 32);
-    colocar_powerup(f, 13, 33);
-    colocar_powerup(f, 11, 58);   // acima da elevacao maxima (row 15)
-    colocar_powerup(f, 13, 83);   // pos segundo vale, espaco de respiro
-    colocar_powerup(f, 13, 112);  // grupo de 2 perto do fim
-    colocar_powerup(f, 13, 113);
+    // Blocos de poder: padrao Mario — fileiras mistas + solos altos isolados
+
+    // Fileira 1: [tijolo][?][tijolo][tijolo][?][tijolo]
+    colocar_bloco(f,   13, 28); colocar_powerup(f, 13, 29);
+    colocar_bloco(f,   13, 30); colocar_bloco(f,   13, 31);
+    colocar_powerup(f, 13, 32); colocar_bloco(f,   13, 33);
+
+    // Fileira 2: [tijolo][tijolo][?][tijolo][tijolo]
+    colocar_bloco(f,   13, 52); colocar_bloco(f,   13, 53);
+    colocar_powerup(f, 13, 54); colocar_bloco(f,   13, 55);
+    colocar_bloco(f,   13, 56);
+
+    // Solos altos — requerem plataforma intermediaria (row14) para alcancar
+    colocar_powerup(f, 10,  7);
+    colocar_powerup(f, 10, 50);
 
     // Estruturas de parkour (degrau row13 + prateleira row9 — bem acima do chao row17)
     estrutura_parkour(f, 17, 13, 9);   // Zona A
@@ -145,6 +151,14 @@ static void preencher_fase2(Fase *f) {
     for (int c = 47; c <= 50; c++) f->mapa[10][c] = MOEDA;
     for (int c = 56; c <= 59; c++) f->mapa[13][c] = MOEDA;
     for (int c = 73; c <= 77; c++) f->mapa[12][c] = MOEDA;
+
+    // Blocos de poder: fileira mista + solo alto
+    // Fileira: [tijolo][?][tijolo][tijolo][?][tijolo]
+    colocar_bloco(f,   17, 50); colocar_powerup(f, 17, 51);
+    colocar_bloco(f,   17, 52); colocar_bloco(f,   17, 53);
+    colocar_powerup(f, 17, 54); colocar_bloco(f,   17, 55);
+    // Solo alto acima da fileira (bater de baixo saindo da fileira)
+    colocar_powerup(f, 14, 52);
 
     // Estrutura de parkour apos a ultima plataforma (degrau row17, prateleira row13)
     estrutura_parkour(f, 82, 17, 13);
@@ -180,6 +194,14 @@ static void preencher_fase3(Fase *f) {
     for (int c = 37; c <= 40; c++) f->mapa[ 8][c] = MOEDA;
     for (int c = 57; c <= 60; c++) f->mapa[ 9][c] = MOEDA;
     for (int c = 64; c <= 66; c++) f->mapa[13][c] = MOEDA;
+
+    // Blocos de poder: fileira mista + solo alto
+    // Fileira: [tijolo][?][tijolo][tijolo][tijolo]
+    colocar_bloco(f,   17,  7); colocar_powerup(f, 17,  8);
+    colocar_bloco(f,   17,  9); colocar_bloco(f,   17, 10);
+    colocar_bloco(f,   17, 11);
+    // Solo alto isolado
+    colocar_powerup(f, 14,  5);
 
     // Estrutura de parkour na zona pos-lacuna, antes do boss (degrau row17, prateleira row13)
     estrutura_parkour(f, 65, 17, 13);
