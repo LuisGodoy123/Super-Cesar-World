@@ -8,6 +8,13 @@ static int tile_solido(Fase *f, int col, int linha) {
     return f->mapa[linha][col] == BLOCO;
 }
 
+// Retorna 1 se qualquer tile entre colEsq e colDir (inclusive) na linha eh solido
+static int faixa_solida(Fase *f, int colEsq, int colDir, int linha) {
+    for (int c = colEsq; c <= colDir; c++)
+        if (tile_solido(f, c, linha)) return 1;
+    return 0;
+}
+
 static int sinal(float v) {
     if (v > 0.0f) return 1;
     if (v < 0.0f) return -1;
@@ -253,7 +260,7 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
     linTop = (int)(j->y) / TILE;
     linBot = (int)(j->y + j->alturaAtual - 1) / TILE;
 
-    if (j->vy > 0 && (tile_solido(f, colEsq, linBot) || tile_solido(f, colDir, linBot))) {
+    if (j->vy > 0 && faixa_solida(f, colEsq, colDir, linBot)) {
         j->y      = (float)(linBot * TILE - j->alturaAtual);
         j->vy     = 0.0f;
         j->noChao = 1;
@@ -263,13 +270,13 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
        mas o chao ainda esta diretamente abaixo */
     if (!j->noChao && j->vy >= 0.0f) {
         int linBotRest = (int)(j->y + j->alturaAtual) / TILE;
-        if (tile_solido(f, colEsq, linBotRest) || tile_solido(f, colDir, linBotRest)) {
+        if (faixa_solida(f, colEsq, colDir, linBotRest)) {
             j->noChao = 1;
             j->vy     = 0.0f;
         }
     }
 
-    if (j->vy < 0 && (tile_solido(f, colEsq, linTop) || tile_solido(f, colDir, linTop))) {
+    if (j->vy < 0 && faixa_solida(f, colEsq, colDir, linTop)) {
         for (int c = colEsq; c <= colDir; c++) {
             if (c >= 0 && c < COLUNAS &&
                 f->blocos[linTop][c].tipo  == BLOCO_TIPO_POWERUP &&
