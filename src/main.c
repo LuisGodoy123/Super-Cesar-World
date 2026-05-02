@@ -411,6 +411,7 @@ int main(void) {
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoedas, numFramesMoeda, tempoAnimMoeda);
 			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado);
 			DesenharJogador(&jogador, fase.cameraYOffset);
+			if (jogador.devMode) DesenharGradeDebug(&fase);
 			EndMode2D();
 
 			int frameAtual = (numFramesMoeda > 0) ? ((int)(tempoAnimMoeda * 10.0f) % numFramesMoeda) : 0;

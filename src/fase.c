@@ -24,6 +24,23 @@ static void preencher_chao(Fase *f, int cIni, int cFim, int linhaTopo) {
             colocar_bloco(f, l, c);
 }
 
+static void limpar_bloco(Fase *f, int l, int c) {
+    if (l < 0 || l >= LINHAS || c < 0 || c >= COLUNAS) return;
+    f->mapa[l][c] = VAZIO;
+    f->blocos[l][c] = (Bloco){ 0 };
+}
+
+static void limpar_segmento(Fase *f, int cIni, int cFim, int lIni, int lFim) {
+    for (int l = lIni; l <= lFim; l++)
+        for (int c = cIni; c <= cFim; c++)
+            limpar_bloco(f, l, c);
+}
+
+static void plataforma(Fase *f, int cIni, int cFim, int linha) {
+    for (int c = cIni; c <= cFim; c++)
+        colocar_bloco(f, linha, c);
+}
+
 // Estrutura de parkour: degrau de entrada + prateleira longa + powerup isolado + bloco de saida
 // Estrutura de parkour: degrau de blocos comuns + prateleira alta + powerup isolado para bater de baixo
 static void estrutura_parkour(Fase *f, int cBase, int lDegrau, int lPrataleira) {
@@ -505,4 +522,28 @@ int VerificarColisao(Rectangle a, Rectangle b) {
     if (a.y + a.height <= b.y) return 0;
     if (b.y + b.height <= a.y) return 0;
     return 1;
+}
+
+void DesenharGradeDebug(Fase *f) {
+    float zoom = CAMERA_ZOOM;
+    int   sw   = GetScreenWidth();
+    int   sh   = GetScreenHeight();
+    int   camX = (int)f->cameraX;
+    float camY = f->cameraYOffset;
+
+    for (int c = 0; c <= COLUNAS; c++) {
+        int sx = (int)((c * TILE - camX) * zoom);
+        if (sx < 0 || sx > sw) continue;
+        DrawLine(sx, 0, sx, sh, Fade(WHITE, 0.20f));
+        if (c < COLUNAS)
+            DrawText(TextFormat("%d", c), sx + 1, 1, 9, YELLOW);
+    }
+
+    for (int r = 0; r <= LINHAS; r++) {
+        int sy = (int)((r * TILE - camY) * zoom);
+        if (sy < 0 || sy > sh) continue;
+        DrawLine(0, sy, sw, sy, Fade(WHITE, 0.20f));
+        if (r < LINHAS)
+            DrawText(TextFormat("%d", r), 1, sy + 1, 9, YELLOW);
+    }
 }
