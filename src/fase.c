@@ -129,11 +129,6 @@ static void preencher_fase1(Fase *f) {
     colocar_bloco(f,   13, 30); colocar_bloco(f,   13, 31);
     colocar_powerup(f, 13, 32); colocar_bloco(f,   13, 33);
 
-    // Fileira 2: [tijolo][tijolo][?][tijolo][tijolo]
-    colocar_bloco(f,   13, 52); colocar_bloco(f,   13, 53);
-    colocar_powerup(f, 13, 54); colocar_bloco(f,   13, 55);
-    colocar_bloco(f,   13, 56);
-
     // Solos altos — requerem plataforma intermediaria (row14) para alcancar
     colocar_powerup(f, 10,  7);
     colocar_powerup(f, 10, 50);
