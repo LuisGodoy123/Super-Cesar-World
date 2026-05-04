@@ -191,7 +191,11 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                         ini->ativo = 0;
                         j->pontos += pontos_por_tipo(ini->tipo);
                     }
-                    j->vy = FORCA_PULO / 2.0f;
+                    j->vy = FORCA_PULO * 4.0f;
+                    j->noChao = 0;
+                    j->jumpFrames = 0;
+                    j->jumpHoldFrames = 0;
+                    j->jumpCutFeito = 0;
                 } else if (j->estado == VIVO) {
                     /* colisao lateral ou por baixo = dano ao jogador */
                     j->vidas--;
