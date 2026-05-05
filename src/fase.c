@@ -157,9 +157,9 @@ static void preencher_fase1(Fase *f) {
     colocar_bloco(f, 12, 107);
     colocar_bloco(f, 12, 113);
     colocar_bloco(f, 12, 117);
-    plataforma(f, 109, 111, 10);
-    colocar_bloco(f, 9, 108);
-    colocar_bloco(f, 9, 112);
+    plataforma(f, 109, 111, 9);
+    colocar_bloco(f, 8, 108);
+    colocar_bloco(f, 8, 112);
 
     // Porta para a fase 2
     colocar_porta(f, 15, 126);
