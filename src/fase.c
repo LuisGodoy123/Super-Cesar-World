@@ -130,9 +130,9 @@ static void preencher_fase1(Fase *f) {
     // Blocos de poder: padrao Mario — fileiras mistas + solos altos isolados
 
     // Fileira 1: [tijolo][?][tijolo][tijolo][?][tijolo]
-    colocar_bloco(f,   13, 28); colocar_powerup(f, 13, 29);
-    colocar_bloco(f,   13, 30); colocar_bloco(f,   13, 31);
-    colocar_powerup(f, 13, 32); colocar_bloco(f,   13, 33);
+    colocar_bloco(f, 13, 28); colocar_bloco(f, 13, 29);
+    colocar_bloco(f, 13, 30); colocar_bloco(f, 13, 31);
+    colocar_bloco(f, 13, 32); colocar_bloco(f, 13, 33);
 
     // Solos altos — requerem plataforma intermediaria (row14) para alcancar
     colocar_powerup(f, 10,  7);
@@ -145,12 +145,15 @@ static void preencher_fase1(Fase *f) {
 
     // Blocos removidos manualmente
     limpar_bloco(f, 13, 35);           // bloco de saida Zona A  (x=35,  y=13)
+    limpar_segmento(f, 63, 65, 13, 13); // degrau Zona B removido
+    limpar_segmento(f, 68, 74, 9, 9);  // prateleira Zona B descida 1 bloco
     limpar_bloco(f, 9,  77);           // powerup Zona B         (x=77,  y=9)
     limpar_segmento(f, 102, 108, 9, 9);// prateleira Zona C      (x=102-108, y=9)
     limpar_bloco(f, 9,  111);          // powerup Zona C         (x=111, y=9)
     limpar_bloco(f, 13, 115);          // bloco de saida Zona C  (x=115, y=13)
 
     // Blocos adicionados manualmente
+    plataforma(f, 68, 74, 10);         // prateleira Zona B na linha 10
     plataforma(f, 104, 106, 13);       // x=105-108, y=11
     plataforma(f, 114, 116, 13);       // x=112-115, y=11
     colocar_bloco(f, 12, 103);
