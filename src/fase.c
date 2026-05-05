@@ -137,6 +137,13 @@ static void preencher_fase1(Fase *f) {
     estrutura_parkour(f, 17, 13, 9);   // Zona A
     estrutura_parkour(f, 63, 13, 9);   // Zona B
     estrutura_parkour(f, 97, 13, 9);   // Zona C
+
+    // Blocos removidos manualmente
+    limpar_bloco(f, 13, 35);           // bloco de saida Zona A  (x=35,  y=13)
+    limpar_bloco(f, 9,  77);           // powerup Zona B         (x=77,  y=9)
+    limpar_segmento(f, 102, 108, 9, 9);// prateleira Zona C      (x=102-108, y=9)
+    limpar_bloco(f, 9,  111);          // powerup Zona C         (x=111, y=9)
+    limpar_bloco(f, 13, 115);          // bloco de saida Zona C  (x=115, y=13)
 }
 
 static void preencher_fase2(Fase *f) {

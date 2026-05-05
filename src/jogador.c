@@ -148,14 +148,8 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
 
     /* pulo (buffer + coyote) */
     if (!j->agachado && j->jumpBufferFrames > 0 && (j->noChao || j->coyoteFrames > 0)) {
-        float limiarCorrida = vel_corrida * 0.8f;
-        if (fabsf(j->vx) >= limiarCorrida) {
-            j->vy = FORCA_PULO_CORRENDO;
-            j->puloCorrendo = 1;
-        } else {
-            j->vy = FORCA_PULO;
-            j->puloCorrendo = 0;
-        }
+        j->vy = FORCA_PULO;
+        j->puloCorrendo = 0;
         j->noChao = 0;
         j->coyoteFrames = 0;
         j->jumpBufferFrames = 0;
@@ -227,25 +221,11 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         j->emDerrapagem = 0;
     }
 
-    /* corte de pulo curto */
-    if (j->jumpFrames >= 0 && !jumpHeld && !j->jumpCutFeito &&
-        j->jumpFrames < CORTE_PULO_CURTO && j->vy < 0.0f) {
-        j->vy *= 0.4f;
-        j->jumpCutFeito = 1;
-    }
-
-    /* gravidade variavel */
+    /* gravidade */
     float grav = GRAVIDADE;
-    if (j->vy < 0.0f) grav *= (jumpHeld ? 0.7f : 1.1f);
+    if (j->vy < 0.0f) grav *= 1.0f;
     else              grav *= 1.3f;
     j->vy += grav;
-
-    /* pulo variavel (hold) */
-    if (j->jumpFrames >= 0 && jumpHeld && j->vy < 0.0f &&
-        j->jumpHoldFrames < TEMPO_MAXIMO_SEGURAR_PULO) {
-        j->vy += j->puloCorrendo ? FORCA_SEGURAR_PULO_CORRENDO : FORCA_SEGURAR_PULO;
-        j->jumpHoldFrames++;
-    }
 
     if (j->vy > VELOCIDADE_QUEDA_MAXIMA) j->vy = VELOCIDADE_QUEDA_MAXIMA;
 
