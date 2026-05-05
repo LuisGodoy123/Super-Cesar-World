@@ -346,12 +346,21 @@ static void desenhar_nuvens(int faseNum, float cameraX, float cameraYOffset) {
 //DesenharFase
 
 void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture2D texTerra,
-                  Texture2D texNuvem1, Texture2D texNuvem2, Texture2D texNuvem3, Texture2D texCafe) {
+                  Texture2D texNuvem1, Texture2D texNuvem2, Texture2D texNuvem3, Texture2D texCafe,
+                  Texture2D texFundo2) {
     ClearBackground(f->corFundo);
-    if (f->numero == 1)
+    if (f->numero == 2 && texFundo2.id > 0) {
+        float sw = (float)GetScreenWidth();
+        float sh = (float)GetScreenHeight();
+        DrawTexturePro(texFundo2,
+            (Rectangle){0, 0, (float)texFundo2.width, (float)texFundo2.height},
+            (Rectangle){0, 0, sw, sh},
+            (Vector2){0, 0}, 0.0f, WHITE);
+    } else if (f->numero == 1) {
         desenhar_nuvens_sprite(f->cameraX, f->cameraYOffset, texNuvem1, texNuvem2, texNuvem3);
-    else
+    } else {
         desenhar_nuvens(f->numero, f->cameraX, f->cameraYOffset);
+    }
 
     for (int i = 0; i < LINHAS; i++) {
         for (int j = 0; j < COLUNAS; j++) {

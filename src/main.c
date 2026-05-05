@@ -269,6 +269,12 @@ int main(void) {
 		SetTextureFilter(texIniRebaixado, TEXTURE_FILTER_POINT);
 	}
 
+	Texture2D texFundo2 = {0};
+	if (FileExists("assets/sprites/sala_brum_jogo.png")) {
+		texFundo2 = LoadTexture("assets/sprites/sala_brum_jogo.png");
+		SetTextureFilter(texFundo2, TEXTURE_FILTER_BILINEAR);
+	}
+
 	Sound sndCoin = {0};
 	if (FileExists("assets/sons/coin.wav"))  sndCoin  = LoadSound("assets/sons/coin.wav");
 	Sound sndJump = {0};
@@ -407,7 +413,7 @@ int main(void) {
 			cam.zoom     = extraZoom;
 
 			BeginMode2D(cam);
-			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3, texCafe);
+			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3, texCafe, texFundo2);
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoedas, numFramesMoeda, tempoAnimMoeda);
 			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado);
 			DesenharJogador(&jogador, fase.cameraYOffset);
@@ -470,6 +476,7 @@ int main(void) {
 	if (texIni1.id > 0) UnloadTexture(texIni1);
 	if (texIni2.id > 0) UnloadTexture(texIni2);
 	if (texIniRebaixado.id > 0) UnloadTexture(texIniRebaixado);
+	if (texFundo2.id > 0) UnloadTexture(texFundo2);
 	UnloadSound(sndCoin);
 	UnloadSound(sndJump);
 	UnloadSound(snd1up);
