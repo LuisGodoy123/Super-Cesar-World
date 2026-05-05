@@ -3,6 +3,7 @@
 #include "jogador.h"
 #include "inimigo.h"
 #include "moeda.h"
+#include "chave.h"
 #include "placar.h"
 #include "menu.h"
 #include <stddef.h>
@@ -169,6 +170,7 @@ int main(void) {
 
 	No *listaInimigos = NULL;
 	NoMoeda *listaMoedas = NULL;
+	Chave chaveF1;
 
 	int faseAtual = 1;
 	int scoreRegistrado = 0;
@@ -305,6 +307,7 @@ int main(void) {
 				scoreRegistrado = 0;
 				timerFase = 300.0f;
 				preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 0);
+				IniciarChave(&chaveF1, 110 * TILE, 8 * TILE);
 				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 				estado = JOGANDO;
 				introTimer = 2.5f;
@@ -345,6 +348,7 @@ int main(void) {
 				AtualizarJogador(&jogador, &fase, introTimer > 0.0f, sndJump, snd1up);
 				AtualizarInimigos(listaInimigos, &jogador, &fase, FIXED_DT, sndKick);
 				AtualizarMoedas(listaMoedas, &jogador, sndCoin);
+				if (faseAtual == 1) AtualizarChave(&chaveF1, &jogador);
 
 				for (int l = 0; l < LINHAS; l++) {
 					for (int c = 0; c < COLUNAS; c++) {
@@ -385,7 +389,7 @@ int main(void) {
 									(float)(c * TILE), (float)(l * TILE),
 									(float)TILE, (float)TILE
 								};
-								if (VerificarColisao(playerHitbox, portaHitbox)) {
+								if (VerificarColisao(playerHitbox, portaHitbox) && chaveF1.coletada) {
 									jogador.pontos += BONUS_COMPLETAR_FASE;
 									faseAtual = 2;
 									timerFase = 300.0f;
@@ -402,14 +406,14 @@ int main(void) {
 					float bordaDirJogador = jogador.x + JOGADOR_HITBOX_OFFSET_X + JOGADOR_HITBOX_LARGURA;
 
 					if (!entrou_porta && bordaDirJogador >= fimDaFase) {
-						if (faseAtual < 3) {
+						if (faseAtual < 3 && (faseAtual != 1 || chaveF1.coletada)) {
 							jogador.pontos += BONUS_COMPLETAR_FASE;
 							faseAtual++;
 							timerFase = 300.0f;
 							preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
 							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 							introTimer = 2.5f;
-						} else if (!boss_ativo(listaInimigos)) {
+						} else if (faseAtual == 3 && !boss_ativo(listaInimigos)) {
 							jogador.pontos += BONUS_COMPLETAR_FASE;
 							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 							estado = VITORIA;
@@ -444,6 +448,7 @@ int main(void) {
 			BeginMode2D(cam);
 			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3, texCafe, texFundo2);
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoedas, numFramesMoeda, tempoAnimMoeda);
+			if (faseAtual == 1) DesenharChave(chaveF1, fase.cameraX, fase.cameraYOffset);
 			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado);
 			DesenharJogador(&jogador, fase.cameraYOffset);
 			if (jogador.devMode) DesenharGradeDebug(&fase);
