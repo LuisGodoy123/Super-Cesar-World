@@ -14,6 +14,7 @@
 #define VAZIO  0
 #define BLOCO  1
 #define MOEDA  2
+#define PORTA  3
 
 typedef struct {
     int   mapa[LINHAS][COLUNAS];

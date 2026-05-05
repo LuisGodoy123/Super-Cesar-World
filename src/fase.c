@@ -30,6 +30,11 @@ static void limpar_bloco(Fase *f, int l, int c) {
     f->blocos[l][c] = (Bloco){ 0 };
 }
 
+static void colocar_porta(Fase *f, int l, int c) {
+    if (l < 0 || l >= LINHAS || c < 0 || c >= COLUNAS) return;
+    f->mapa[l][c] = PORTA;
+}
+
 static void limpar_segmento(Fase *f, int cIni, int cFim, int lIni, int lFim) {
     for (int l = lIni; l <= lFim; l++)
         for (int c = cIni; c <= cFim; c++)
@@ -144,6 +149,21 @@ static void preencher_fase1(Fase *f) {
     limpar_segmento(f, 102, 108, 9, 9);// prateleira Zona C      (x=102-108, y=9)
     limpar_bloco(f, 9,  111);          // powerup Zona C         (x=111, y=9)
     limpar_bloco(f, 13, 115);          // bloco de saida Zona C  (x=115, y=13)
+
+    // Blocos adicionados manualmente
+    plataforma(f, 104, 106, 13);       // x=105-108, y=11
+    plataforma(f, 114, 116, 13);       // x=112-115, y=11
+    colocar_bloco(f, 12, 103);
+    colocar_bloco(f, 12, 107);
+    colocar_bloco(f, 12, 113);
+    colocar_bloco(f, 12, 117);
+    plataforma(f, 109, 111, 10);
+    colocar_bloco(f, 9, 108);
+    colocar_bloco(f, 9, 112);
+
+    // Porta para a fase 2
+    colocar_porta(f, 15, 126);
+    colocar_porta(f, 16, 126);
 }
 
 static void preencher_fase2(Fase *f) {
@@ -389,6 +409,23 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture
             int y = screenY;
 
             Bloco b = f->blocos[i][j];
+
+            if (tipo == PORTA) {
+                int isTop = (i == 0 || f->mapa[i - 1][j] != PORTA);
+                Color portaFundo = (Color){  20, 120,  50, 255 };
+                Color portaBorda = (Color){   5,  60,  25, 255 };
+                Color portaLuz   = (Color){  80, 200, 110, 255 };
+                DrawRectangle(x, y, tileSize, tileH, portaFundo);
+                DrawRectangleLines(x, y, tileSize, tileH, portaBorda);
+                DrawLine(x + 2, y + 2, x + tileSize - 3, y + 2, portaLuz);
+                DrawLine(x + 2, y + 2, x + 2, y + tileH - 3, portaLuz);
+                if (isTop) {
+                    int fSize = tileSize * 2 / 3;
+                    int tw = MeasureText("2", fSize);
+                    DrawText("2", x + (tileSize - tw) / 2, y + (tileH - fSize) / 2, fSize, portaLuz);
+                }
+                continue;
+            }
 
             if (b.tipo == BLOCO_TIPO_POWERUP) {
                 if (b.estado == BLOCO_ESTADO_ATIVO) {

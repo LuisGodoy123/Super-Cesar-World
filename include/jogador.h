@@ -21,7 +21,7 @@
 #define DESACELERACAO               0.12f
 #define ACELERACAO_AR               0.12f
 #define DESACELERACAO_AR            0.08f
-#define FORCA_PULO                 -9.0f
+#define FORCA_PULO                 -8.5f
 #define FORCA_SEGURAR_PULO         -0.20f
 #define TEMPO_MAXIMO_SEGURAR_PULO   12
 #define CORTE_PULO_CURTO             6

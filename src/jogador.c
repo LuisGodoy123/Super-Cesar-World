@@ -224,7 +224,7 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
     /* gravidade */
     float grav = GRAVIDADE;
     if (j->vy < 0.0f) grav *= 1.0f;
-    else              grav *= 1.3f;
+    else              grav *= 2.5f;
     j->vy += grav;
 
     if (j->vy > VELOCIDADE_QUEDA_MAXIMA) j->vy = VELOCIDADE_QUEDA_MAXIMA;
