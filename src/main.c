@@ -256,14 +256,14 @@ int main(void) {
 	}
 
 	Texture2D texIni1 = {0};
-	if (FileExists("assets/sprites/inimigo1andando.png")) {
-		texIni1 = LoadTexture("assets/sprites/inimigo1andando.png");
+	if (FileExists("assets/sprites/inimigos/inimigo1andando.png")) {
+		texIni1 = LoadTexture("assets/sprites/inimigos/inimigo1andando.png");
 		SetTextureFilter(texIni1, TEXTURE_FILTER_POINT);
 	}
 
 	Texture2D texIni2 = {0};
-	if (FileExists("assets/sprites/inimigo1andando2.png")) {
-		texIni2 = LoadTexture("assets/sprites/inimigo1andando2.png");
+	if (FileExists("assets/sprites/inimigos/inimigo1andando2.png")) {
+		texIni2 = LoadTexture("assets/sprites/inimigos/inimigo1andando2.png");
 		SetTextureFilter(texIni2, TEXTURE_FILTER_POINT);
 	}
 
