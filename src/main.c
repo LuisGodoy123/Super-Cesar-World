@@ -86,7 +86,13 @@ static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *f
 		float x3 = 1700.0f;
 		float x4 = 2200.0f;
 		AdicionarInimigo(listaInimigos, CAMINHADOR, x1, y_superficie_chao(fase, x1, 32, 448.0f));
+		(*listaInimigos)->dados.spriteSet = 2;
+		(*listaInimigos)->dados.largura   = 48;
+		(*listaInimigos)->dados.altura    = 48;
 		AdicionarInimigo(listaInimigos, CAMINHADOR, x2, y_superficie_chao(fase, x2, 32, 352.0f));
+		(*listaInimigos)->dados.spriteSet = 2;
+		(*listaInimigos)->dados.largura   = 48;
+		(*listaInimigos)->dados.altura    = 48;
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x3, y_superficie_chao(fase, x3, 32, 416.0f));
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x4, y_superficie_chao(fase, x4, 32, 320.0f));
 	} else if (faseAtual == 3) {
@@ -292,6 +298,22 @@ int main(void) {
 		SetTextureFilter(texVoador3, TEXTURE_FILTER_POINT);
 	}
 
+	Texture2D texF2Ini1 = {0};
+	if (FileExists("assets/sprites/inimigos/inimigo2andando.png")) {
+		texF2Ini1 = LoadTexture("assets/sprites/inimigos/inimigo2andando.png");
+		SetTextureFilter(texF2Ini1, TEXTURE_FILTER_POINT);
+	}
+	Texture2D texF2Ini2 = {0};
+	if (FileExists("assets/sprites/inimigos/inimigo2andando2.png")) {
+		texF2Ini2 = LoadTexture("assets/sprites/inimigos/inimigo2andando2.png");
+		SetTextureFilter(texF2Ini2, TEXTURE_FILTER_POINT);
+	}
+	Texture2D texF2Ini3 = {0};
+	if (FileExists("assets/sprites/inimigos/inimigo2andando3.png")) {
+		texF2Ini3 = LoadTexture("assets/sprites/inimigos/inimigo2andando3.png");
+		SetTextureFilter(texF2Ini3, TEXTURE_FILTER_POINT);
+	}
+
 	Texture2D texFundo2 = {0};
 	if (FileExists("assets/sprites/sala_brum_jogo.png")) {
 		texFundo2 = LoadTexture("assets/sprites/sala_brum_jogo.png");
@@ -467,7 +489,7 @@ int main(void) {
 			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3, texCafe, texFundo2);
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoedas, numFramesMoeda, tempoAnimMoeda);
 			if (faseAtual == 1) DesenharChave(chaveF1, fase.cameraX, fase.cameraYOffset);
-			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado, texVoador1, texVoador2, texVoador3);
+			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado, texVoador1, texVoador2, texVoador3, texF2Ini1, texF2Ini2, texF2Ini3);
 			DesenharJogador(&jogador, fase.cameraYOffset);
 			if (jogador.devMode) DesenharGradeDebug(&fase);
 			EndMode2D();
@@ -531,6 +553,9 @@ int main(void) {
 	if (texVoador1.id > 0) UnloadTexture(texVoador1);
 	if (texVoador2.id > 0) UnloadTexture(texVoador2);
 	if (texVoador3.id > 0) UnloadTexture(texVoador3);
+	if (texF2Ini1.id > 0) UnloadTexture(texF2Ini1);
+	if (texF2Ini2.id > 0) UnloadTexture(texF2Ini2);
+	if (texF2Ini3.id > 0) UnloadTexture(texF2Ini3);
 	if (texFundo2.id > 0) UnloadTexture(texFundo2);
 	UnloadSound(sndCoin);
 	UnloadSound(sndJump);

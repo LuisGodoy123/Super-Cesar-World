@@ -13,8 +13,9 @@ static int pontos_por_tipo(int tipo) {
 
 /* dimensoes de cada tipo */
 static void definir_dimensoes(Inimigo *ini) {
-    if (ini->tipo == BOSS) { ini->largura = 64; ini->altura = 64; }
-    else                   { ini->largura = 32; ini->altura = 32; }
+    if      (ini->tipo == BOSS)       { ini->largura = 64; ini->altura = 64; }
+    else if (ini->tipo == CAMINHADOR) { ini->largura = 32; ini->altura = 32; }
+    else                              { ini->largura = 32; ini->altura = 32; }
 }
 
 /* ------------------------------------------------------------------ */
@@ -38,6 +39,7 @@ No *CriarInimigo(int tipo, float x, float y) {
     novo->dados.stuckTimer = 0.0f;
     novo->dados.patrulhaMin = 0.0f;
     novo->dados.patrulhaMax = 0.0f;
+    novo->dados.spriteSet   = 1;
     definir_dimensoes(&novo->dados);
 
     novo->proximo = NULL;
@@ -196,7 +198,10 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                     ini->animTimer += dt;
                     if (ini->animTimer >= 0.18f) {
                         ini->animTimer = 0.0f;
-                        ini->animFrame = 1 - ini->animFrame;
+                        if (ini->spriteSet == 2)
+                            ini->animFrame = (ini->animFrame + 1) % 3;
+                        else
+                            ini->animFrame = 1 - ini->animFrame;
                     }
                 }
 
@@ -245,7 +250,8 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
 
 void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
                       Texture2D texIni1, Texture2D texIni2, Texture2D texIniRebaixado,
-                      Texture2D texVoador1, Texture2D texVoador2, Texture2D texVoador3) {
+                      Texture2D texVoador1, Texture2D texVoador2, Texture2D texVoador3,
+                      Texture2D texF2Ini1, Texture2D texF2Ini2, Texture2D texF2Ini3) {
     No *atual = lista;
     float zoom = CAMERA_ZOOM;
 
@@ -281,19 +287,21 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
             } else {
                 /* CAMINHADOR: rebaixado apos 1 pulo, animado no estado normal */
                 Texture2D tex;
-                if (ini->vida <= 1 && texIniRebaixado.id > 0)
+                if (ini->vida <= 1 && texIniRebaixado.id > 0) {
                     tex = texIniRebaixado;
-                else if (ini->animFrame == 0 && texIni1.id > 0)
-                    tex = texIni1;
-                else
-                    tex = texIni2;
+                } else if (ini->spriteSet == 2) {
+                    tex = (ini->animFrame == 0) ? texF2Ini1 :
+                          (ini->animFrame == 1) ? texF2Ini2 : texF2Ini3;
+                } else {
+                    tex = (ini->animFrame == 0 && texIni1.id > 0) ? texIni1 : texIni2;
+                }
 
                 if (tex.id > 0) {
                     float tw = (float)tex.width;
                     float th = (float)tex.height;
                     Rectangle src  = { 0, 0, tw, th };
                     Rectangle dest = { (float)screenX, (float)screenY, (float)largura, (float)altura };
-                    if (ini->vx < 0) { src.x = tw; src.width = -tw; }
+                    if (ini->vx > 0) { src.x = tw; src.width = -tw; }
                     DrawTexturePro(tex, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
                 } else {
                     DrawRectangle(screenX, screenY, largura, altura, BROWN);
