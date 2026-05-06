@@ -8,17 +8,19 @@
 #define CAMINHADOR  0
 #define PERSEGUIDOR 1
 #define BOSS        2
+#define VOADOR      3
 
 #define VEL_CAMINHADOR   80.0f
 #define VEL_PERSEGUIDOR 120.0f
 #define VEL_BOSS         50.0f
+#define VEL_VOADOR      100.0f
 #define PATROL_RANGE     96.0f  // 3 tiles de patrulha para cada lado
 #define INTERVALO_TIRO    3.0f  // boss atira a cada 3 segundos
 
 typedef struct {
     float x, y;
     float vx, vy;
-    int tipo;          // CAMINHADOR | PERSEGUIDOR | BOSS
+    int tipo;          // CAMINHADOR | PERSEGUIDOR | BOSS | VOADOR
     int vida;
     int ativo;
     int largura, altura;
@@ -27,6 +29,8 @@ typedef struct {
     float animTimer;
     int   animFrame;
     float stuckTimer;
+    float patrulhaMin; // limite esquerdo do voador
+    float patrulhaMax; // limite direito do voador
 } Inimigo;
 
 typedef struct No {        // NO DA LISTA ENCADEADA
@@ -36,8 +40,11 @@ typedef struct No {        // NO DA LISTA ENCADEADA
 
 No  *CriarInimigo(int tipo, float x, float y);
 void AdicionarInimigo(No **lista, int tipo, float x, float y);
+void AdicionarInimigoVoador(No **lista, float x, float y, float min, float max);
 void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick);
-void DesenharInimigos(No *lista, float cameraX, float cameraYOffset, Texture2D texIni1, Texture2D texIni2, Texture2D texIniRebaixado);
+void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
+                      Texture2D texIni1, Texture2D texIni2, Texture2D texIniRebaixado,
+                      Texture2D texVoador);
 void LiberarInimigos(No *lista);
 
 #endif

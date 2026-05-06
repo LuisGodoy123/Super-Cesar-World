@@ -7,6 +7,7 @@ static int pontos_por_tipo(int tipo) {
     if (tipo == CAMINHADOR)  return 200;
     if (tipo == PERSEGUIDOR) return 300;
     if (tipo == BOSS)        return 1000;
+    if (tipo == VOADOR)      return 250;
     return 0;
 }
 
@@ -25,7 +26,7 @@ No *CriarInimigo(int tipo, float x, float y) {
 
     novo->dados.x       = x;
     novo->dados.y       = y;
-    novo->dados.vx      = (tipo == BOSS) ? VEL_BOSS : VEL_CAMINHADOR;
+    novo->dados.vx      = (tipo == BOSS) ? VEL_BOSS : (tipo == VOADOR) ? VEL_VOADOR : VEL_CAMINHADOR;
     novo->dados.vy      = 0.0f;
     novo->dados.tipo    = tipo;
     novo->dados.vida    = (tipo == BOSS) ? 5 : (tipo == CAMINHADOR) ? 2 : 1;
@@ -35,6 +36,8 @@ No *CriarInimigo(int tipo, float x, float y) {
     novo->dados.animTimer  = 0.0f;
     novo->dados.animFrame  = 0;
     novo->dados.stuckTimer = 0.0f;
+    novo->dados.patrulhaMin = 0.0f;
+    novo->dados.patrulhaMax = 0.0f;
     definir_dimensoes(&novo->dados);
 
     novo->proximo = NULL;
@@ -47,6 +50,14 @@ No *CriarInimigo(int tipo, float x, float y) {
 
 void AdicionarInimigo(No **lista, int tipo, float x, float y) {
     No *novo  = CriarInimigo(tipo, x, y);
+    novo->proximo = *lista;
+    *lista = novo;
+}
+
+void AdicionarInimigoVoador(No **lista, float x, float y, float min, float max) {
+    No *novo = CriarInimigo(VOADOR, x, y);
+    novo->dados.patrulhaMin = min;
+    novo->dados.patrulhaMax = max;
     novo->proximo = *lista;
     *lista = novo;
 }
@@ -139,6 +150,18 @@ static void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
     }
 }
 
+static void aplicar_fisica_voador(Inimigo *ini, float dt) {
+    ini->x += ini->vx * dt;
+
+    if (ini->vx > 0.0f && ini->x >= ini->patrulhaMax) {
+        ini->x  = ini->patrulhaMax;
+        ini->vx = -ini->vx;
+    } else if (ini->vx < 0.0f && ini->x <= ini->patrulhaMin) {
+        ini->x  = ini->patrulhaMin;
+        ini->vx = -ini->vx;
+    }
+}
+
 /* verifica colisao entre retangulos (usa VerificarColisao de fase.c) */
 static int colidiu(Inimigo *ini, Jogador *j) {
     Rectangle retJog = { j->x + JOGADOR_HITBOX_OFFSET_X, j->y, JOGADOR_HITBOX_LARGURA, (float)j->alturaAtual };
@@ -157,34 +180,36 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
         Inimigo *ini = &atual->dados;
 
         if (ini->ativo) {
-            /* movimento e colisao com o terreno */
-            aplicar_fisica_inimigo(ini, f, dt);
+            if (ini->tipo == VOADOR) {
+                aplicar_fisica_voador(ini, dt);
+            } else {
+                /* movimento e colisao com o terreno */
+                aplicar_fisica_inimigo(ini, f, dt);
 
-            /* animacao de caminhada */
-            if (ini->tipo == CAMINHADOR || ini->tipo == PERSEGUIDOR) {
-                ini->animTimer += dt;
-                if (ini->animTimer >= 0.18f) {
-                    ini->animTimer = 0.0f;
-                    ini->animFrame = 1 - ini->animFrame;
+                /* animacao de caminhada */
+                if (ini->tipo == CAMINHADOR || ini->tipo == PERSEGUIDOR) {
+                    ini->animTimer += dt;
+                    if (ini->animTimer >= 0.18f) {
+                        ini->animTimer = 0.0f;
+                        ini->animFrame = 1 - ini->animFrame;
+                    }
+                }
+
+                if (ini->tipo == BOSS) {
+                    ini->timerTiro -= dt;
+                    if (ini->timerTiro <= 0.0f) {
+                        ini->timerTiro = INTERVALO_TIRO;
+                    }
                 }
             }
 
-            if (ini->tipo == BOSS) {
-                ini->timerTiro -= dt;
-                if (ini->timerTiro <= 0.0f) {
-                    ini->timerTiro = INTERVALO_TIRO;
-                    /* TODO: criar projetil na direcao do jogador */
-                }
-            }
-
-            /* colisao com o jogador */
+            /* colisao com o jogador (todos os tipos) */
             if (j->estado != MORTO && colidiu(ini, j)) {
                 float jogadorBase = j->y + (float)j->alturaAtual;
                 float iniMeio     = ini->y + (float)ini->altura * 0.5f;
                 int pisou_em_cima = (j->vyAnterior > -3.0f) && (jogadorBase < iniMeio);
 
                 if (pisou_em_cima) {
-                    /* pés do jogador na metade superior do inimigo = pulo em cima */
                     PlaySound(sndKick);
                     ini->vida--;
                     if (ini->vida <= 0) {
@@ -197,7 +222,6 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                     j->jumpHoldFrames = 0;
                     j->jumpCutFeito = 0;
                 } else if (j->estado == VIVO) {
-                    /* colisao lateral ou por baixo = dano ao jogador */
                     j->vidas--;
                     j->estado          = INVENCIVEL;
                     j->timerInvencivel = TEMPO_INVENCIVEL;
@@ -214,7 +238,9 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
 /* DesenharInimigos — percorre lista e renderiza                        */
 /* ------------------------------------------------------------------ */
 
-void DesenharInimigos(No *lista, float cameraX, float cameraYOffset, Texture2D texIni1, Texture2D texIni2, Texture2D texIniRebaixado) {
+void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
+                      Texture2D texIni1, Texture2D texIni2, Texture2D texIniRebaixado,
+                      Texture2D texVoador) {
     No *atual = lista;
     float zoom = CAMERA_ZOOM;
 
@@ -227,7 +253,18 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset, Texture2D t
             int largura = (int)((float)ini->largura * zoom);
             int altura  = (int)((float)ini->altura  * zoom);
 
-            if (ini->tipo == BOSS) {
+            if (ini->tipo == VOADOR) {
+                if (texVoador.id > 0) {
+                    float tw = (float)texVoador.width;
+                    float th = (float)texVoador.height;
+                    Rectangle src  = { 0, 0, tw, th };
+                    Rectangle dest = { (float)screenX, (float)screenY, (float)largura, (float)altura };
+                    if (ini->vx < 0) { src.x = tw; src.width = -tw; }
+                    DrawTexturePro(texVoador, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                } else {
+                    DrawRectangle(screenX, screenY, largura, altura, SKYBLUE);
+                }
+            } else if (ini->tipo == BOSS) {
                 DrawRectangle(screenX, screenY, largura, altura, PURPLE);
                 DrawRectangle(screenX, screenY - (int)(10 * zoom), largura, (int)(6 * zoom), DARKGRAY);
                 DrawRectangle(screenX, screenY - (int)(10 * zoom),
@@ -239,8 +276,10 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset, Texture2D t
                 Texture2D tex;
                 if (ini->vida <= 1 && texIniRebaixado.id > 0)
                     tex = texIniRebaixado;
+                else if (ini->animFrame == 0 && texIni1.id > 0)
+                    tex = texIni1;
                 else
-                    tex = (ini->animFrame == 0) ? texIni1 : texIni2;
+                    tex = texIni2;
 
                 if (tex.id > 0) {
                     float tw = (float)tex.width;
