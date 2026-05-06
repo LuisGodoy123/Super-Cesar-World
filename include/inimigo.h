@@ -44,7 +44,7 @@ void AdicionarInimigoVoador(No **lista, float x, float y, float min, float max);
 void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick);
 void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
                       Texture2D texIni1, Texture2D texIni2, Texture2D texIniRebaixado,
-                      Texture2D texVoador);
+                      Texture2D texVoador1, Texture2D texVoador2, Texture2D texVoador3);
 void LiberarInimigos(No *lista);
 
 #endif

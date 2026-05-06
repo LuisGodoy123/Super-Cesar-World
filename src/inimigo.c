@@ -182,6 +182,11 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
         if (ini->ativo) {
             if (ini->tipo == VOADOR) {
                 aplicar_fisica_voador(ini, dt);
+                ini->animTimer += dt;
+                if (ini->animTimer >= 0.15f) {
+                    ini->animTimer = 0.0f;
+                    ini->animFrame = (ini->animFrame + 1) % 3;
+                }
             } else {
                 /* movimento e colisao com o terreno */
                 aplicar_fisica_inimigo(ini, f, dt);
@@ -240,7 +245,7 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
 
 void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
                       Texture2D texIni1, Texture2D texIni2, Texture2D texIniRebaixado,
-                      Texture2D texVoador) {
+                      Texture2D texVoador1, Texture2D texVoador2, Texture2D texVoador3) {
     No *atual = lista;
     float zoom = CAMERA_ZOOM;
 
@@ -254,13 +259,15 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
             int altura  = (int)((float)ini->altura  * zoom);
 
             if (ini->tipo == VOADOR) {
-                if (texVoador.id > 0) {
-                    float tw = (float)texVoador.width;
-                    float th = (float)texVoador.height;
+                Texture2D texV = (ini->animFrame == 1) ? texVoador2 :
+                                 (ini->animFrame == 2) ? texVoador3 : texVoador1;
+                if (texV.id > 0) {
+                    float tw = (float)texV.width;
+                    float th = (float)texV.height;
                     Rectangle src  = { 0, 0, tw, th };
                     Rectangle dest = { (float)screenX, (float)screenY, (float)largura, (float)altura };
                     if (ini->vx < 0) { src.x = tw; src.width = -tw; }
-                    DrawTexturePro(texVoador, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                    DrawTexturePro(texV, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
                 } else {
                     DrawRectangle(screenX, screenY, largura, altura, SKYBLUE);
                 }

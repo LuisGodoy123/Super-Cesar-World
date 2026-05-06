@@ -276,10 +276,20 @@ int main(void) {
 		SetTextureFilter(texIniRebaixado, TEXTURE_FILTER_POINT);
 	}
 
-	Texture2D texVoador = {0};
+	Texture2D texVoador1 = {0};
 	if (FileExists("assets/sprites/inimigos/inimigoVoador.png")) {
-		texVoador = LoadTexture("assets/sprites/inimigos/inimigoVoador.png");
-		SetTextureFilter(texVoador, TEXTURE_FILTER_POINT);
+		texVoador1 = LoadTexture("assets/sprites/inimigos/inimigoVoador.png");
+		SetTextureFilter(texVoador1, TEXTURE_FILTER_POINT);
+	}
+	Texture2D texVoador2 = {0};
+	if (FileExists("assets/sprites/inimigos/inimigoVoador2.png")) {
+		texVoador2 = LoadTexture("assets/sprites/inimigos/inimigoVoador2.png");
+		SetTextureFilter(texVoador2, TEXTURE_FILTER_POINT);
+	}
+	Texture2D texVoador3 = {0};
+	if (FileExists("assets/sprites/inimigos/inimigoVoador3.png")) {
+		texVoador3 = LoadTexture("assets/sprites/inimigos/inimigoVoador3.png");
+		SetTextureFilter(texVoador3, TEXTURE_FILTER_POINT);
 	}
 
 	Texture2D texFundo2 = {0};
@@ -457,7 +467,7 @@ int main(void) {
 			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3, texCafe, texFundo2);
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoedas, numFramesMoeda, tempoAnimMoeda);
 			if (faseAtual == 1) DesenharChave(chaveF1, fase.cameraX, fase.cameraYOffset);
-			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado, texVoador);
+			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado, texVoador1, texVoador2, texVoador3);
 			DesenharJogador(&jogador, fase.cameraYOffset);
 			if (jogador.devMode) DesenharGradeDebug(&fase);
 			EndMode2D();
@@ -518,7 +528,9 @@ int main(void) {
 	if (texIni1.id > 0) UnloadTexture(texIni1);
 	if (texIni2.id > 0) UnloadTexture(texIni2);
 	if (texIniRebaixado.id > 0) UnloadTexture(texIniRebaixado);
-	if (texVoador.id > 0) UnloadTexture(texVoador);
+	if (texVoador1.id > 0) UnloadTexture(texVoador1);
+	if (texVoador2.id > 0) UnloadTexture(texVoador2);
+	if (texVoador3.id > 0) UnloadTexture(texVoador3);
 	if (texFundo2.id > 0) UnloadTexture(texFundo2);
 	UnloadSound(sndCoin);
 	UnloadSound(sndJump);
