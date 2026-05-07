@@ -29,9 +29,11 @@ typedef struct {
     float animTimer;
     int   animFrame;
     float stuckTimer;
-    float patrulhaMin; // limite esquerdo do voador
-    float patrulhaMax; // limite direito do voador
-    int   spriteSet;   // 1 = fase1, 2 = fase2
+    float patrulhaMin;  // limite esquerdo (voador/boss)
+    float patrulhaMax;  // limite direito  (voador/boss)
+    float patrulhaYMin; // limite superior do boss
+    float patrulhaYMax; // limite inferior do boss
+    int   spriteSet;    // 1 = fase1, 2 = fase2
 } Inimigo;
 
 typedef struct No {        // NO DA LISTA ENCADEADA

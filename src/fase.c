@@ -237,9 +237,6 @@ static void preencher_fase3(Fase *f) {
     for (int c = 49; c <= 53; c++) colocar_bloco(f, 16, c);
     for (int c = 56; c <= 61; c++) colocar_bloco(f, 10, c);
     for (int c = 63; c <= 67; c++) colocar_bloco(f, 14, c);
-    //arena do boss
-    for (int c = 70; c <= 79; c++) colocar_bloco(f, 20, c);
-    for (int c = 70; c <= 79; c++) colocar_bloco(f, 21, c);
 
     //moedas
     for (int c =  3; c <=  5; c++) f->mapa[16][c] = MOEDA;

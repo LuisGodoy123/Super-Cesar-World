@@ -103,7 +103,13 @@ static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *f
 		AdicionarInimigo(listaInimigos, CAMINHADOR, x1, y_superficie_chao(fase, x1, 32, 480.0f));
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x2, y_superficie_chao(fase, x2, 32, 352.0f));
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x3, y_superficie_chao(fase, x3, 32, 416.0f));
-		AdicionarInimigo(listaInimigos, BOSS,       x4, y_superficie_chao(fase, x4, 64, 576.0f));
+		AdicionarInimigo(listaInimigos, BOSS, 3200.0f, 380.0f);
+		(*listaInimigos)->dados.patrulhaMin  = 1408.0f; // col 44 — bem mais à esquerda
+		(*listaInimigos)->dados.patrulhaMax  = 4064.0f; // col 127 — quase no final do mapa
+		(*listaInimigos)->dados.patrulhaYMin = 280.0f;
+		(*listaInimigos)->dados.patrulhaYMax = 450.0f;
+		(*listaInimigos)->dados.timerTiro    = 5.0f;
+		(*listaInimigos)->dados.vy           = VEL_BOSS;
 	}
 }
 

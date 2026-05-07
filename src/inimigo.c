@@ -13,7 +13,7 @@ static int pontos_por_tipo(int tipo) {
 
 /* dimensoes de cada tipo */
 static void definir_dimensoes(Inimigo *ini) {
-    if      (ini->tipo == BOSS)       { ini->largura = 64; ini->altura = 64; }
+    if      (ini->tipo == BOSS)       { ini->largura = 96; ini->altura = 96; }
     else if (ini->tipo == CAMINHADOR) { ini->largura = 32; ini->altura = 32; }
     else                              { ini->largura = 32; ini->altura = 32; }
 }
@@ -30,16 +30,18 @@ No *CriarInimigo(int tipo, float x, float y) {
     novo->dados.vx      = (tipo == BOSS) ? VEL_BOSS : (tipo == VOADOR) ? VEL_VOADOR : VEL_CAMINHADOR;
     novo->dados.vy      = 0.0f;
     novo->dados.tipo    = tipo;
-    novo->dados.vida    = (tipo == BOSS) ? 5 : (tipo == CAMINHADOR) ? 2 : 1;
+    novo->dados.vida    = (tipo == BOSS) ? 8 : (tipo == CAMINHADOR) ? 2 : 1;
     novo->dados.ativo   = 1;
     novo->dados.origemX   = x;
     novo->dados.timerTiro = INTERVALO_TIRO;
     novo->dados.animTimer  = 0.0f;
     novo->dados.animFrame  = 0;
     novo->dados.stuckTimer = 0.0f;
-    novo->dados.patrulhaMin = 0.0f;
-    novo->dados.patrulhaMax = 0.0f;
-    novo->dados.spriteSet   = 1;
+    novo->dados.patrulhaMin  = 0.0f;
+    novo->dados.patrulhaMax  = 0.0f;
+    novo->dados.patrulhaYMin = 0.0f;
+    novo->dados.patrulhaYMax = 0.0f;
+    novo->dados.spriteSet    = 1;
     definir_dimensoes(&novo->dados);
 
     novo->proximo = NULL;
@@ -152,6 +154,27 @@ static void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
     }
 }
 
+static void aplicar_fisica_boss(Inimigo *ini, float dt) {
+    ini->x += ini->vx * dt;
+    ini->y += ini->vy * dt;
+
+    if (ini->vx > 0.0f && ini->x >= ini->patrulhaMax) {
+        ini->x  = ini->patrulhaMax;
+        ini->vx = -ini->vx;
+    } else if (ini->vx < 0.0f && ini->x <= ini->patrulhaMin) {
+        ini->x  = ini->patrulhaMin;
+        ini->vx = -ini->vx;
+    }
+
+    if (ini->vy > 0.0f && ini->y >= ini->patrulhaYMax) {
+        ini->y  = ini->patrulhaYMax;
+        ini->vy = -ini->vy;
+    } else if (ini->vy < 0.0f && ini->y <= ini->patrulhaYMin) {
+        ini->y  = ini->patrulhaYMin;
+        ini->vy = -ini->vy;
+    }
+}
+
 static void aplicar_fisica_voador(Inimigo *ini, float dt) {
     ini->x += ini->vx * dt;
 
@@ -189,6 +212,40 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                     ini->animTimer = 0.0f;
                     ini->animFrame = (ini->animFrame + 1) % 3;
                 }
+            } else if (ini->tipo == BOSS) {
+                ini->animTimer += dt;
+                if (ini->animTimer >= 0.12f) {
+                    ini->animTimer = 0.0f;
+                    ini->animFrame = (ini->animFrame + 1) % 6;
+                }
+                if (ini->stuckTimer > 0.0f) {
+                    if (ini->y < 576.0f) {
+                        // descendo suavemente ate o chao
+                        ini->y += ini->vy * dt;
+                        if (ini->y >= 576.0f) {
+                            ini->y  = 576.0f;
+                            ini->vy = 0.0f;
+                        }
+                    } else {
+                        // parado no chao, contagem regressiva
+                        ini->stuckTimer -= dt;
+                        if (ini->stuckTimer <= 0.0f) {
+                            ini->stuckTimer = 0.0f;
+                            ini->timerTiro  = 5.0f;
+                            ini->vx = VEL_BOSS;
+                            ini->vy = -400.0f; // decolagem rapida para cima
+                        }
+                    }
+                } else {
+                    // voando
+                    aplicar_fisica_boss(ini, dt);
+                    ini->timerTiro -= dt;
+                    if (ini->timerTiro <= 0.0f) {
+                        ini->stuckTimer = 2.5f;
+                        ini->vx = 0.0f;
+                        ini->vy = 200.0f; // velocidade de descida
+                    }
+                }
             } else {
                 /* movimento e colisao com o terreno */
                 aplicar_fisica_inimigo(ini, f, dt);
@@ -202,18 +259,6 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                             ini->animFrame = (ini->animFrame + 1) % 3;
                         else
                             ini->animFrame = 1 - ini->animFrame;
-                    }
-                }
-
-                if (ini->tipo == BOSS) {
-                    ini->timerTiro -= dt;
-                    if (ini->timerTiro <= 0.0f) {
-                        ini->timerTiro = INTERVALO_TIRO;
-                    }
-                    ini->animTimer += dt;
-                    if (ini->animTimer >= 0.12f) {
-                        ini->animTimer = 0.0f;
-                        ini->animFrame = (ini->animFrame + 1) % 6;
                     }
                 }
             }
@@ -296,9 +341,6 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
                 } else {
                     DrawRectangle(screenX, screenY, largura, altura, PURPLE);
                 }
-                DrawRectangle(screenX, screenY - (int)(10 * zoom), largura, (int)(6 * zoom), DARKGRAY);
-                DrawRectangle(screenX, screenY - (int)(10 * zoom),
-                              largura * ini->vida / 5, (int)(6 * zoom), RED);
             } else if (ini->tipo == PERSEGUIDOR) {
                 DrawRectangle(screenX, screenY, largura, altura, ORANGE);
             } else {
