@@ -210,6 +210,11 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                     if (ini->timerTiro <= 0.0f) {
                         ini->timerTiro = INTERVALO_TIRO;
                     }
+                    ini->animTimer += dt;
+                    if (ini->animTimer >= 0.12f) {
+                        ini->animTimer = 0.0f;
+                        ini->animFrame = (ini->animFrame + 1) % 6;
+                    }
                 }
             }
 
@@ -251,7 +256,8 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
 void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
                       Texture2D texIni1, Texture2D texIni2, Texture2D texIniRebaixado,
                       Texture2D texVoador1, Texture2D texVoador2, Texture2D texVoador3,
-                      Texture2D texF2Ini1, Texture2D texF2Ini2, Texture2D texF2Ini3) {
+                      Texture2D texF2Ini1, Texture2D texF2Ini2, Texture2D texF2Ini3,
+                      Texture2D texBoss[6]) {
     No *atual = lista;
     float zoom = CAMERA_ZOOM;
 
@@ -278,7 +284,18 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
                     DrawRectangle(screenX, screenY, largura, altura, SKYBLUE);
                 }
             } else if (ini->tipo == BOSS) {
-                DrawRectangle(screenX, screenY, largura, altura, PURPLE);
+                int frame = ini->animFrame % 6;
+                Texture2D texB = texBoss[frame];
+                if (texB.id > 0) {
+                    float tw = (float)texB.width;
+                    float th = (float)texB.height;
+                    Rectangle src  = { 0, 0, tw, th };
+                    Rectangle dest = { (float)screenX, (float)screenY, (float)largura, (float)altura };
+                    if (ini->vx > 0) { src.x = tw; src.width = -tw; }
+                    DrawTexturePro(texB, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                } else {
+                    DrawRectangle(screenX, screenY, largura, altura, PURPLE);
+                }
                 DrawRectangle(screenX, screenY - (int)(10 * zoom), largura, (int)(6 * zoom), DARKGRAY);
                 DrawRectangle(screenX, screenY - (int)(10 * zoom),
                               largura * ini->vida / 5, (int)(6 * zoom), RED);
