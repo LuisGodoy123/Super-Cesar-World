@@ -170,40 +170,53 @@ static void preencher_fase1(Fase *f) {
 }
 
 static void preencher_fase2(Fase *f) {
-    //chao com uma lacuna
-    preencher_chao(f, 0, 34, 21);
-    preencher_chao(f, 40, COLUNAS - 1, 21);
+    // Chao com lacuna no centro do mapa (6 tiles)
+    preencher_chao(f,  0,  58, 21);
+    preencher_chao(f, 65, 129, 21);
 
-    //plataformas intermediarias
-    for (int c =  3; c <=  8; c++) colocar_bloco(f, 16, c);
-    for (int c = 11; c <= 16; c++) colocar_bloco(f, 13, c);
-    for (int c = 20; c <= 24; c++) colocar_bloco(f, 17, c);
-    for (int c = 27; c <= 33; c++) colocar_bloco(f, 12, c);
-    for (int c = 38; c <= 43; c++) colocar_bloco(f, 15, c);
-    for (int c = 46; c <= 51; c++) colocar_bloco(f, 11, c);
-    for (int c = 55; c <= 60; c++) colocar_bloco(f, 14, c);
-    for (int c = 63; c <= 68; c++) colocar_bloco(f, 17, c);
-    for (int c = 72; c <= 78; c++) colocar_bloco(f, 13, c);
+    // 9 plataformas intermediarias com alturas variadas
+    for (int c =  4; c <=  9; c++) colocar_bloco(f, 18, c);    // baixa, inicio
+    for (int c = 15; c <= 20; c++) colocar_bloco(f, 15, c);    // media
+    for (int c = 26; c <= 31; c++) colocar_bloco(f, 19, c);    // muito baixa
+    for (int c = 37; c <= 42; c++) colocar_bloco(f, 13, c);    // alta
+    for (int c = 50; c <= 55; c++) colocar_bloco(f, 16, c);    // media, beira da lacuna
+    for (int c = 68; c <= 73; c++) colocar_bloco(f, 18, c);    // baixa, pos-lacuna
+    for (int c = 80; c <= 85; c++) colocar_bloco(f, 14, c);    // media
+    for (int c = 94; c <= 99; c++) colocar_bloco(f, 17, c);    // baixa
+    for (int c = 108; c <= 113; c++) colocar_bloco(f, 11, c);  // alta final
 
-    //moedas
-    for (int c =  4; c <=  7; c++) f->mapa[15][c] = MOEDA;
-    for (int c = 12; c <= 15; c++) f->mapa[12][c] = MOEDA;
-    for (int c = 28; c <= 32; c++) f->mapa[11][c] = MOEDA;
-    for (int c = 39; c <= 42; c++) f->mapa[14][c] = MOEDA;
-    for (int c = 47; c <= 50; c++) f->mapa[10][c] = MOEDA;
-    for (int c = 56; c <= 59; c++) f->mapa[13][c] = MOEDA;
-    for (int c = 73; c <= 77; c++) f->mapa[12][c] = MOEDA;
+    // 7 grupos de moedas acima das plataformas
+    for (int c =  5; c <=  8; c++) f->mapa[17][c] = MOEDA;
+    for (int c = 16; c <= 19; c++) f->mapa[14][c] = MOEDA;
+    for (int c = 38; c <= 41; c++) f->mapa[12][c] = MOEDA;
+    for (int c = 51; c <= 54; c++) f->mapa[15][c] = MOEDA;
+    for (int c = 69; c <= 72; c++) f->mapa[17][c] = MOEDA;
+    for (int c = 81; c <= 84; c++) f->mapa[13][c] = MOEDA;
+    for (int c = 109; c <= 112; c++) f->mapa[10][c] = MOEDA;
 
-    // Blocos de poder: fileira mista + solo alto
-    // Fileira: [tijolo][?][tijolo][tijolo][?][tijolo]
-    colocar_bloco(f,   17, 50); colocar_powerup(f, 17, 51);
-    colocar_bloco(f,   17, 52); colocar_bloco(f,   17, 53);
-    colocar_powerup(f, 17, 54); colocar_bloco(f,   17, 55);
-    // Solo alto acima da fileira (bater de baixo saindo da fileira)
-    colocar_powerup(f, 14, 52);
+    // Fileira mista [tijolo][?][tijolo][tijolo][?][tijolo] + solo alto isolado
+    colocar_bloco(f,   17, 31); colocar_powerup(f, 17, 32);
+    colocar_bloco(f,   17, 33); colocar_bloco(f,   17, 34);
+    colocar_powerup(f, 17, 35); colocar_bloco(f,   17, 36);
+    colocar_powerup(f, 14, 33);
 
-    // Estrutura de parkour apos a ultima plataforma (degrau row17, prateleira row13)
-    estrutura_parkour(f, 82, 17, 13);
+    // Estrutura de parkour (degrau row18, prateleira row14)
+    estrutura_parkour(f, 95, 18, 14);
+
+    // Remover plataforma row19, cols 26-31
+    limpar_segmento(f, 26, 31, 19, 19);
+
+    // Blocos de tijolo na lacuna (row21, cols 61-62)
+    preencher_chao(f, 61, 62, 21);
+
+    // Remover degrau de entrada do parkour (row18, cols 95-97)
+    limpar_bloco(f, 18, 95);
+    limpar_bloco(f, 18, 96);
+    limpar_bloco(f, 18, 97);
+
+    // Porta para a fase 3
+    colocar_porta(f, 19, 125);
+    colocar_porta(f, 20, 125);
 }
 
 static void preencher_fase3(Fase *f) {
@@ -424,8 +437,9 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture
                 DrawLine(x + 2, y + 2, x + 2, y + tileH - 3, portaLuz);
                 if (isTop) {
                     int fSize = tileSize * 2 / 3;
-                    int tw = MeasureText("2", fSize);
-                    DrawText("2", x + (tileSize - tw) / 2, y + (tileH - fSize) / 2, fSize, portaLuz);
+                    const char *num = TextFormat("%d", f->numero + 1);
+                    int tw = MeasureText(num, fSize);
+                    DrawText(num, x + (tileSize - tw) / 2, y + (tileH - fSize) / 2, fSize, portaLuz);
                 }
                 continue;
             }
