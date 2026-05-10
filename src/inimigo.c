@@ -27,7 +27,7 @@ No *CriarInimigo(int tipo, float x, float y) {
 
     novo->dados.x       = x;
     novo->dados.y       = y;
-    novo->dados.vx      = (tipo == BOSS) ? VEL_BOSS : (tipo == VOADOR) ? VEL_VOADOR : VEL_CAMINHADOR;
+    novo->dados.vx      = (tipo == BOSS) ? VEL_BOSS : (tipo == VOADOR) ? VEL_VOADOR : (tipo == PERSEGUIDOR) ? VEL_PERSEGUIDOR : VEL_CAMINHADOR;
     novo->dados.vy      = 0.0f;
     novo->dados.tipo    = tipo;
     novo->dados.vida    = (tipo == BOSS) ? 8 : (tipo == CAMINHADOR) ? 2 : 1;
@@ -84,7 +84,7 @@ static float velocidade_por_tipo(int tipo) {
 }
 
 static void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
-    if (ini->vx == 0.0f) ini->vx = velocidade_por_tipo(ini->tipo);
+    if (ini->vx == 0.0f && ini->tipo != PERSEGUIDOR) ini->vx = velocidade_por_tipo(ini->tipo);
 
     ini->x += ini->vx * dt;
 
@@ -247,6 +247,26 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                     }
                 }
             } else {
+                /* PERSEGUIDOR: persegue o jogador e para na borda do mapa */
+                if (ini->tipo == PERSEGUIDOR) {
+                    int dir = (j->x > ini->x) ? 1 : -1;
+                    int linPe     = (int)(ini->y + ini->altura) / TILE;
+                    int colCentro = (int)(ini->x + ini->largura * 0.5f) / TILE;
+                    int noChao    = tile_solido(f, colCentro, linPe);
+
+                    if (noChao) {
+                        int colFrente = (dir > 0) ? (int)(ini->x + ini->largura) / TILE
+                                                  : (int)(ini->x - 1.0f) / TILE;
+                        if (tile_solido(f, colFrente, linPe)) {
+                            ini->vx = (float)dir * VEL_PERSEGUIDOR;
+                        } else {
+                            ini->vx = 0.0f;
+                            ini->stuckTimer = 0.0f;
+                        }
+                    } else {
+                        ini->vx = (float)dir * VEL_PERSEGUIDOR;
+                    }
+                }
                 /* movimento e colisao com o terreno */
                 aplicar_fisica_inimigo(ini, f, dt);
 
