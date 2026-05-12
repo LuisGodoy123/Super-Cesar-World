@@ -86,13 +86,7 @@ static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *f
 		float x3 = 1700.0f;
 		float x4 = 2200.0f;
 		AdicionarInimigo(listaInimigos, CAMINHADOR, x1, y_superficie_chao(fase, x1, 32, 448.0f));
-		(*listaInimigos)->dados.spriteSet = 2;
-		(*listaInimigos)->dados.largura   = 48;
-		(*listaInimigos)->dados.altura    = 48;
 		AdicionarInimigo(listaInimigos, CAMINHADOR, x2, y_superficie_chao(fase, x2, 32, 352.0f));
-		(*listaInimigos)->dados.spriteSet = 2;
-		(*listaInimigos)->dados.largura   = 48;
-		(*listaInimigos)->dados.altura    = 48;
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x3, y_superficie_chao(fase, x3, 32, 416.0f));
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x4, y_superficie_chao(fase, x4, 32, 320.0f));
 	} else if (faseAtual == 3) {

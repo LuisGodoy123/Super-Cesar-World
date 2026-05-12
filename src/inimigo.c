@@ -15,6 +15,7 @@ static int pontos_por_tipo(int tipo) {
 static void definir_dimensoes(Inimigo *ini) {
     if      (ini->tipo == BOSS)       { ini->largura = 96; ini->altura = 96; }
     else if (ini->tipo == CAMINHADOR) { ini->largura = 32; ini->altura = 32; }
+    else if (ini->tipo == PERSEGUIDOR) { ini->largura = 48; ini->altura = 48; }
     else                              { ini->largura = 32; ini->altura = 32; }
 }
 
@@ -362,15 +363,23 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
                     DrawRectangle(screenX, screenY, largura, altura, PURPLE);
                 }
             } else if (ini->tipo == PERSEGUIDOR) {
-                DrawRectangle(screenX, screenY, largura, altura, ORANGE);
+                Texture2D texP = (ini->animFrame == 0) ? texF2Ini1 :
+                                 (ini->animFrame == 1) ? texF2Ini2 : texF2Ini3;
+                if (texP.id > 0) {
+                    float tw = (float)texP.width;
+                    float th = (float)texP.height;
+                    Rectangle src  = { 0, 0, tw, th };
+                    Rectangle dest = { (float)screenX, (float)screenY, (float)largura, (float)altura };
+                    if (ini->vx > 0) { src.x = tw; src.width = -tw; }
+                    DrawTexturePro(texP, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+                } else {
+                    DrawRectangle(screenX, screenY, largura, altura, ORANGE);
+                }
             } else {
                 /* CAMINHADOR: rebaixado apos 1 pulo, animado no estado normal */
                 Texture2D tex;
                 if (ini->vida <= 1 && texIniRebaixado.id > 0) {
                     tex = texIniRebaixado;
-                } else if (ini->spriteSet == 2) {
-                    tex = (ini->animFrame == 0) ? texF2Ini1 :
-                          (ini->animFrame == 1) ? texF2Ini2 : texF2Ini3;
                 } else {
                     tex = (ini->animFrame == 0 && texIni1.id > 0) ? texIni1 : texIni2;
                 }
