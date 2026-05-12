@@ -176,21 +176,23 @@ static void preencher_fase2(Fase *f) {
 
     // 9 plataformas intermediarias com alturas variadas
     for (int c =  4; c <=  9; c++) colocar_bloco(f, 18, c);    // baixa, inicio
-    for (int c = 15; c <= 20; c++) colocar_bloco(f, 15, c);    // media
+    for (int c = 14; c <= 19; c++) colocar_bloco(f, 15, c);    // media
     for (int c = 26; c <= 31; c++) colocar_bloco(f, 19, c);    // muito baixa
     for (int c = 37; c <= 42; c++) colocar_bloco(f, 13, c);    // alta
-    for (int c = 50; c <= 55; c++) colocar_bloco(f, 16, c);    // media, beira da lacuna
-    for (int c = 68; c <= 73; c++) colocar_bloco(f, 18, c);    // baixa, pos-lacuna
+    for (int c = 49; c <= 54; c++) colocar_bloco(f, 16, c);    // media, beira da lacuna
+    for (int c = 59; c <= 64; c++) colocar_bloco(f, 17, c);    // plataforma sobre a lacuna
+    for (int c = 73; c <= 78; c++) colocar_bloco(f, 18, c);    // baixa, pos-lacuna
     for (int c = 80; c <= 85; c++) colocar_bloco(f, 14, c);    // media
-    for (int c = 94; c <= 99; c++) colocar_bloco(f, 17, c);    // baixa
+    for (int c = 92; c <= 97; c++) colocar_bloco(f, 17, c);    // baixa
     for (int c = 108; c <= 113; c++) colocar_bloco(f, 11, c);  // alta final
 
     // 7 grupos de moedas acima das plataformas
     for (int c =  5; c <=  8; c++) f->mapa[17][c] = MOEDA;
-    for (int c = 16; c <= 19; c++) f->mapa[14][c] = MOEDA;
+    for (int c = 15; c <= 18; c++) f->mapa[14][c] = MOEDA;
     for (int c = 38; c <= 41; c++) f->mapa[12][c] = MOEDA;
-    for (int c = 51; c <= 54; c++) f->mapa[15][c] = MOEDA;
-    for (int c = 69; c <= 72; c++) f->mapa[17][c] = MOEDA;
+    for (int c = 50; c <= 53; c++) f->mapa[15][c] = MOEDA;
+    for (int c = 60; c <= 63; c++) f->mapa[16][c] = MOEDA;
+    for (int c = 74; c <= 77; c++) f->mapa[17][c] = MOEDA;
     for (int c = 81; c <= 84; c++) f->mapa[13][c] = MOEDA;
     for (int c = 109; c <= 112; c++) f->mapa[10][c] = MOEDA;
 
@@ -213,6 +215,8 @@ static void preencher_fase2(Fase *f) {
     limpar_bloco(f, 18, 95);
     limpar_bloco(f, 18, 96);
     limpar_bloco(f, 18, 97);
+    limpar_bloco(f, 14, 109);
+    limpar_bloco(f, 19, 113);
 
     // Porta para a fase 3
     colocar_porta(f, 19, 125);
