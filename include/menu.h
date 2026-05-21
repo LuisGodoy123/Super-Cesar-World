@@ -5,12 +5,8 @@
 #include "placar.h"
 
 typedef enum {
-    OPCAO_SLOT_A = 0,
-    OPCAO_SLOT_B,
-    OPCAO_SLOT_C,
-    OPCAO_COMECAR,
+    OPCAO_COMECAR = 0,
     OPCAO_PLACAR,
-    OPCAO_OPCOES,
     OPCAO_TOTAL
 } OpcaoMenu;
 

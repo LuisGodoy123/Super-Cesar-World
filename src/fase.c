@@ -1,6 +1,11 @@
 #include "fase.h"
 #include <string.h>
 
+int tile_solido(Fase *f, int col, int linha) {
+    if (col < 0 || col >= COLUNAS || linha < 0 || linha >= LINHAS) return 0;
+    return f->mapa[linha][col] == BLOCO;
+}
+
 // Helpers para preencher o mapa
 
 static void colocar_bloco(Fase *f, int l, int c) {

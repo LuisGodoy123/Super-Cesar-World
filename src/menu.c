@@ -11,12 +11,8 @@
 #define CURSOR_X     492
 
 static const char *LABELS[OPCAO_TOTAL] = {
-    "CESAR A  A .. EMPTY",
-    "CESAR B  B .. EMPTY",
-    "CESAR C  C .. EMPTY",
     "COMECAR JOGO",
     "PLACAR",
-    "OPCOES",
 };
 
 /* ------------------------------------------------------------------ */

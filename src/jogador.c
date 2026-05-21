@@ -1,13 +1,6 @@
 #include "jogador.h"
 #include <math.h>
 
-// Retorna 1 se o tile na posicao (col, linha) do mapa eh solido
-static int tile_solido(Fase *f, int col, int linha) {
-    if (col < 0 || col >= COLUNAS || linha < 0 || linha >= LINHAS)
-        return 0;
-    return f->mapa[linha][col] == BLOCO;
-}
-
 // Retorna 1 se qualquer tile entre colEsq e colDir (inclusive) na linha eh solido
 static int faixa_solida(Fase *f, int colEsq, int colDir, int linha) {
     for (int c = colEsq; c <= colDir; c++)
