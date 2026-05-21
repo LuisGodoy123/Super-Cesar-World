@@ -239,7 +239,7 @@ static void preencher_fase3(Fase *f) {
     for (int c = 36; c <= 41; c++) colocar_bloco(f,  9, c);
     for (int c = 43; c <= 47; c++) colocar_bloco(f, 13, c);
     for (int c = 49; c <= 53; c++) colocar_bloco(f, 16, c);
-    for (int c = 56; c <= 61; c++) colocar_bloco(f, 10, c);
+    for (int c = 57; c <= 59; c++) colocar_bloco(f, 13, c);
     for (int c = 63; c <= 67; c++) colocar_bloco(f, 14, c);
 
     //moedas
@@ -261,6 +261,11 @@ static void preencher_fase3(Fase *f) {
 
     // Estrutura de parkour na zona pos-lacuna, antes do boss (degrau row17, prateleira row13)
     estrutura_parkour(f, 65, 17, 13);
+    limpar_bloco(f, 17, 65);
+    limpar_bloco(f, 17, 66);
+    limpar_bloco(f, 17, 67);
+    plataforma(f, 68, 70, 17);
+    colocar_bloco(f, 13, 79);
 }
 
 //CarregarFase
