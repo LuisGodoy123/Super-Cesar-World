@@ -223,6 +223,11 @@ static void preencher_fase2(Fase *f) {
     limpar_bloco(f, 14, 109);
     limpar_bloco(f, 19, 113);
 
+    colocar_bloco(f, 13, 100);
+    colocar_bloco(f, 13, 106);
+    colocar_bloco(f, 10, 108);
+    colocar_bloco(f, 10, 113);
+
     // Porta para a fase 3
     colocar_porta(f, 19, 125);
     colocar_porta(f, 20, 125);
@@ -233,7 +238,7 @@ static void preencher_fase3(Fase *f) {
     preencher_chao(f, 0, 13, 21);
     preencher_chao(f, 19, 33, 21);
     preencher_chao(f, 41, 53, 21);
-    preencher_chao(f, 62, COLUNAS - 1, 21);
+    preencher_chao(f, 62, 109, 21);
 
     //plataformas complexas
     for (int c =  2; c <=  6; c++) colocar_bloco(f, 17, c);
@@ -271,6 +276,10 @@ static void preencher_fase3(Fase *f) {
     limpar_bloco(f, 17, 67);
     plataforma(f, 68, 70, 17);
     colocar_bloco(f, 13, 79);
+
+    // Porta de saida da fase 3
+    colocar_porta(f, 19, 107);
+    colocar_porta(f, 20, 107);
 }
 
 //CarregarFase

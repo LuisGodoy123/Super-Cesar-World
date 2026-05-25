@@ -87,6 +87,8 @@ static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *f
 		AdicionarInimigo(listaInimigos, CAMINHADOR, x2, y_superficie_chao(fase, x2, 32, 352.0f));
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x3, y_superficie_chao(fase, x3, 32, 416.0f));
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x4, y_superficie_chao(fase, x4, 32, 320.0f));
+		AdicionarInimigo(listaInimigos, PERSEGUIDOR, 3296.0f, 336.0f); // 103,12
+		AdicionarInimigo(listaInimigos, PERSEGUIDOR, 3520.0f, 240.0f); // 110,9
 	} else if (faseAtual == 3) {
 		float x1 =  380.0f;
 		float x2 = 1100.0f;
@@ -177,6 +179,7 @@ int main(void) {
 	No *listaInimigos = NULL;
 	NoMoeda *listaMoedas = NULL;
 	Chave chaveF1;
+	Chave chaveF2;
 
 	int faseAtual = 1;
 	int scoreRegistrado = 0;
@@ -336,6 +339,7 @@ int main(void) {
 				timerFase = 300.0f;
 				preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 0);
 				IniciarChave(&chaveF1, 110 * TILE, 8 * TILE);
+				IniciarChave(&chaveF2, 111 * TILE, 10 * TILE);
 				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 				estado = JOGANDO;
 				introTimer = 2.5f;
@@ -377,6 +381,7 @@ int main(void) {
 				AtualizarInimigos(listaInimigos, &jogador, &fase, FIXED_DT, sndKick);
 				AtualizarMoedas(listaMoedas, &jogador, sndCoin);
 				if (faseAtual == 1) AtualizarChave(&chaveF1, &jogador);
+				if (faseAtual == 2) AtualizarChave(&chaveF2, &jogador);
 
 				for (int l = 0; l < LINHAS; l++) {
 					for (int c = 0; c < COLUNAS; c++) {
@@ -422,9 +427,34 @@ int main(void) {
 									faseAtual = 2;
 									timerFase = 300.0f;
 									preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
+									IniciarChave(&chaveF2, 111 * TILE, 10 * TILE);
 									AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 									introTimer = 2.5f;
 									entrou_porta = 1;
+								}
+							}
+						}
+						if (faseAtual == 2) {
+							Rectangle playerHitbox = {
+								jogador.x + JOGADOR_HITBOX_OFFSET_X, jogador.y,
+								(float)JOGADOR_HITBOX_LARGURA, (float)jogador.alturaAtual
+							};
+							for (int l = 0; l < LINHAS && !entrou_porta; l++) {
+								for (int c = 0; c < COLUNAS && !entrou_porta; c++) {
+									if (fase.mapa[l][c] != PORTA) continue;
+									Rectangle portaHitbox = {
+										(float)(c * TILE), (float)(l * TILE),
+										(float)TILE, (float)TILE
+									};
+									if (VerificarColisao(playerHitbox, portaHitbox) && chaveF2.coletada) {
+										jogador.pontos += BONUS_COMPLETAR_FASE;
+										faseAtual = 3;
+										timerFase = 300.0f;
+										preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
+										AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
+										introTimer = 2.5f;
+										entrou_porta = 1;
+									}
 								}
 							}
 						}
@@ -434,11 +464,12 @@ int main(void) {
 					float bordaDirJogador = jogador.x + JOGADOR_HITBOX_OFFSET_X + JOGADOR_HITBOX_LARGURA;
 
 					if (!entrou_porta && bordaDirJogador >= fimDaFase) {
-						if (faseAtual < 3 && (faseAtual != 1 || chaveF1.coletada)) {
+						if (faseAtual < 3 && (faseAtual != 1 || chaveF1.coletada) && (faseAtual != 2 || chaveF2.coletada)) {
 							jogador.pontos += BONUS_COMPLETAR_FASE;
 							faseAtual++;
 							timerFase = 300.0f;
 							preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
+							if (faseAtual == 2) IniciarChave(&chaveF2, 111 * TILE, 10 * TILE);
 							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 							introTimer = 2.5f;
 						} else if (faseAtual == 3 && !boss_ativo(listaInimigos)) {
@@ -477,6 +508,7 @@ int main(void) {
 			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3, texCafe, texFundo2);
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoedas, numFramesMoeda, tempoAnimMoeda);
 			if (faseAtual == 1) DesenharChave(chaveF1, fase.cameraX, fase.cameraYOffset);
+			if (faseAtual == 2) DesenharChave(chaveF2, fase.cameraX, fase.cameraYOffset);
 			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado, texF2Ini1, texF2Ini2, texF2Ini3, texBoss);
 			DesenharJogador(&jogador, fase.cameraYOffset);
 			if (jogador.devMode) DesenharGradeDebug(&fase);

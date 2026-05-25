@@ -74,34 +74,35 @@ static void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
     int linBot = (int)(ini->y + ini->altura - 1) / TILE;
 
     if (ini->vx < 0 && (tile_solido(f, colEsq, linTop) || tile_solido(f, colEsq, linBot))) {
-        /* empurra da parede primeiro, depois tenta subir 1 bloco */
         ini->x = (float)((colEsq + 1) * TILE);
-        if (ini->vy >= 0.0f && linTop > 0 && !tile_solido(f, colEsq, linTop - 1)) {
+        if (ini->tipo != PERSEGUIDOR && ini->vy >= 0.0f && linTop > 0 && !tile_solido(f, colEsq, linTop - 1)) {
             ini->vy = -290.0f;
             ini->stuckTimer = 0.0f;
-        } else {
+        } else if (ini->tipo != PERSEGUIDOR) {
             ini->vx = -ini->vx;
         }
     }
     if (ini->vx > 0 && (tile_solido(f, colDir, linTop) || tile_solido(f, colDir, linBot))) {
         ini->x = (float)(colDir * TILE - ini->largura);
-        if (ini->vy >= 0.0f && linTop > 0 && !tile_solido(f, colDir, linTop - 1)) {
+        if (ini->tipo != PERSEGUIDOR && ini->vy >= 0.0f && linTop > 0 && !tile_solido(f, colDir, linTop - 1)) {
             ini->vy = -290.0f;
             ini->stuckTimer = 0.0f;
-        } else {
+        } else if (ini->tipo != PERSEGUIDOR) {
             ini->vx = -ini->vx;
         }
     }
 
-    /* stuck timer: se ficar no chao sem progredir, forca um pulo */
-    if (ini->vy >= 0.0f) {
-        ini->stuckTimer += dt;
-        if (ini->stuckTimer >= 1.2f) {
-            ini->vy = -290.0f;
+    /* stuck timer: so o caminhador pula para se desgrudar */
+    if (ini->tipo != PERSEGUIDOR) {
+        if (ini->vy >= 0.0f) {
+            ini->stuckTimer += dt;
+            if (ini->stuckTimer >= 1.2f) {
+                ini->vy = -290.0f;
+                ini->stuckTimer = 0.0f;
+            }
+        } else {
             ini->stuckTimer = 0.0f;
         }
-    } else {
-        ini->stuckTimer = 0.0f;
     }
 
     float grav = GRAVIDADE * 60.0f * 60.0f;
