@@ -81,6 +81,7 @@ typedef struct {
     Texture2D sprites[3];
     int numSprites;
     int temSprites;
+    int respawn;
 } Jogador;
 
 void IniciarJogador(Jogador *j);

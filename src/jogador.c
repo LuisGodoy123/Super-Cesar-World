@@ -71,6 +71,7 @@ void IniciarJogador(Jogador *j) {
     j->cafeAtivo       = 0;
     j->timerCafe       = 0.0f;
     j->moedas          = 0;
+    j->respawn         = 0;
     j->temSprites      = temSprites;
     j->numSprites      = numSprites;
 
@@ -354,7 +355,7 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         if (j->vidas <= 0)
             j->estado = MORTO;
         else
-            IniciarJogador(j); // reinicia posicao
+            j->respawn = 1;
     }
 }
 

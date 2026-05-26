@@ -238,7 +238,7 @@ static void preencher_fase3(Fase *f) {
     preencher_chao(f, 0, 13, 21);
     preencher_chao(f, 19, 33, 21);
     preencher_chao(f, 41, 53, 21);
-    preencher_chao(f, 62, 109, 21);
+    preencher_chao(f, 62, 129, 21);
 
     //plataformas complexas
     for (int c =  2; c <=  6; c++) colocar_bloco(f, 17, c);
@@ -246,10 +246,13 @@ static void preencher_fase3(Fase *f) {
     for (int c = 16; c <= 20; c++) colocar_bloco(f, 11, c);
     for (int c = 23; c <= 27; c++) colocar_bloco(f, 15, c);
     for (int c = 29; c <= 33; c++) colocar_bloco(f, 12, c);
+    for (int c = 29; c <= 33; c++) colocar_bloco(f, 18, c);
     for (int c = 36; c <= 41; c++) colocar_bloco(f,  9, c);
     for (int c = 43; c <= 47; c++) colocar_bloco(f, 13, c);
     for (int c = 49; c <= 53; c++) colocar_bloco(f, 16, c);
     for (int c = 57; c <= 59; c++) colocar_bloco(f, 13, c);
+    colocar_bloco(f, 19, 57);
+    colocar_bloco(f, 19, 58);
     for (int c = 63; c <= 67; c++) colocar_bloco(f, 14, c);
 
     //moedas

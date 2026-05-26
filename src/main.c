@@ -378,6 +378,13 @@ int main(void) {
 		while (acumulador >= FIXED_DT) {
 			if (estado == JOGANDO) {
 				AtualizarJogador(&jogador, &fase, introTimer > 0.0f, sndJump, snd1up);
+				if (jogador.respawn) {
+					jogador.respawn = 0;
+					timerFase = 300.0f;
+					preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
+					if (faseAtual == 1) IniciarChave(&chaveF1, 110 * TILE, 8 * TILE);
+					if (faseAtual == 2) IniciarChave(&chaveF2, 111 * TILE, 10 * TILE);
+				}
 				AtualizarInimigos(listaInimigos, &jogador, &fase, FIXED_DT, sndKick);
 				AtualizarMoedas(listaMoedas, &jogador, sndCoin);
 				if (faseAtual == 1) AtualizarChave(&chaveF1, &jogador);
