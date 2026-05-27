@@ -364,7 +364,7 @@ void DesenharJogador(Jogador *j, float cameraYOffset) {
     if (j->estado == MORTO) return;
 
     // Piscar quando INVENCIVEL: some nos frames impares
-    if (j->estado == INVENCIVEL && (int)(GetTime() * 10) % 2 == 0) return;
+    if (j->estado == INVENCIVEL && j->timerInvencivel > 0.5f && (int)(GetTime() * 10) % 2 == 0) return;
 
     float zoom = CAMERA_ZOOM;
     float screenX = (j->x - j->cameraX) * zoom;
