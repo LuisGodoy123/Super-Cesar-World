@@ -280,9 +280,6 @@ static void preencher_fase3(Fase *f) {
     plataforma(f, 68, 70, 17);
     colocar_bloco(f, 13, 79);
 
-    // Porta de saida da fase 3
-    colocar_porta(f, 19, 107);
-    colocar_porta(f, 20, 107);
 }
 
 //CarregarFase
