@@ -99,7 +99,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
     int run   = !bloqueado && (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT));
 
     int jumpPressed = !bloqueado && (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W));
-    int jumpHeld    = !bloqueado && (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_W));
 
     int dirInput = (right ? 1 : 0) - (left ? 1 : 0);
 
@@ -217,8 +216,7 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
 
     /* gravidade */
     float grav = GRAVIDADE;
-    if (j->vy < 0.0f) grav *= 1.0f;
-    else              grav *= 2.5f;
+    if (j->vy >= 0.0f) grav *= 2.5f;
     j->vy += grav;
 
     if (j->vy > VELOCIDADE_QUEDA_MAXIMA) j->vy = VELOCIDADE_QUEDA_MAXIMA;

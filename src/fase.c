@@ -29,50 +29,14 @@ static void preencher_chao(Fase *f, int cIni, int cFim, int linhaTopo) {
             colocar_bloco(f, l, c);
 }
 
-static void limpar_bloco(Fase *f, int l, int c) {
-    if (l < 0 || l >= LINHAS || c < 0 || c >= COLUNAS) return;
-    f->mapa[l][c] = VAZIO;
-    f->blocos[l][c] = (Bloco){ 0 };
-}
-
 static void colocar_porta(Fase *f, int l, int c) {
     if (l < 0 || l >= LINHAS || c < 0 || c >= COLUNAS) return;
     f->mapa[l][c] = PORTA;
 }
 
-static void limpar_segmento(Fase *f, int cIni, int cFim, int lIni, int lFim) {
-    for (int l = lIni; l <= lFim; l++)
-        for (int c = cIni; c <= cFim; c++)
-            limpar_bloco(f, l, c);
-}
-
 static void plataforma(Fase *f, int cIni, int cFim, int linha) {
     for (int c = cIni; c <= cFim; c++)
         colocar_bloco(f, linha, c);
-}
-
-// Estrutura de parkour: degrau de entrada + prateleira longa + powerup isolado + bloco de saida
-// Estrutura de parkour: degrau de blocos comuns + prateleira alta + powerup isolado para bater de baixo
-static void estrutura_parkour(Fase *f, int cBase, int lDegrau, int lPrataleira) {
-    // degrau de entrada (esq): 3 blocos comuns — sem powerup aqui
-    colocar_bloco(f, lDegrau, cBase);
-    colocar_bloco(f, lDegrau, cBase + 1);
-    colocar_bloco(f, lDegrau, cBase + 2);
-
-    // prateleira longa flutuante: 7 blocos comuns
-    for (int c = cBase + 5; c <= cBase + 11; c++)
-        colocar_bloco(f, lPrataleira, c);
-
-    // powerup isolado flutuando (hit de baixo): gap de 2 tiles da prateleira
-    colocar_powerup(f, lPrataleira, cBase + 14);
-
-    // bloco unico de saida (dir, mesma altura do degrau)
-    colocar_bloco(f, lDegrau, cBase + 18);
-
-    // moedas acima da prateleira guiando o jogador
-    for (int c = cBase + 5; c <= cBase + 11; c++)
-        if (f->mapa[lPrataleira - 1][c] == VAZIO)
-            f->mapa[lPrataleira - 1][c] = MOEDA;
 }
 
 // Mapas das fases
@@ -143,22 +107,21 @@ static void preencher_fase1(Fase *f) {
     colocar_powerup(f, 10,  7);
     colocar_powerup(f, 10, 50);
 
-    // Estruturas de parkour (degrau row13 + prateleira row9 — bem acima do chao row17)
-    estrutura_parkour(f, 17, 13, 9);   // Zona A
-    estrutura_parkour(f, 63, 13, 9);   // Zona B
-    estrutura_parkour(f, 97, 13, 9);   // Zona C
+    // Zona A: degrau + prateleira + powerup + moedas (sem bloco de saida)
+    colocar_bloco(f, 13, 17); colocar_bloco(f, 13, 18); colocar_bloco(f, 13, 19);
+    for (int c = 22; c <= 28; c++) colocar_bloco(f, 9, c);
+    colocar_powerup(f, 9, 31);
+    for (int c = 22; c <= 28; c++) f->mapa[8][c] = MOEDA;
 
-    // Blocos removidos manualmente
-    limpar_bloco(f, 13, 35);           // bloco de saida Zona A  (x=35,  y=13)
-    limpar_segmento(f, 63, 65, 13, 13); // degrau Zona B removido
-    limpar_segmento(f, 68, 74, 9, 9);  // prateleira Zona B descida 1 bloco
-    limpar_bloco(f, 9,  77);           // powerup Zona B         (x=77,  y=9)
-    limpar_segmento(f, 102, 108, 9, 9);// prateleira Zona C      (x=102-108, y=9)
-    limpar_bloco(f, 9,  111);          // powerup Zona C         (x=111, y=9)
-    limpar_bloco(f, 13, 115);          // bloco de saida Zona C  (x=115, y=13)
+    // Zona B: prateleira na linha 10 + bloco de saida + moedas (sem degrau, sem powerup)
+    for (int c = 68; c <= 74; c++) colocar_bloco(f, 10, c);
+    colocar_bloco(f, 13, 81);
+    for (int c = 68; c <= 74; c++) f->mapa[8][c] = MOEDA;
 
-    // Blocos adicionados manualmente
-    plataforma(f, 68, 74, 10);         // prateleira Zona B na linha 10
+    // Zona C: degrau + moedas (sem prateleira, sem powerup, sem bloco de saida)
+    colocar_bloco(f, 13, 97); colocar_bloco(f, 13, 98); colocar_bloco(f, 13, 99);
+    for (int c = 102; c <= 108; c++) f->mapa[8][c] = MOEDA;
+
     plataforma(f, 104, 106, 13);       // x=105-108, y=11
     plataforma(f, 114, 116, 13);       // x=112-115, y=11
     colocar_bloco(f, 12, 103);
@@ -182,7 +145,6 @@ static void preencher_fase2(Fase *f) {
     // 9 plataformas intermediarias com alturas variadas
     for (int c =  4; c <=  9; c++) colocar_bloco(f, 18, c);    // baixa, inicio
     for (int c = 14; c <= 19; c++) colocar_bloco(f, 15, c);    // media
-    for (int c = 26; c <= 31; c++) colocar_bloco(f, 19, c);    // muito baixa
     for (int c = 37; c <= 42; c++) colocar_bloco(f, 13, c);    // alta
     for (int c = 49; c <= 54; c++) colocar_bloco(f, 16, c);    // media, beira da lacuna
     for (int c = 59; c <= 64; c++) colocar_bloco(f, 17, c);    // plataforma sobre a lacuna
@@ -207,21 +169,13 @@ static void preencher_fase2(Fase *f) {
     colocar_powerup(f, 17, 35); colocar_bloco(f,   17, 36);
     colocar_powerup(f, 14, 33);
 
-    // Estrutura de parkour (degrau row18, prateleira row14)
-    estrutura_parkour(f, 95, 18, 14);
-
-    // Remover plataforma row19, cols 26-31
-    limpar_segmento(f, 26, 31, 19, 19);
-
     // Blocos de tijolo na lacuna (row21, cols 61-62)
     preencher_chao(f, 61, 62, 21);
 
-    // Remover degrau de entrada do parkour (row18, cols 95-97)
-    limpar_bloco(f, 18, 95);
-    limpar_bloco(f, 18, 96);
-    limpar_bloco(f, 18, 97);
-    limpar_bloco(f, 14, 109);
-    limpar_bloco(f, 19, 113);
+    // Parkour zone: prateleira + bloco de saida + moedas (sem degrau, sem powerup)
+    for (int c = 100; c <= 106; c++) colocar_bloco(f, 14, c);
+    colocar_bloco(f, 18, 113);
+    for (int c = 100; c <= 106; c++) f->mapa[13][c] = MOEDA;
 
     colocar_bloco(f, 13, 100);
     colocar_bloco(f, 13, 106);
@@ -272,25 +226,17 @@ static void preencher_fase3(Fase *f) {
     // Solo alto isolado
     colocar_powerup(f, 14,  5);
 
-    // Estrutura de parkour na zona pos-lacuna, antes do boss (degrau row17, prateleira row13)
-    estrutura_parkour(f, 65, 17, 13);
-    limpar_bloco(f, 17, 65);
-    limpar_bloco(f, 17, 66);
-    limpar_bloco(f, 17, 67);
-    plataforma(f, 68, 70, 17);
+    // Parkour zone: degrau deslocado + prateleira + bloco normal + moedas
+    for (int c = 68; c <= 70; c++) colocar_bloco(f, 17, c);
+    for (int c = 70; c <= 76; c++) colocar_bloco(f, 13, c);
     colocar_bloco(f, 13, 79);
+    for (int c = 70; c <= 76; c++) f->mapa[12][c] = MOEDA;
 
     colocar_bloco(f, 20, 75);
     colocar_bloco(f, 20, 76);
     colocar_bloco(f, 19, 76);
 
     plataforma(f, 80, 83, 13);
-    plataforma(f, 91, 101, 17);
-    limpar_bloco(f, 17, 83);
-    limpar_segmento(f, 91, 98, 17, 17);
-    limpar_bloco(f, 17, 101);
-    limpar_bloco(f, 17, 99);
-    limpar_bloco(f, 17, 100);
     colocar_bloco(f, 20, 104);
     colocar_bloco(f, 20, 105);
     colocar_bloco(f, 19, 104);
@@ -397,11 +343,6 @@ static void desenhar_nuvens_sprite(float cameraX, float cameraYOffset,
 }
 
 static void desenhar_nuvens(int faseNum, float cameraX, float cameraYOffset) {
-    static const NuvemDeco n1[] = {
-        {  180,  60, 1.00f }, {  640,  38, 1.20f }, { 1090,  72, 0.85f },
-        { 1570,  46, 1.10f }, { 2060,  66, 0.95f }, { 2510,  36, 1.15f },
-        { 2960,  60, 1.00f }, { 3460,  78, 0.85f }, { 3960,  42, 1.05f },
-    };
     static const NuvemDeco n2[] = {
         {  300,  52, 0.90f }, {  920,  34, 1.10f }, { 1620,  64, 0.80f },
         { 2240,  40, 1.00f }, { 3020,  68, 1.20f },
@@ -413,8 +354,7 @@ static void desenhar_nuvens(int faseNum, float cameraX, float cameraYOffset) {
 
     const NuvemDeco *nuvens = NULL;
     int n = 0;
-    if      (faseNum == 1) { nuvens = n1; n = 9; }
-    else if (faseNum == 2) { nuvens = n2; n = 5; }
+    if      (faseNum == 2) { nuvens = n2; n = 5; }
     else if (faseNum == 3) { nuvens = n3; n = 4; }
 
     for (int i = 0; i < n; i++)
