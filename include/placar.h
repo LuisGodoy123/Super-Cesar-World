@@ -21,5 +21,6 @@ void SalvarPlacar(Placar *p);
 void RegistrarPontuacaoFinal(Placar *p, int pontuacaoFinal);
 void DesenharPlacar(Placar *p, Font *fonte, int temFonte, Texture2D texMoeda, int temTexMoeda);
 void DesenharTopScores(Placar *p, int x, int y);
+void DesenharBarraVidaBoss(int vida, int vidaMax);
 
 #endif

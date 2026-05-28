@@ -49,6 +49,16 @@ static int boss_ativo(No *listaInimigos) {
 	return 0;
 }
 
+static int boss_vida(No *listaInimigos) {
+	No *atual = listaInimigos;
+	while (atual != NULL) {
+		if (atual->dados.tipo == BOSS && atual->dados.ativo)
+			return atual->dados.vida;
+		atual = atual->proximo;
+	}
+	return 0;
+}
+
 static float y_superficie_chao(Fase *fase, float x, int altura, float fallback) {
 	if (fase == NULL) return fallback;
 
@@ -530,11 +540,16 @@ int main(void) {
 			               (numFramesMoeda > 0) ? texMoedas[frameAtual] : (Texture2D){0},
 			               numFramesMoeda > 0);
 
+			if (faseAtual == 3 && jogador.x > 105 * 32.0f)
+				DesenharBarraVidaBoss(boss_vida(listaInimigos), 8);
+
 			if (jogador.devMode)   DrawText("[DEV] x3", LARGURA_TELA - 110,  8, 20, RED);
 			if (jogador.cafeAtivo) DrawText(TextFormat("[CAFE] %.1fs", jogador.timerCafe), LARGURA_TELA - 140, 32, 20, BROWN);
 
-			if (faseAtual == 3 && boss_ativo(listaInimigos)) {
-				DrawText("Derrote o boss para liberar a vitoria!", 340, 20, 24, GOLD);
+			if (faseAtual == 3 && !boss_ativo(listaInimigos) && jogador.x > 105 * 32.0f) {
+				const char *msg = "Boss derrotado! Va ate o fim da fase!";
+				int msgW = MeasureText(msg, 24);
+				DrawText(msg, (LARGURA_TELA - msgW) / 2, 20, 24, GREEN);
 			}
 		} else if (estado == GAME_OVER) {
 			ClearBackground(BLACK);

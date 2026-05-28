@@ -161,3 +161,44 @@ void DesenharTopScores(Placar *p, int x, int y) {
 		DrawText(TextFormat("%d. %d", i + 1, p->topScores[i]), x, y + 40 + i * 28, 24, WHITE);
 	}
 }
+
+void DesenharBarraVidaBoss(int vida, int vidaMax) {
+	if (vidaMax <= 0) return;
+
+	int sw = GetScreenWidth();
+	int sh = GetScreenHeight();
+
+	int barW    = 400;
+	int barH    = 28;
+	int padding = 6;
+	int outW    = barW + padding * 2;
+	int outH    = barH + padding * 2;
+	int labelH  = 24;
+	int gap     = 6;
+	int totalH  = labelH + gap + outH;
+
+	int blockY = sh - 20 - totalH;
+	int outX   = sw / 2 - outW / 2;
+	int outY   = blockY + labelH + gap;
+
+	const char *label = "BOSS";
+	DrawText(label, sw / 2 - MeasureText(label, labelH) / 2, blockY, labelH, RED);
+
+	DrawRectangle(outX - 4, outY - 4, outW + 8, outH + 8, (Color){0, 0, 0, 180});
+	DrawRectangle(outX, outY, outW, outH, (Color){60, 60, 60, 255});
+
+	float ratio = (float)vida / (float)vidaMax;
+	Color cor;
+	if      (ratio > 0.60f) cor = (Color){40, 200, 40, 255};
+	else if (ratio > 0.30f) cor = (Color){230, 180, 0, 255};
+	else                    cor = (Color){210, 30, 30, 255};
+
+	int fillW = (int)(ratio * (float)barW);
+	if (fillW > 0)
+		DrawRectangle(outX + padding, outY + padding, fillW, barH, cor);
+
+	DrawRectangleLines(outX, outY, outW, outH, WHITE);
+
+	const char *hp = TextFormat("%d / %d", vida, vidaMax);
+	DrawText(hp, outX + outW - MeasureText(hp, 18) - 6, outY + (outH - 18) / 2, 18, WHITE);
+}
