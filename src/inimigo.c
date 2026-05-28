@@ -32,10 +32,9 @@ No *CriarInimigo(int tipo, float x, float y) {
     novo->dados.tipo    = tipo;
     novo->dados.vida    = (tipo == BOSS) ? 8 : (tipo == CAMINHADOR) ? 2 : 1;
     novo->dados.ativo   = 1;
-    novo->dados.origemX   = x;
-    novo->dados.timerTiro = INTERVALO_TIRO;
     novo->dados.animTimer  = 0.0f;
     novo->dados.animFrame  = 0;
+    novo->dados.timerPouso = INTERVALO_POUSO;
     novo->dados.stuckTimer = 0.0f;
     novo->dados.patrulhaMin  = 0.0f;
     novo->dados.patrulhaMax  = 0.0f;
@@ -193,7 +192,7 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                         ini->stuckTimer -= dt;
                         if (ini->stuckTimer <= 0.0f) {
                             ini->stuckTimer = 0.0f;
-                            ini->timerTiro  = 5.0f;
+                            ini->timerPouso = INTERVALO_POUSO;
                             ini->vx = VEL_BOSS;
                             ini->vy = -400.0f; // decolagem rapida para cima
                         }
@@ -201,11 +200,11 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                 } else {
                     // voando
                     aplicar_fisica_boss(ini, dt);
-                    ini->timerTiro -= dt;
-                    if (ini->timerTiro <= 0.0f) {
+                    ini->timerPouso -= dt;
+                    if (ini->timerPouso <= 0.0f) {
                         ini->stuckTimer = 2.5f;
                         ini->vx = 0.0f;
-                        ini->vy = 200.0f; // velocidade de descida
+                        ini->vy = 200.0f;
                     }
                 }
             } else {

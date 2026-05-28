@@ -12,8 +12,7 @@
 #define VEL_CAMINHADOR   80.0f
 #define VEL_PERSEGUIDOR 120.0f
 #define VEL_BOSS         50.0f
-#define PATROL_RANGE     96.0f  // 3 tiles de patrulha para cada lado
-#define INTERVALO_TIRO    3.0f  // boss atira a cada 3 segundos
+#define INTERVALO_POUSO   3.0f
 
 typedef struct {
     float x, y;
@@ -22,10 +21,9 @@ typedef struct {
     int vida;
     int ativo;
     int largura, altura;
-    float origemX;     // centro da patrulha do CAMINHADOR
-    float timerTiro;   // contador de tiro do BOSS
     float animTimer;
     int   animFrame;
+    float timerPouso;
     float stuckTimer;
     float patrulhaMin;  // limite esquerdo (voador/boss)
     float patrulhaMax;  // limite direito  (voador/boss)
@@ -34,7 +32,7 @@ typedef struct {
     int   spriteSet;    // 1 = fase1, 2 = fase2
 } Inimigo;
 
-typedef struct No {        // NO DA LISTA ENCADEADA
+typedef struct No {        // no da lista de inimigos 
     Inimigo dados;
     struct No *proximo;    // ponteiro para o proximo no
 } No;

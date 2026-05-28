@@ -116,7 +116,7 @@ static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *f
 		(*listaInimigos)->dados.patrulhaMax  = 4064.0f; // col 127 — quase no final do mapa
 		(*listaInimigos)->dados.patrulhaYMin = 280.0f;
 		(*listaInimigos)->dados.patrulhaYMax = 450.0f;
-		(*listaInimigos)->dados.timerTiro    = 5.0f;
+		(*listaInimigos)->dados.timerPouso   = 5.0f;
 		(*listaInimigos)->dados.vy           = VEL_BOSS;
 	}
 }
