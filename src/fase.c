@@ -280,6 +280,21 @@ static void preencher_fase3(Fase *f) {
     plataforma(f, 68, 70, 17);
     colocar_bloco(f, 13, 79);
 
+    colocar_bloco(f, 20, 75);
+    colocar_bloco(f, 20, 76);
+    colocar_bloco(f, 19, 76);
+
+    plataforma(f, 80, 83, 13);
+    plataforma(f, 91, 101, 17);
+    limpar_bloco(f, 17, 83);
+    limpar_segmento(f, 91, 98, 17, 17);
+    limpar_bloco(f, 17, 101);
+    limpar_bloco(f, 17, 99);
+    limpar_bloco(f, 17, 100);
+    colocar_bloco(f, 20, 104);
+    colocar_bloco(f, 20, 105);
+    colocar_bloco(f, 19, 104);
+
 }
 
 //CarregarFase
