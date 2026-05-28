@@ -455,27 +455,27 @@ int main(void) {
 								}
 							}
 						}
-						if (faseAtual == 2) {
-							Rectangle playerHitbox = {
-								jogador.x + JOGADOR_HITBOX_OFFSET_X, jogador.y,
-								(float)JOGADOR_HITBOX_LARGURA, (float)jogador.alturaAtual
-							};
-							for (int l = 0; l < LINHAS && !entrou_porta; l++) {
-								for (int c = 0; c < COLUNAS && !entrou_porta; c++) {
-									if (fase.mapa[l][c] != PORTA) continue;
-									Rectangle portaHitbox = {
-										(float)(c * TILE), (float)(l * TILE),
-										(float)TILE, (float)TILE
-									};
-									if (VerificarColisao(playerHitbox, portaHitbox) && chaveF2.coletada) {
-										jogador.pontos += BONUS_COMPLETAR_FASE;
-										faseAtual = 3;
-										timerFase = 300.0f;
-										preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
-										AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
-										introTimer = 2.5f;
-										entrou_porta = 1;
-									}
+					}
+					if (faseAtual == 2) {
+						Rectangle playerHitbox = {
+							jogador.x + JOGADOR_HITBOX_OFFSET_X, jogador.y,
+							(float)JOGADOR_HITBOX_LARGURA, (float)jogador.alturaAtual
+						};
+						for (int l = 0; l < LINHAS && !entrou_porta; l++) {
+							for (int c = 0; c < COLUNAS && !entrou_porta; c++) {
+								if (fase.mapa[l][c] != PORTA) continue;
+								Rectangle portaHitbox = {
+									(float)(c * TILE), (float)(l * TILE),
+									(float)TILE, (float)TILE
+								};
+								if (VerificarColisao(playerHitbox, portaHitbox) && chaveF2.coletada) {
+									jogador.pontos += BONUS_COMPLETAR_FASE;
+									faseAtual = 3;
+									timerFase = 300.0f;
+									preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
+									AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
+									introTimer = 2.5f;
+									entrou_porta = 1;
 								}
 							}
 						}
