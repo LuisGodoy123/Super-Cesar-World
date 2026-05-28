@@ -249,7 +249,7 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
             if (j->estado != MORTO && colidiu(ini, j)) {
                 float jogadorBase = j->y + (float)j->alturaAtual;
                 float iniMeio     = ini->y + (float)ini->altura * 0.5f;
-                int pisou_em_cima = (j->vyAnterior > 0.0f) && (j->y < iniMeio);
+                int pisou_em_cima = (j->vyAnterior >= 1.5f) && (jogadorBase <= iniMeio);
 
                 if (pisou_em_cima) {
                     PlaySound(sndKick);
