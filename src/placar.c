@@ -5,9 +5,9 @@
 #define HUD_COR      ((Color){0, 0, 0, 200})
 #define HUD_BORDA    ((Color){70, 70, 70, 255})
 
-static const char *ARQ_PLACAR = "data/placar.dat";
+const char *ARQ_PLACAR = "data/placar.dat";
 
-static void desenhar_texto_ui(Font *fonte, int temFonte, const char *txt,
+void desenhar_texto_ui(Font *fonte, int temFonte, const char *txt,
                               int x, int y, int tamanho, Color cor) {
 	if (temFonte && fonte != NULL) {
 		DrawTextEx(*fonte, txt, (Vector2){(float)x, (float)y}, (float)tamanho, 1, cor);
@@ -16,13 +16,13 @@ static void desenhar_texto_ui(Font *fonte, int temFonte, const char *txt,
 	}
 }
 
-static int medir_texto(Font *fonte, int temFonte, const char *txt, int tamanho) {
+int medir_texto(Font *fonte, int temFonte, const char *txt, int tamanho) {
 	if (temFonte && fonte != NULL)
 		return (int)MeasureTextEx(*fonte, txt, (float)tamanho, 1).x;
 	return MeasureText(txt, tamanho);
 }
 
-static void limpar_top_scores(Placar *p) {
+void limpar_top_scores(Placar *p) {
 	for (int i = 0; i < TOP_SCORES; i++) p->topScores[i] = 0;
 }
 

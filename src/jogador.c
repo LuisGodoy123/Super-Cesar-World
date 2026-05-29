@@ -2,13 +2,13 @@
 #include <math.h>
 
 // Retorna 1 se qualquer tile entre colEsq e colDir (inclusive) na linha eh solido
-static int faixa_solida(Fase *f, int colEsq, int colDir, int linha) {
+int faixa_solida(Fase *f, int colEsq, int colDir, int linha) {
     for (int c = colEsq; c <= colDir; c++)
         if (tile_solido(f, c, linha)) return 1;
     return 0;
 }
 
-static float aproximar(float v, float alvo, float delta) {
+float aproximar(float v, float alvo, float delta) {
     if (v < alvo) return fminf(v + delta, alvo);
     if (v > alvo) return fmaxf(v - delta, alvo);
     return v;

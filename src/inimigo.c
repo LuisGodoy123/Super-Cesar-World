@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 /* pontos concedidos ao eliminar cada tipo */
-static int pontos_por_tipo(int tipo) {
+int pontos_por_tipo(int tipo) {
     if (tipo == CAMINHADOR)  return 200;
     if (tipo == PERSEGUIDOR) return 300;
     if (tipo == BOSS)        return 1000;
@@ -11,7 +11,7 @@ static int pontos_por_tipo(int tipo) {
 }
 
 /* dimensoes de cada tipo */
-static void definir_dimensoes(Inimigo *ini) {
+void definir_dimensoes(Inimigo *ini) {
     if      (ini->tipo == BOSS)       { ini->largura = 96; ini->altura = 96; }
     else if (ini->tipo == CAMINHADOR) { ini->largura = 32; ini->altura = 32; }
     else if (ini->tipo == PERSEGUIDOR) { ini->largura = 48; ini->altura = 48; }
@@ -61,7 +61,7 @@ void AdicionarInimigo(No **lista, int tipo, float x, float y) {
 /* Comportamentos internos                                             */
 /* ------------------------------------------------------------------ */
 
-static void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
+void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
     if (ini->vx == 0.0f && ini->tipo != PERSEGUIDOR)
         ini->vx = (ini->tipo == BOSS) ? VEL_BOSS : VEL_CAMINHADOR;
 
@@ -134,7 +134,7 @@ static void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
     }
 }
 
-static void aplicar_fisica_boss(Inimigo *ini, float dt) {
+void aplicar_fisica_boss(Inimigo *ini, float dt) {
     ini->x += ini->vx * dt;
     ini->y += ini->vy * dt;
 
@@ -156,7 +156,7 @@ static void aplicar_fisica_boss(Inimigo *ini, float dt) {
 }
 
 /* verifica colisao entre retangulos (usa VerificarColisao de fase.c) */
-static int colidiu(Inimigo *ini, Jogador *j) {
+int colidiu(Inimigo *ini, Jogador *j) {
     Rectangle retJog = { j->x + JOGADOR_HITBOX_OFFSET_X, j->y, JOGADOR_HITBOX_LARGURA, (float)JOGADOR_ALTURA };
     Rectangle retIni = { ini->x,  ini->y,  (float)ini->largura, (float)ini->altura };
     return VerificarColisao(retJog, retIni);

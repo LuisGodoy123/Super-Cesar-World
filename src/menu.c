@@ -10,7 +10,7 @@
 #define MENU_ESPACO   52
 #define CURSOR_X     492
 
-static const char *LABELS[OPCAO_TOTAL] = {
+const char *LABELS[OPCAO_TOTAL] = {
     "COMECAR JOGO",
     "PLACAR",
 };
@@ -19,7 +19,7 @@ static const char *LABELS[OPCAO_TOTAL] = {
 /* Helpers visuais                                                       */
 /* ------------------------------------------------------------------ */
 
-static void desenhar_texto_contorno(const char *txt, int x, int y,
+void desenhar_texto_contorno(const char *txt, int x, int y,
                                     int tamanho, Color preenchimento, Color contorno) {
     DrawText(txt, x - 2, y,     tamanho, contorno);
     DrawText(txt, x + 2, y,     tamanho, contorno);
@@ -29,7 +29,7 @@ static void desenhar_texto_contorno(const char *txt, int x, int y,
 }
 
 /* contorno grosso (3px) para o titulo principal */
-static void desenhar_texto_contorno_grosso(const char *txt, int x, int y,
+void desenhar_texto_contorno_grosso(const char *txt, int x, int y,
                                            int tamanho, Color preenchimento, Color contorno) {
     for (int dx = -3; dx <= 3; dx++)
         for (int dy = -3; dy <= 3; dy++)
@@ -39,7 +39,7 @@ static void desenhar_texto_contorno_grosso(const char *txt, int x, int y,
 }
 
 /* texto com leve negrito (3 passadas) */
-static void desenhar_texto_fonte_negrito(Font fonte, const char *txt,
+void desenhar_texto_fonte_negrito(Font fonte, const char *txt,
                                          Vector2 pos, float tamanho, float espacamento, Color cor) {
     DrawTextEx(fonte, txt, pos, tamanho, espacamento, cor);
     DrawTextEx(fonte, txt, (Vector2){pos.x + 1, pos.y}, tamanho, espacamento, cor);
@@ -47,14 +47,14 @@ static void desenhar_texto_fonte_negrito(Font fonte, const char *txt,
 }
 
 /* fallback de negrito para fonte padrao */
-static void desenhar_texto_negrito(const char *txt, int x, int y, int tamanho, Color cor) {
+void desenhar_texto_negrito(const char *txt, int x, int y, int tamanho, Color cor) {
     DrawText(txt, x, y, tamanho, cor);
     DrawText(txt, x + 1, y, tamanho, cor);
     DrawText(txt, x, y + 1, tamanho, cor);
 }
 
 /* desenha palavra letra a letra com fonte padrao, cada uma com sua cor */
-static void desenhar_palavra_colorida(const char *palavra, Color *cores,
+void desenhar_palavra_colorida(const char *palavra, Color *cores,
                                       int x, int y, int tamanho, Color contorno) {
     char buf[2] = {0, 0};
     int curX = x;
@@ -66,7 +66,7 @@ static void desenhar_palavra_colorida(const char *palavra, Color *cores,
 }
 
 /* desenha palavra letra a letra com fonte customizada, cada uma com sua cor */
-static void desenhar_palavra_colorida_fonte(const char *palavra, Color *cores,
+void desenhar_palavra_colorida_fonte(const char *palavra, Color *cores,
                                             Font fonte, int x, int y,
                                             float tamanho, Color contorno) {
     char buf[2] = {0, 0};
@@ -82,7 +82,7 @@ static void desenhar_palavra_colorida_fonte(const char *palavra, Color *cores,
 }
 
 /* logo CESAR real: disco plano + oval do corpo + letra C como anel parcial */
-static void desenhar_logo_cesar(int cx, int cy, int r, Color cFundo) {
+void desenhar_logo_cesar(int cx, int cy, int r, Color cFundo) {
     Color cD = {16, 12, 8, 255};
 
     /* 1. Disco plano na base — oval muito larga e achatada */
@@ -107,7 +107,7 @@ static void desenhar_logo_cesar(int cx, int cy, int r, Color cFundo) {
 }
 
 /* preenche uma area com padrao de tijolos (running bond) */
-static void desenhar_tijolos(int x0, int y0, int larg, int alt,
+void desenhar_tijolos(int x0, int y0, int larg, int alt,
                               Color cTij, Color cMort) {
     int bW = 68, bH = 22, mJ = 3; /* largura, altura, junta */
     DrawRectangle(x0, y0, larg, alt, cMort);
@@ -129,14 +129,14 @@ static void desenhar_tijolos(int x0, int y0, int larg, int alt,
 }
 
 /* folha de palmeira: base no tronco, ponta em (px,py) com largura w */
-static void folha_palma(int tx, int ty, int px, int py, int w, Color c) {
+void folha_palma(int tx, int ty, int px, int py, int w, Color c) {
     /* desenha como dois triangulos sobrepostos para dar volume */
     DrawTriangle((Vector2){tx - w, ty},
                  (Vector2){tx + w, ty},
                  (Vector2){px,     py}, c);
 }
 
-static void desenhar_fundo_programatico(void) {
+void desenhar_fundo_programatico(void) {
     /* ── paleta de cores ── */
     Color cEsc    = { 14,  10,   6, 255}; /* escuro geral            */
     Color cCeu    = { 12,  14,  22, 255}; /* ceu quase preto         */
@@ -309,7 +309,7 @@ static void desenhar_fundo_programatico(void) {
 }
 
 /* moldura de madeira ao redor da tela (estilo retro) */
-static void desenhar_borda_madeira(void) {
+void desenhar_borda_madeira(void) {
     const int t = 36;
     Color cEscuro = (Color){58, 31, 10, 255};
     Color cMedio  = (Color){102, 60, 23, 255};

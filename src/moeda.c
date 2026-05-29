@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 // verifica colisao entre o retangulo da moeda e do jogador
-static int colidiu_moeda_jogador(NoMoeda *m, Jogador *j) {
+int colidiu_moeda_jogador(NoMoeda *m, Jogador *j) {
     Rectangle retJog = { j->x + JOGADOR_HITBOX_OFFSET_X, j->y, JOGADOR_HITBOX_LARGURA, (float)JOGADOR_ALTURA };
     Rectangle retMoeda = { m->x, m->y, (float)TILE, (float)TILE };
     return VerificarColisao(retJog, retMoeda);

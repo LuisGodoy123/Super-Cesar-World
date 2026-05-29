@@ -22,7 +22,7 @@ typedef enum {
 
 // Utilitarios internos
 
-static void resetar_posicao_jogador_preservando_status(Jogador *j) {
+void resetar_posicao_jogador_preservando_status(Jogador *j) {
 	int   vidas     = j->vidas;
 	int   pontos    = j->pontos;
 	int   moedas    = j->moedas;
@@ -40,7 +40,7 @@ static void resetar_posicao_jogador_preservando_status(Jogador *j) {
 	j->timerCafe = timerCafe;
 }
 
-static int boss_ativo(No *listaInimigos) {
+int boss_ativo(No *listaInimigos) {
 	No *atual = listaInimigos;
 	while (atual != NULL) {
 		if (atual->dados.tipo == BOSS && atual->dados.ativo) return 1;
@@ -49,7 +49,7 @@ static int boss_ativo(No *listaInimigos) {
 	return 0;
 }
 
-static int boss_vida(No *listaInimigos) {
+int boss_vida(No *listaInimigos) {
 	No *atual = listaInimigos;
 	while (atual != NULL) {
 		if (atual->dados.tipo == BOSS && atual->dados.ativo)
@@ -59,7 +59,7 @@ static int boss_vida(No *listaInimigos) {
 	return 0;
 }
 
-static float y_superficie_chao(Fase *fase, float x, int altura, float fallback) {
+float y_superficie_chao(Fase *fase, float x, int altura, float fallback) {
 	if (fase == NULL) return fallback;
 
 	int col = (int)(x / TILE);
@@ -77,7 +77,7 @@ static float y_superficie_chao(Fase *fase, float x, int altura, float fallback) 
 	return fallback;
 }
 
-static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *fase) {
+void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *fase) {
 	if (faseAtual == 1) {
 		AdicionarInimigo(listaInimigos, CAMINHADOR,  896.0f, 480.0f); // 28,16
 		AdicionarInimigo(listaInimigos, CAMINHADOR, 1184.0f, 480.0f); // 37,16
@@ -121,7 +121,7 @@ static void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *f
 	}
 }
 
-static void preparar_fase(Fase *fase,
+void preparar_fase(Fase *fase,
 						  Jogador *jogador,
 						  No **listaInimigos,
 						  NoMoeda **listaMoedas,
@@ -146,7 +146,7 @@ static void preparar_fase(Fase *fase,
 	carregar_inimigos_da_fase(listaInimigos, faseAtual, fase);
 }
 
-static int carregar_fonte_ui(Font *fonte) {
+int carregar_fonte_ui(Font *fonte) {
 	const char *caminhos_fonte[] = {
 		"assets/fontes/SuperMarioWorld.ttf",
 		"assets/fontes/PressStart2P-Regular.ttf",
@@ -163,7 +163,7 @@ static int carregar_fonte_ui(Font *fonte) {
 	return 0;
 }
 
-static void desenhar_texto_ui(Font *fonte, int temFonte, const char *txt,
+void desenhar_texto_hud(Font *fonte, int temFonte, const char *txt,
 						  int x, int y, int tamanho, Color cor) {
 	if (temFonte && fonte != NULL) {
 		DrawTextEx(*fonte, txt, (Vector2){(float)x, (float)y}, (float)tamanho, 1, cor);
@@ -557,18 +557,18 @@ int main(void) {
 			const char *s1 = "GAME OVER";
 			const char *s2 = TextFormat("Pontuacao final: %d", jogador.pontos);
 			const char *s3 = "Pressione ENTER para voltar ao menu";
-			desenhar_texto_ui(&fonteUI, temFonteUI, s1, (LARGURA_TELA - (int)MeasureTextEx(fm, s1, 48, 1).x) / 2, 260, 48, RED);
-			desenhar_texto_ui(&fonteUI, temFonteUI, s2, (LARGURA_TELA - (int)MeasureTextEx(fm, s2, 26, 1).x) / 2, 340, 26, WHITE);
-			desenhar_texto_ui(&fonteUI, temFonteUI, s3, (LARGURA_TELA - (int)MeasureTextEx(fm, s3, 20, 1).x) / 2, 400, 20, LIGHTGRAY);
+			desenhar_texto_hud(&fonteUI, temFonteUI, s1, (LARGURA_TELA - (int)MeasureTextEx(fm, s1, 48, 1).x) / 2, 260, 48, RED);
+			desenhar_texto_hud(&fonteUI, temFonteUI, s2, (LARGURA_TELA - (int)MeasureTextEx(fm, s2, 26, 1).x) / 2, 340, 26, WHITE);
+			desenhar_texto_hud(&fonteUI, temFonteUI, s3, (LARGURA_TELA - (int)MeasureTextEx(fm, s3, 20, 1).x) / 2, 400, 20, LIGHTGRAY);
 		} else {
 			ClearBackground(DARKBLUE);
 			Font fm = temFonteUI ? fonteUI : GetFontDefault();
 			const char *s1 = "VITORIA!";
 			const char *s2 = TextFormat("Pontuacao final: %d", jogador.pontos);
 			const char *s3 = "Recorde salvo! Pressione ENTER para voltar ao menu";
-			desenhar_texto_ui(&fonteUI, temFonteUI, s1, (LARGURA_TELA - (int)MeasureTextEx(fm, s1, 48, 1).x) / 2, 260, 48, YELLOW);
-			desenhar_texto_ui(&fonteUI, temFonteUI, s2, (LARGURA_TELA - (int)MeasureTextEx(fm, s2, 26, 1).x) / 2, 340, 26, WHITE);
-			desenhar_texto_ui(&fonteUI, temFonteUI, s3, (LARGURA_TELA - (int)MeasureTextEx(fm, s3, 20, 1).x) / 2, 400, 20, LIGHTGRAY);
+			desenhar_texto_hud(&fonteUI, temFonteUI, s1, (LARGURA_TELA - (int)MeasureTextEx(fm, s1, 48, 1).x) / 2, 260, 48, YELLOW);
+			desenhar_texto_hud(&fonteUI, temFonteUI, s2, (LARGURA_TELA - (int)MeasureTextEx(fm, s2, 26, 1).x) / 2, 340, 26, WHITE);
+			desenhar_texto_hud(&fonteUI, temFonteUI, s3, (LARGURA_TELA - (int)MeasureTextEx(fm, s3, 20, 1).x) / 2, 400, 20, LIGHTGRAY);
 		}
 
 		EndDrawing();

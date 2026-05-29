@@ -8,17 +8,17 @@ int tile_solido(Fase *f, int col, int linha) {
 
 // Helpers para preencher o mapa
 
-static void colocar_bloco(Fase *f, int l, int c) {
+void colocar_bloco(Fase *f, int l, int c) {
     f->mapa[l][c] = BLOCO;
     f->blocos[l][c] = (Bloco){ BLOCO_TIPO_NORMAL, BLOCO_ESTADO_ATIVO, 0.0f, 0 };
 }
 
-static void colocar_powerup(Fase *f, int l, int c) {
+void colocar_powerup(Fase *f, int l, int c) {
     f->mapa[l][c] = BLOCO;
     f->blocos[l][c] = (Bloco){ BLOCO_TIPO_POWERUP, BLOCO_ESTADO_ATIVO, 0.0f, 0 };
 }
 
-static void preencher_chao(Fase *f, int cIni, int cFim, int linhaTopo) {
+void preencher_chao(Fase *f, int cIni, int cFim, int linhaTopo) {
     if (cIni < 0) cIni = 0;
     if (cFim >= COLUNAS) cFim = COLUNAS - 1;
     if (linhaTopo < 0) linhaTopo = 0;
@@ -29,19 +29,19 @@ static void preencher_chao(Fase *f, int cIni, int cFim, int linhaTopo) {
             colocar_bloco(f, l, c);
 }
 
-static void colocar_porta(Fase *f, int l, int c) {
+void colocar_porta(Fase *f, int l, int c) {
     if (l < 0 || l >= LINHAS || c < 0 || c >= COLUNAS) return;
     f->mapa[l][c] = PORTA;
 }
 
-static void plataforma(Fase *f, int cIni, int cFim, int linha) {
+void plataforma(Fase *f, int cIni, int cFim, int linha) {
     for (int c = cIni; c <= cFim; c++)
         colocar_bloco(f, linha, c);
 }
 
 // Mapas das fases
 
-static void preencher_fase1(Fase *f) {
+void preencher_fase1(Fase *f) {
     // Inspirado em Yoshi's Island 1 (Super Mario World)
     // Ritmo: plano → subida leve → plano → vale raso → plano
     // Linha base: 17 | elevacao: 15-16 | vale raso: 18
@@ -137,7 +137,7 @@ static void preencher_fase1(Fase *f) {
     colocar_porta(f, 16, 126);
 }
 
-static void preencher_fase2(Fase *f) {
+void preencher_fase2(Fase *f) {
     // Chao com lacuna no centro do mapa (6 tiles)
     preencher_chao(f,  0,  58, 21);
     preencher_chao(f, 65, 129, 21);
@@ -187,7 +187,7 @@ static void preencher_fase2(Fase *f) {
     colocar_porta(f, 20, 125);
 }
 
-static void preencher_fase3(Fase *f) {
+void preencher_fase3(Fase *f) {
     //chao com multiplos buracos
     preencher_chao(f, 0, 13, 21);
     preencher_chao(f, 19, 33, 21);
@@ -274,7 +274,7 @@ void CarregarFase(Fase *f, int n) {
 
 typedef struct { float x, y, escala; } NuvemDeco;
 
-static void desenhar_nuvem_deco(float wx, float wy, float escala, float cameraX, float cameraYOffset) {
+void desenhar_nuvem_deco(float wx, float wy, float escala, float cameraX, float cameraYOffset) {
     float zoom = CAMERA_ZOOM;
     // parallax: nuvens se movem a 50% da camera para dar sensacao de profundidade
     float sx = (wx - cameraX * 0.5f) * zoom;
@@ -303,10 +303,10 @@ static void desenhar_nuvem_deco(float wx, float wy, float escala, float cameraX,
                   (int)(r2 * 0.7f + r + r3 * 0.7f), (int)(r * 0.22f), somb);
 }
 
-static void desenhar_nuvens_sprite(float cameraX, float cameraYOffset,
+void desenhar_nuvens_sprite(float cameraX, float cameraYOffset,
                                    Texture2D t1, Texture2D t2, Texture2D t3) {
     typedef struct { float wx, wy, escala; int idx; } NuvemTex;
-    static const NuvemTex nuvens[] = {
+    const NuvemTex nuvens[] = {
         {  120, 165, 1.00f, 0 },
         {  460, 148, 0.80f, 1 },
         {  800, 195, 1.10f, 2 },
@@ -342,12 +342,12 @@ static void desenhar_nuvens_sprite(float cameraX, float cameraYOffset,
     }
 }
 
-static void desenhar_nuvens(int faseNum, float cameraX, float cameraYOffset) {
-    static const NuvemDeco n2[] = {
+void desenhar_nuvens(int faseNum, float cameraX, float cameraYOffset) {
+    const NuvemDeco n2[] = {
         {  300,  52, 0.90f }, {  920,  34, 1.10f }, { 1620,  64, 0.80f },
         { 2240,  40, 1.00f }, { 3020,  68, 1.20f },
     };
-    static const NuvemDeco n3[] = {
+    const NuvemDeco n3[] = {
         {  420,  48, 0.70f }, { 1230,  30, 0.90f },
         { 2020,  54, 0.80f }, { 2830,  36, 1.00f },
     };
