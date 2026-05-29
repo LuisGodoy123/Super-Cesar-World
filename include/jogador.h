@@ -16,7 +16,6 @@
 #define GRAVIDADE                   0.25f
 #define VELOCIDADE_QUEDA_MAXIMA     8.0f
 #define VELOCIDADE_CAMINHADA        2.5f
-#define VELOCIDADE_CORRIDA          3.8f
 #define ACELERACAO                  0.15f
 #define DESACELERACAO               0.12f
 #define ACELERACAO_AR               0.12f
@@ -25,8 +24,6 @@
 #define FORCA_SEGURAR_PULO         -0.20f
 #define TEMPO_MAXIMO_SEGURAR_PULO   12
 #define CORTE_PULO_CURTO             6
-#define FORCA_PULO_CORRENDO        -6.8f
-#define FORCA_SEGURAR_PULO_CORRENDO -0.25f
 #define DESACELERACAO_DERRAPAGEM    0.6f
 #define LIMITE_DERRAPAGEM           2.0f
 #define COYOTE_FRAMES                6
@@ -42,7 +39,6 @@
 typedef enum {
     MOV_PARADO = 0,
     MOV_CAMINHANDO,
-    MOV_CORRENDO,
     MOV_DERRAPANDO,
     MOV_PULANDO,
     MOV_CAINDO,
@@ -65,12 +61,10 @@ typedef struct {
     int jumpHoldFrames;
     int jumpFrames;
     int jumpCutFeito;
-    int puloCorrendo;
     int agachado;
     int emDerrapagem;
     int direcao;           // -1 esquerda, 1 direita
     int alturaAtual;
-    float limiteVelocidadeAr;
     float animTimer;
     int animFrame;
     float cameraX;        // offset da camera (seguindo o jogador)

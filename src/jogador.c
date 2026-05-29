@@ -57,12 +57,10 @@ void IniciarJogador(Jogador *j) {
     j->jumpHoldFrames  = 0;
     j->jumpFrames      = -1;
     j->jumpCutFeito    = 0;
-    j->puloCorrendo    = 0;
     j->agachado        = 0;
     j->emDerrapagem    = 0;
     j->direcao         = 1;
     j->alturaAtual     = JOGADOR_ALTURA;
-    j->limiteVelocidadeAr = VELOCIDADE_CAMINHADA;
     j->animTimer       = 0.0f;
     j->vyAnterior      = 0.0f;
     j->animFrame       = 0;
@@ -91,12 +89,10 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
 
     float fator = (j->devMode ? 3.0f : 1.0f) * (j->cafeAtivo ? FATOR_CAFE : 1.0f);
     float vel_caminhada = VELOCIDADE_CAMINHADA * fator;
-    float vel_corrida   = VELOCIDADE_CORRIDA   * fator;
 
     int left  = !bloqueado && (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A));
     int right = !bloqueado && (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D));
     int down  = !bloqueado && (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S));
-    int run   = !bloqueado && (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT));
 
     int jumpPressed = !bloqueado && (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W));
 
@@ -106,11 +102,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
     if (j->coyoteFrames > 0) j->coyoteFrames--;
     if (j->jumpBufferFrames > 0) j->jumpBufferFrames--;
     if (jumpPressed) j->jumpBufferFrames = JUMP_BUFFER_FRAMES;
-
-    /* limite de velocidade no ar depende do estado no chao */
-    if (j->noChao) {
-        j->limiteVelocidadeAr = run ? vel_corrida : vel_caminhada;
-    }
 
     /* atualiza direcao pelo input (fora da derrapagem) */
     if (!j->emDerrapagem && dirInput != 0) {
@@ -142,7 +133,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
     /* pulo (buffer + coyote) */
     if (!j->agachado && j->jumpBufferFrames > 0 && (j->noChao || j->coyoteFrames > 0)) {
         j->vy = FORCA_PULO;
-        j->puloCorrendo = 0;
         j->noChao = 0;
         j->coyoteFrames = 0;
         j->jumpBufferFrames = 0;
@@ -167,27 +157,24 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
                     j->alturaAtual = alturaBaixa;
                     j->y += (float)(alturaCheia - alturaBaixa);
                 } else if (dirInput != 0) {
-                    float limite = run ? vel_corrida : vel_caminhada;
                     j->vx += (float)dirInput * ACELERACAO;
-                    j->vx = fminf(fmaxf(j->vx, -limite), limite);
+                    j->vx = fminf(fmaxf(j->vx, -vel_caminhada), vel_caminhada);
                 }
             }
         } else if (dirInput != 0) {
             if (sinal(j->vx) != 0 && dirInput != sinal(j->vx) && fabsf(j->vx) > LIMITE_DERRAPAGEM) {
                 j->emDerrapagem = 1;
             } else {
-                float limite = run ? vel_corrida : vel_caminhada;
                 j->vx += (float)dirInput * ACELERACAO;
-                j->vx = fminf(fmaxf(j->vx, -limite), limite);
+                j->vx = fminf(fmaxf(j->vx, -vel_caminhada), vel_caminhada);
             }
         } else {
             j->vx = aproximar(j->vx, 0.0f, DESACELERACAO);
         }
     } else {
-        float limite = j->limiteVelocidadeAr;
         if (dirInput != 0) {
             j->vx += (float)dirInput * ACELERACAO_AR;
-            j->vx = fminf(fmaxf(j->vx, -limite), limite);
+            j->vx = fminf(fmaxf(j->vx, -vel_caminhada), vel_caminhada);
         } else {
             j->vx = aproximar(j->vx, 0.0f, DESACELERACAO_AR);
         }
@@ -276,7 +263,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         j->jumpFrames = -1;
         j->jumpHoldFrames = 0;
         j->jumpCutFeito = 0;
-        j->puloCorrendo = 0;
     } else if (j->jumpFrames >= 0) {
         j->jumpFrames++;
     }
@@ -305,15 +291,13 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         j->estadoMov = MOV_DERRAPANDO;
     } else if (fabsf(j->vx) < 0.01f) {
         j->estadoMov = MOV_PARADO;
-    } else if (fabsf(j->vx) > VELOCIDADE_CAMINHADA + 0.01f || run) {
-        j->estadoMov = MOV_CORRENDO;
     } else {
         j->estadoMov = MOV_CAMINHANDO;
     }
 
-    if (j->estadoMov == MOV_CAMINHANDO || j->estadoMov == MOV_CORRENDO) {
+    if (j->estadoMov == MOV_CAMINHANDO) {
         float speed = fabsf(j->vx);
-        float ratio = (VELOCIDADE_CORRIDA > 0.0f) ? (speed / VELOCIDADE_CORRIDA) : 0.0f;
+        float ratio = (VELOCIDADE_CAMINHADA > 0.0f) ? (speed / VELOCIDADE_CAMINHADA) : 0.0f;
         float step = 0.10f + 0.15f * ratio;
         int frames = (j->numSprites > 0) ? j->numSprites : 1;
 
@@ -372,7 +356,7 @@ void DesenharJogador(Jogador *j, float cameraYOffset) {
 
     if (j->temSprites && j->numSprites > 0) {
         int frame = 0;
-        if (j->estadoMov == MOV_CAMINHANDO || j->estadoMov == MOV_CORRENDO) {
+        if (j->estadoMov == MOV_CAMINHANDO) {
             frame = j->animFrame % (j->numSprites > 2 ? 2 : j->numSprites);
         } else if ((j->estadoMov == MOV_PULANDO || j->estadoMov == MOV_CAINDO) && j->numSprites > 2) {
             frame = 2;
@@ -393,7 +377,7 @@ void DesenharJogador(Jogador *j, float cameraYOffset) {
         }
         DrawTexturePro(tex, src, dest, origin, 0.0f, WHITE);
     } else {
-        Color corpo = (j->estadoMov == MOV_CORRENDO) ? ORANGE : RED;
+        Color corpo = RED;
         if (j->estadoMov == MOV_AGACHADO) corpo = MAROON;
         if (j->estadoMov == MOV_DERRAPANDO) corpo = DARKGRAY;
 
@@ -407,7 +391,7 @@ void DesenharJogador(Jogador *j, float cameraYOffset) {
         DrawRectangle(olhoX2, olhoY, 4, 4, WHITE);
 
         /* pezinhos simples para animacao */
-        if (j->estadoMov == MOV_CAMINHANDO || j->estadoMov == MOV_CORRENDO) {
+        if (j->estadoMov == MOV_CAMINHANDO) {
             int footY = (int)screenY + (int)altura - 5;
             int off = (j->animFrame % 2 == 0) ? 3 : 7;
             DrawRectangle((int)screenX + off, footY, 6, 4, DARKGRAY);
