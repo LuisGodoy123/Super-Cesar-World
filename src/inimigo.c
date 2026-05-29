@@ -157,7 +157,7 @@ static void aplicar_fisica_boss(Inimigo *ini, float dt) {
 
 /* verifica colisao entre retangulos (usa VerificarColisao de fase.c) */
 static int colidiu(Inimigo *ini, Jogador *j) {
-    Rectangle retJog = { j->x + JOGADOR_HITBOX_OFFSET_X, j->y, JOGADOR_HITBOX_LARGURA, (float)j->alturaAtual };
+    Rectangle retJog = { j->x + JOGADOR_HITBOX_OFFSET_X, j->y, JOGADOR_HITBOX_LARGURA, (float)JOGADOR_ALTURA };
     Rectangle retIni = { ini->x,  ini->y,  (float)ini->largura, (float)ini->altura };
     return VerificarColisao(retJog, retIni);
 }
@@ -246,7 +246,7 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
 
             /* colisao com o jogador (todos os tipos) */
             if (j->estado != MORTO && colidiu(ini, j)) {
-                float jogadorBase = j->y + (float)j->alturaAtual;
+                float jogadorBase = j->y + (float)JOGADOR_ALTURA;
                 float iniMeio     = ini->y + (float)ini->altura * 0.5f;
                 int pisou_em_cima = (j->vyAnterior >= 1.5f) && (jogadorBase <= iniMeio);
 
@@ -259,9 +259,6 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                     }
                     j->vy = FORCA_PULO;
                     j->noChao = 0;
-                    j->jumpFrames = 0;
-                    j->jumpHoldFrames = 0;
-                    j->jumpCutFeito = 0;
                     if (j->estado == VIVO) {
                         j->estado = INVENCIVEL;
                         j->timerInvencivel = 0.3f;

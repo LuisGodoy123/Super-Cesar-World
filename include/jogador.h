@@ -21,11 +21,6 @@
 #define ACELERACAO_AR               0.12f
 #define DESACELERACAO_AR            0.08f
 #define FORCA_PULO                 -8.5f
-#define FORCA_SEGURAR_PULO         -0.20f
-#define TEMPO_MAXIMO_SEGURAR_PULO   12
-#define CORTE_PULO_CURTO             6
-#define DESACELERACAO_DERRAPAGEM    0.6f
-#define LIMITE_DERRAPAGEM           2.0f
 #define COYOTE_FRAMES                6
 #define JUMP_BUFFER_FRAMES           8
 
@@ -39,10 +34,8 @@
 typedef enum {
     MOV_PARADO = 0,
     MOV_CAMINHANDO,
-    MOV_DERRAPANDO,
     MOV_PULANDO,
     MOV_CAINDO,
-    MOV_AGACHADO,
     MOV_MORTO
 } EstadoMovimento;
 
@@ -58,13 +51,7 @@ typedef struct {
     float timerInvencivel;
     int coyoteFrames;
     int jumpBufferFrames;
-    int jumpHoldFrames;
-    int jumpFrames;
-    int jumpCutFeito;
-    int agachado;
-    int emDerrapagem;
     int direcao;           // -1 esquerda, 1 direita
-    int alturaAtual;
     float animTimer;
     int animFrame;
     float cameraX;        // offset da camera (seguindo o jogador)

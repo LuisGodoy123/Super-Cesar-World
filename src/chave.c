@@ -11,7 +11,7 @@ void IniciarChave(Chave *chave, float x, float y) {
 
 static int colidiu_chave_jogador(Chave *chave, Jogador *j) {
     Rectangle rj = { j->x + JOGADOR_HITBOX_OFFSET_X, j->y,
-                     (float)JOGADOR_HITBOX_LARGURA, (float)j->alturaAtual };
+                     (float)JOGADOR_HITBOX_LARGURA, (float)JOGADOR_ALTURA };
     Rectangle rc = { chave->x, chave->y, (float)TILE, (float)TILE };
     return VerificarColisao(rj, rc);
 }

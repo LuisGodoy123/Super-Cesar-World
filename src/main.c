@@ -415,7 +415,7 @@ int main(void) {
 						float cx = (float)(c * TILE) + 4, cy = (float)(l * TILE) + b->cafeOffset, cs = (float)(TILE - 8);
 						if (jogador.x + JOGADOR_HITBOX_OFFSET_X < cx + cs &&
 							jogador.x + JOGADOR_HITBOX_OFFSET_X + JOGADOR_HITBOX_LARGURA > cx &&
-							jogador.y < cy + cs && jogador.y + jogador.alturaAtual > cy) {
+							jogador.y < cy + cs && jogador.y + JOGADOR_ALTURA > cy) {
 							b->cafeColetado = 1;
 							jogador.cafeAtivo = 1;
 							jogador.timerCafe = TEMPO_CAFE;
@@ -434,7 +434,7 @@ int main(void) {
 					if (faseAtual == 1) {
 						Rectangle playerHitbox = {
 							jogador.x + JOGADOR_HITBOX_OFFSET_X, jogador.y,
-							(float)JOGADOR_HITBOX_LARGURA, (float)jogador.alturaAtual
+							(float)JOGADOR_HITBOX_LARGURA, (float)JOGADOR_ALTURA
 						};
 						for (int l = 0; l < LINHAS && !entrou_porta; l++) {
 							for (int c = 0; c < COLUNAS && !entrou_porta; c++) {
@@ -459,7 +459,7 @@ int main(void) {
 					if (faseAtual == 2) {
 						Rectangle playerHitbox = {
 							jogador.x + JOGADOR_HITBOX_OFFSET_X, jogador.y,
-							(float)JOGADOR_HITBOX_LARGURA, (float)jogador.alturaAtual
+							(float)JOGADOR_HITBOX_LARGURA, (float)JOGADOR_ALTURA
 						};
 						for (int l = 0; l < LINHAS && !entrou_porta; l++) {
 							for (int c = 0; c < COLUNAS && !entrou_porta; c++) {
@@ -519,7 +519,7 @@ int main(void) {
 			}
 
 			float playerSX = (jogador.x - jogador.cameraX) * CAMERA_ZOOM + JOGADOR_LARGURA * CAMERA_ZOOM / 2.0f;
-			float playerSY = (jogador.y - fase.cameraYOffset) * CAMERA_ZOOM + jogador.alturaAtual * CAMERA_ZOOM / 2.0f;
+			float playerSY = (jogador.y - fase.cameraYOffset) * CAMERA_ZOOM + JOGADOR_ALTURA * CAMERA_ZOOM / 2.0f;
 			Camera2D cam = { 0 };
 			cam.offset   = (Vector2){ playerSX, playerSY };
 			cam.target   = (Vector2){ playerSX, playerSY };
