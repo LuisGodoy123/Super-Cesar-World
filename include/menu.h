@@ -11,8 +11,8 @@ typedef enum {
 } OpcaoMenu;
 
 typedef struct {
-    int selecionado;       /* item atual do cursor */
-    float tempoCursor;     /* animacao do cursor */
+    int selecionado;
+    float tempoCursor;
     Texture2D fundo;
     int temFundo;
     Texture2D texNome;
@@ -23,7 +23,7 @@ typedef struct {
 
 void IniciarMenu(Menu *m);
 void LiberarMenu(Menu *m);
-int  AtualizarMenu(Menu *m);   /* retorna OpcaoMenu selecionada, ou -1 */
+int  AtualizarMenu(Menu *m);
 void DesenharMenu(Menu *m, Placar *p);
 
 #endif

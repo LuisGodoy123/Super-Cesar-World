@@ -10,7 +10,6 @@
 #define CAMERA_ZOOM 1.35f
 #define CAMERA_Y_OFFSET 128.0f
 
-//valores do mapa
 #define VAZIO  0
 #define BLOCO  1
 #define MOEDA  2

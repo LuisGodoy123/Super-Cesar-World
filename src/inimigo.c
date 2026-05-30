@@ -2,7 +2,6 @@
 #include "fase.h"
 #include <stdlib.h>
 
-/* pontos concedidos ao eliminar cada tipo */
 int pontos_por_tipo(int tipo) {
     if (tipo == CAMINHADOR)  return 200;
     if (tipo == PERSEGUIDOR) return 300;
@@ -10,7 +9,6 @@ int pontos_por_tipo(int tipo) {
     return 0;
 }
 
-/* dimensoes de cada tipo */
 void definir_dimensoes(Inimigo *ini) {
     if      (ini->tipo == BOSS)       { ini->largura = 96; ini->altura = 96; }
     else if (ini->tipo == CAMINHADOR) { ini->largura = 32; ini->altura = 32; }
@@ -18,12 +16,8 @@ void definir_dimensoes(Inimigo *ini) {
     else                              { ini->largura = 32; ini->altura = 32; }
 }
 
-/* ------------------------------------------------------------------ */
-/* CriarInimigo — malloc de novo no (ALOCACAO DINAMICA)                */
-/* ------------------------------------------------------------------ */
-
 No *CriarInimigo(int tipo, float x, float y) {
-    No *novo = (No *) malloc(sizeof(No));   /* ALOCACAO DINAMICA */
+    No *novo = (No *) malloc(sizeof(No));
 
     novo->dados.x       = x;
     novo->dados.y       = y;
@@ -47,19 +41,11 @@ No *CriarInimigo(int tipo, float x, float y) {
     return novo;
 }
 
-/* ------------------------------------------------------------------ */
-/* AdicionarInimigo — insere no inicio da lista                        */
-/* ------------------------------------------------------------------ */
-
 void AdicionarInimigo(No **lista, int tipo, float x, float y) {
     No *novo  = CriarInimigo(tipo, x, y);
     novo->proximo = *lista;
     *lista = novo;
 }
-
-/* ------------------------------------------------------------------ */
-/* Comportamentos internos                                             */
-/* ------------------------------------------------------------------ */
 
 void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
     if (ini->vx == 0.0f && ini->tipo != PERSEGUIDOR)
@@ -91,7 +77,6 @@ void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
         }
     }
 
-    /* stuck timer: so o caminhador pula para se desgrudar */
     if (ini->tipo != PERSEGUIDOR) {
         if (ini->vy >= 0.0f) {
             ini->stuckTimer += dt;
@@ -122,7 +107,6 @@ void aplicar_fisica_inimigo(Inimigo *ini, Fase *f, float dt) {
         ini->vy = 0.0f;
     }
 
-    /* limites do mapa — impede o inimigo de sair pelos lados */
     if (ini->x < 0.0f) {
         ini->x  = 0.0f;
         if (ini->vx < 0) ini->vx = -ini->vx;
@@ -155,16 +139,11 @@ void aplicar_fisica_boss(Inimigo *ini, float dt) {
     }
 }
 
-/* verifica colisao entre retangulos (usa VerificarColisao de fase.c) */
 int colidiu(Inimigo *ini, Jogador *j) {
     Rectangle retJog = { j->x + JOGADOR_HITBOX_OFFSET_X, j->y, JOGADOR_HITBOX_LARGURA, (float)JOGADOR_ALTURA };
     Rectangle retIni = { ini->x,  ini->y,  (float)ini->largura, (float)ini->altura };
     return VerificarColisao(retJog, retIni);
 }
-
-/* ------------------------------------------------------------------ */
-/* AtualizarInimigos — percorre lista, move cada inimigo               */
-/* ------------------------------------------------------------------ */
 
 void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) {
     No *atual = lista;
@@ -181,24 +160,21 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                 }
                 if (ini->stuckTimer > 0.0f) {
                     if (ini->y < 576.0f) {
-                        // descendo suavemente ate o chao
                         ini->y += ini->vy * dt;
                         if (ini->y >= 576.0f) {
                             ini->y  = 576.0f;
                             ini->vy = 0.0f;
                         }
                     } else {
-                        // parado no chao, contagem regressiva
                         ini->stuckTimer -= dt;
                         if (ini->stuckTimer <= 0.0f) {
                             ini->stuckTimer = 0.0f;
                             ini->timerPouso = INTERVALO_POUSO;
                             ini->vx = VEL_BOSS;
-                            ini->vy = -400.0f; // decolagem rapida para cima
+                            ini->vy = -400.0f;
                         }
                     }
                 } else {
-                    // voando
                     aplicar_fisica_boss(ini, dt);
                     ini->timerPouso -= dt;
                     if (ini->timerPouso <= 0.0f) {
@@ -208,7 +184,6 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                     }
                 }
             } else {
-                /* PERSEGUIDOR: persegue o jogador e para na borda do mapa */
                 if (ini->tipo == PERSEGUIDOR) {
                     int dir = (j->x > ini->x) ? 1 : -1;
                     int linPe     = (int)(ini->y + ini->altura) / TILE;
@@ -228,10 +203,8 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                         ini->vx = (float)dir * VEL_PERSEGUIDOR;
                     }
                 }
-                /* movimento e colisao com o terreno */
                 aplicar_fisica_inimigo(ini, f, dt);
 
-                /* animacao de caminhada */
                 if (ini->tipo == CAMINHADOR || ini->tipo == PERSEGUIDOR) {
                     ini->animTimer += dt;
                     if (ini->animTimer >= 0.18f) {
@@ -244,7 +217,6 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                 }
             }
 
-            /* colisao com o jogador (todos os tipos) */
             if (j->estado != MORTO && colidiu(ini, j)) {
                 float jogadorBase = j->y + (float)JOGADOR_ALTURA;
                 float iniMeio     = ini->y + (float)ini->altura * 0.5f;
@@ -272,13 +244,9 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
             }
         }
 
-        atual = atual->proximo;   /* avanca na lista */
+        atual = atual->proximo;
     }
 }
-
-/* ------------------------------------------------------------------ */
-/* DesenharInimigos — percorre lista e renderiza                        */
-/* ------------------------------------------------------------------ */
 
 void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
                       Texture2D texIni1, Texture2D texIni2, Texture2D texIniRebaixado,
@@ -323,7 +291,6 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
                     DrawRectangle(screenX, screenY, largura, altura, ORANGE);
                 }
             } else {
-                /* CAMINHADOR: rebaixado apos 1 pulo, animado no estado normal */
                 Texture2D tex;
                 if (ini->vida <= 1 && texIniRebaixado.id > 0) {
                     tex = texIniRebaixado;
@@ -348,14 +315,10 @@ void DesenharInimigos(No *lista, float cameraX, float cameraYOffset,
     }
 }
 
-/* ------------------------------------------------------------------ */
-/* LiberarInimigos — free em cada no da lista                          */
-/* ------------------------------------------------------------------ */
-
 void LiberarInimigos(No *lista) {
     while (lista) {
         No *tmp = lista;
         lista   = lista->proximo;
-        free(tmp);               /* LIBERACAO DINAMICA */
+        free(tmp);
     }
 }

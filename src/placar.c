@@ -92,16 +92,11 @@ void RegistrarPontuacaoFinal(Placar *p, int pontuacaoFinal) {
 	p->topScores[pos] = pontuacaoFinal;
 }
 
-// DesenharPlacar — HUD superior com vidas, timer, moedas e pontuacao
-
 void DesenharPlacar(Placar *p, Font *fonte, int temFonte, Texture2D texMoeda, int temTexMoeda) {
 	if (p == NULL) return;
 
 	int sw = GetScreenWidth();
 
-	// ==============================
-	// ESQUERDA: "CESAR" + "x{vidas}"
-	// ==============================
 	int lx = 30;
 
 	const char *nomeTxt  = "CESAR";
@@ -110,9 +105,6 @@ void DesenharPlacar(Placar *p, Font *fonte, int temFonte, Texture2D texMoeda, in
 	desenhar_texto_ui(fonte, temFonte, nomeTxt,  lx, 8,  26, ORANGE);
 	desenhar_texto_ui(fonte, temFonte, vidasTxt, lx, 40, 26, WHITE);
 
-	// ==============================
-	// CENTRO: "TIME" + valor
-	// ==============================
 	int cx = sw / 2;
 
 	const char *timeLbl = "TIME";
@@ -126,9 +118,6 @@ void DesenharPlacar(Placar *p, Font *fonte, int temFonte, Texture2D texMoeda, in
 	desenhar_texto_ui(fonte, temFonte, timeLbl, cx - timeLblW / 2, 8,  26, YELLOW);
 	desenhar_texto_ui(fonte, temFonte, timeVal, cx - timeValW / 2, 36, 28, corTempo);
 
-	// ==============================
-	// DIREITA: icone moeda + "x{n}" + pontuacao
-	// ==============================
 	int iconSz  = 36;
 	int iconX   = sw - 230;
 	int iconY   = (HUD_ALTURA - iconSz) / 2 - 4;
@@ -149,8 +138,6 @@ void DesenharPlacar(Placar *p, Font *fonte, int temFonte, Texture2D texMoeda, in
 	desenhar_texto_ui(fonte, temFonte, moedasTxt, txtX, 8,  26, WHITE);
 	desenhar_texto_ui(fonte, temFonte, pontosTxt, txtX, 36, 26, WHITE);
 }
-
-// DesenharTopScores — mostra ranking de pontuacoes
 
 void DesenharTopScores(Placar *p, int x, int y) {
 	if (p == NULL) return;

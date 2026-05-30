@@ -12,7 +12,6 @@
 #define FATOR_CAFE             2.0f
 #define TEMPO_CAFE             5.0f
 
-/* constantes de fisica (por frame @60fps) */
 #define GRAVIDADE                   0.25f
 #define VELOCIDADE_QUEDA_MAXIMA     8.0f
 #define VELOCIDADE_CAMINHADA        2.5f
@@ -24,7 +23,6 @@
 #define COYOTE_FRAMES                6
 #define JUMP_BUFFER_FRAMES           8
 
-/* temporizadores em segundos (nao dependem da fisica) */
 #define TEMPO_INVENCIVEL            2.0f
 
 #define VIVO       0
@@ -40,21 +38,21 @@ typedef enum {
 } EstadoMovimento;
 
 typedef struct {
-    float x, y;           // posicao
-    float vx, vy;         // velocidade
-    float vyAnterior;     // vy antes da resolucao de colisao com chao
-    int vidas;            // inicia com 3
+    float x, y;
+    float vx, vy;
+    float vyAnterior;
+    int vidas;
     int pontos;
-    int estado;           // VIVO | INVENCIVEL | MORTO
+    int estado;
     EstadoMovimento estadoMov;
     int noChao;
     float timerInvencivel;
     int coyoteFrames;
     int jumpBufferFrames;
-    int direcao;           // -1 esquerda, 1 direita
+    int direcao;
     float animTimer;
     int animFrame;
-    float cameraX;        // offset da camera (seguindo o jogador)
+    float cameraX;
     int cafeAtivo;
     float timerCafe;
     int moedas;

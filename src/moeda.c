@@ -1,17 +1,14 @@
 #include "moeda.h"
 #include <stdlib.h>
 
-// verifica colisao entre o retangulo da moeda e do jogador
 int colidiu_moeda_jogador(NoMoeda *m, Jogador *j) {
     Rectangle retJog = { j->x + JOGADOR_HITBOX_OFFSET_X, j->y, JOGADOR_HITBOX_LARGURA, (float)JOGADOR_ALTURA };
     Rectangle retMoeda = { m->x, m->y, (float)TILE, (float)TILE };
     return VerificarColisao(retJog, retMoeda);
 }
 
-// CriarMoeda — malloc de novo no (ALOCACAO DINAMICA)
-
 NoMoeda *CriarMoeda(float x, float y) {
-    NoMoeda *novo = (NoMoeda *) malloc(sizeof(NoMoeda));   /* ALOCACAO DINAMICA */
+    NoMoeda *novo = (NoMoeda *) malloc(sizeof(NoMoeda));
     if (novo == NULL) return NULL;
 
     novo->x = x;
@@ -21,8 +18,6 @@ NoMoeda *CriarMoeda(float x, float y) {
     return novo;
 }
 
-// AdicionarMoeda — insere no inicio da lista
-
 void AdicionarMoeda(NoMoeda **lista, float x, float y) {
     NoMoeda *novo = CriarMoeda(x, y);
     if (novo == NULL) return;
@@ -30,11 +25,6 @@ void AdicionarMoeda(NoMoeda **lista, float x, float y) {
     novo->proximo = *lista;
     *lista = novo;
 }
-
-// Comportamentos internos
-
-// CarregarMoedasDaFase — le matriz e cria a lista de moedas
-
 
 void CarregarMoedasDaFase(NoMoeda **lista, Fase *f) {
     if (lista == NULL || f == NULL) return;
@@ -48,8 +38,6 @@ void CarregarMoedasDaFase(NoMoeda **lista, Fase *f) {
         }
     }
 }
-
-// AtualizarMoedas — percorre lista e verifica coleta
 
 void AtualizarMoedas(NoMoeda *lista, Jogador *j, Sound sndCoin) {
     if (j == NULL || j->estado == MORTO) return;
@@ -65,9 +53,6 @@ void AtualizarMoedas(NoMoeda *lista, Jogador *j, Sound sndCoin) {
         atual = atual->proximo;
     }
 }
-
-// DesenharMoedas — percorre lista e renderiza
-
 
 void DesenharMoedas(NoMoeda *lista, float cameraX, float cameraYOffset, Texture2D *texMoedas, int numFrames, float tempoAnim) {
     NoMoeda *atual = lista;
@@ -105,13 +90,10 @@ void DesenharMoedas(NoMoeda *lista, float cameraX, float cameraYOffset, Texture2
     }
 }
 
-
-// LiberarMoedas — free em cada no da lista
-
 void LiberarMoedas(NoMoeda *lista) {
     while (lista != NULL) {
         NoMoeda *tmp = lista;
         lista = lista->proximo;
-        free(tmp);               // LIBERACAO DINAMICA
+        free(tmp);
     }
 }

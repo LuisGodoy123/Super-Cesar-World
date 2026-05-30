@@ -6,8 +6,6 @@ int tile_solido(Fase *f, int col, int linha) {
     return f->mapa[linha][col] == BLOCO;
 }
 
-// Helpers para preencher o mapa
-
 void colocar_bloco(Fase *f, int l, int c) {
     f->mapa[l][c] = BLOCO;
     f->blocos[l][c] = (Bloco){ BLOCO_TIPO_NORMAL, BLOCO_ESTADO_ATIVO, 0.0f, 0 };
@@ -39,91 +37,55 @@ void plataforma(Fase *f, int cIni, int cFim, int linha) {
         colocar_bloco(f, linha, c);
 }
 
-// Mapas das fases
-
 void preencher_fase1(Fase *f) {
-    // Inspirado em Yoshi's Island 1 (Super Mario World)
-    // Ritmo: plano → subida leve → plano → vale raso → plano
-    // Linha base: 17 | elevacao: 15-16 | vale raso: 18
-
-    // Inicio totalmente plano
     preencher_chao(f,   0,  15, 17);
-
-    // Subida leve de 1 bloco
     preencher_chao(f,  16,  26, 16);
-
-    // Retorno ao plano (extendido, sem depressao)
     preencher_chao(f,  27,  51, 17);
-
-    // Degraus naturais: subida progressiva (2 degraus)
     preencher_chao(f,  52,  53, 16);
     preencher_chao(f,  54,  61, 15);
-
-    // Descida suave e retorno ao plano
     preencher_chao(f,  62,  67, 16);
     preencher_chao(f,  68,  78, 17);
-
-    // Vale raso
     preencher_chao(f,  79,  82, 18);
-
-    // Longo espaco de respiro
     preencher_chao(f,  83,  95, 17);
-
-    // Subida leve
     preencher_chao(f,  96, 103, 16);
-
-    // Plano (sem depressao)
     preencher_chao(f, 104, 116, 17);
-
-    // Elevacao leve antes do fim
     preencher_chao(f, 117, 122, 16);
-
-    // Chegada final plana
     preencher_chao(f, 123, 129, 17);
 
-    // Plataformas elevadas simples
-    for (int c =  8; c <= 12; c++) colocar_bloco(f, 14, c); // intro ao salto
-    for (int c = 44; c <= 49; c++) colocar_bloco(f, 14, c); // respiro mid-fase
-    for (int c = 70; c <= 75; c++) colocar_bloco(f, 14, c); // apos vale central
-    for (int c = 85; c <= 90; c++) colocar_bloco(f, 13, c); // plataforma mais alta
+    for (int c =  8; c <= 12; c++) colocar_bloco(f, 14, c);
+    for (int c = 44; c <= 49; c++) colocar_bloco(f, 14, c);
+    for (int c = 70; c <= 75; c++) colocar_bloco(f, 14, c);
+    for (int c = 85; c <= 90; c++) colocar_bloco(f, 13, c);
 
-    // Moedas guiando o jogador
-    for (int c =  3; c <=  7; c++) f->mapa[16][c] = MOEDA;   // arco inicial no chao
-    for (int c =  9; c <= 11; c++) f->mapa[13][c] = MOEDA;   // acima da plataforma inicial
-    for (int c = 41; c <= 46; c++) f->mapa[16][c] = MOEDA;   // guia no espaco de respiro
-    for (int c = 55; c <= 59; c++) f->mapa[14][c] = MOEDA;   // sobre a elevacao maxima
-    for (int c = 71; c <= 74; c++) f->mapa[13][c] = MOEDA;   // acima da plataforma central
-    for (int c = 86; c <= 89; c++) f->mapa[12][c] = MOEDA;   // sobre a plataforma alta
-    for (int c = 109; c <= 113; c++) f->mapa[16][c] = MOEDA; // perto do fim
+    for (int c =  3; c <=  7; c++) f->mapa[16][c] = MOEDA;
+    for (int c =  9; c <= 11; c++) f->mapa[13][c] = MOEDA;
+    for (int c = 41; c <= 46; c++) f->mapa[16][c] = MOEDA;
+    for (int c = 55; c <= 59; c++) f->mapa[14][c] = MOEDA;
+    for (int c = 71; c <= 74; c++) f->mapa[13][c] = MOEDA;
+    for (int c = 86; c <= 89; c++) f->mapa[12][c] = MOEDA;
+    for (int c = 109; c <= 113; c++) f->mapa[16][c] = MOEDA;
 
-    // Blocos de poder: padrao Mario — fileiras mistas + solos altos isolados
-
-    // Fileira 1: [tijolo][?][tijolo][tijolo][?][tijolo]
     colocar_bloco(f, 13, 28); colocar_bloco(f, 13, 29);
     colocar_bloco(f, 13, 30); colocar_bloco(f, 13, 31);
     colocar_bloco(f, 13, 32); colocar_bloco(f, 13, 33);
 
-    // Solos altos — requerem plataforma intermediaria (row14) para alcancar
     colocar_powerup(f, 10,  7);
     colocar_powerup(f, 10, 50);
 
-    // Zona A: degrau + prateleira + powerup + moedas (sem bloco de saida)
     colocar_bloco(f, 13, 17); colocar_bloco(f, 13, 18); colocar_bloco(f, 13, 19);
     for (int c = 22; c <= 28; c++) colocar_bloco(f, 9, c);
     colocar_powerup(f, 9, 31);
     for (int c = 22; c <= 28; c++) f->mapa[8][c] = MOEDA;
 
-    // Zona B: prateleira na linha 10 + bloco de saida + moedas (sem degrau, sem powerup)
     for (int c = 68; c <= 74; c++) colocar_bloco(f, 10, c);
     colocar_bloco(f, 13, 81);
     for (int c = 68; c <= 74; c++) f->mapa[8][c] = MOEDA;
 
-    // Zona C: degrau + moedas (sem prateleira, sem powerup, sem bloco de saida)
     colocar_bloco(f, 13, 97); colocar_bloco(f, 13, 98); colocar_bloco(f, 13, 99);
     for (int c = 102; c <= 108; c++) f->mapa[8][c] = MOEDA;
 
-    plataforma(f, 104, 106, 13);       // x=105-108, y=11
-    plataforma(f, 114, 116, 13);       // x=112-115, y=11
+    plataforma(f, 104, 106, 13);
+    plataforma(f, 114, 116, 13);
     colocar_bloco(f, 12, 103);
     colocar_bloco(f, 12, 107);
     colocar_bloco(f, 12, 113);
@@ -132,28 +94,24 @@ void preencher_fase1(Fase *f) {
     colocar_bloco(f, 8, 108);
     colocar_bloco(f, 8, 112);
 
-    // Porta para a fase 2
     colocar_porta(f, 15, 126);
     colocar_porta(f, 16, 126);
 }
 
 void preencher_fase2(Fase *f) {
-    // Chao com lacuna no centro do mapa (6 tiles)
     preencher_chao(f,  0,  58, 21);
     preencher_chao(f, 65, 129, 21);
 
-    // 9 plataformas intermediarias com alturas variadas
-    for (int c =  4; c <=  9; c++) colocar_bloco(f, 18, c);    // baixa, inicio
-    for (int c = 14; c <= 19; c++) colocar_bloco(f, 15, c);    // media
-    for (int c = 37; c <= 42; c++) colocar_bloco(f, 13, c);    // alta
-    for (int c = 49; c <= 54; c++) colocar_bloco(f, 16, c);    // media, beira da lacuna
-    for (int c = 59; c <= 64; c++) colocar_bloco(f, 17, c);    // plataforma sobre a lacuna
-    for (int c = 73; c <= 78; c++) colocar_bloco(f, 18, c);    // baixa, pos-lacuna
-    for (int c = 80; c <= 85; c++) colocar_bloco(f, 14, c);    // media
-    for (int c = 92; c <= 97; c++) colocar_bloco(f, 17, c);    // baixa
-    for (int c = 108; c <= 113; c++) colocar_bloco(f, 11, c);  // alta final
+    for (int c =  4; c <=  9; c++) colocar_bloco(f, 18, c);
+    for (int c = 14; c <= 19; c++) colocar_bloco(f, 15, c);
+    for (int c = 37; c <= 42; c++) colocar_bloco(f, 13, c);
+    for (int c = 49; c <= 54; c++) colocar_bloco(f, 16, c);
+    for (int c = 59; c <= 64; c++) colocar_bloco(f, 17, c);
+    for (int c = 73; c <= 78; c++) colocar_bloco(f, 18, c);
+    for (int c = 80; c <= 85; c++) colocar_bloco(f, 14, c);
+    for (int c = 92; c <= 97; c++) colocar_bloco(f, 17, c);
+    for (int c = 108; c <= 113; c++) colocar_bloco(f, 11, c);
 
-    // 7 grupos de moedas acima das plataformas
     for (int c =  5; c <=  8; c++) f->mapa[17][c] = MOEDA;
     for (int c = 15; c <= 18; c++) f->mapa[14][c] = MOEDA;
     for (int c = 38; c <= 41; c++) f->mapa[12][c] = MOEDA;
@@ -163,16 +121,13 @@ void preencher_fase2(Fase *f) {
     for (int c = 81; c <= 84; c++) f->mapa[13][c] = MOEDA;
     for (int c = 109; c <= 112; c++) f->mapa[10][c] = MOEDA;
 
-    // Fileira mista [tijolo][?][tijolo][tijolo][?][tijolo] + solo alto isolado
     colocar_bloco(f,   17, 31); colocar_powerup(f, 17, 32);
     colocar_bloco(f,   17, 33); colocar_bloco(f,   17, 34);
     colocar_powerup(f, 17, 35); colocar_bloco(f,   17, 36);
     colocar_powerup(f, 14, 33);
 
-    // Blocos de tijolo na lacuna (row21, cols 61-62)
     preencher_chao(f, 61, 62, 21);
 
-    // Parkour zone: prateleira + bloco de saida + moedas (sem degrau, sem powerup)
     for (int c = 100; c <= 106; c++) colocar_bloco(f, 14, c);
     colocar_bloco(f, 18, 113);
     for (int c = 100; c <= 106; c++) f->mapa[13][c] = MOEDA;
@@ -182,19 +137,16 @@ void preencher_fase2(Fase *f) {
     colocar_bloco(f, 10, 108);
     colocar_bloco(f, 10, 113);
 
-    // Porta para a fase 3
     colocar_porta(f, 19, 125);
     colocar_porta(f, 20, 125);
 }
 
 void preencher_fase3(Fase *f) {
-    //chao com multiplos buracos
     preencher_chao(f, 0, 13, 21);
     preencher_chao(f, 19, 33, 21);
     preencher_chao(f, 41, 53, 21);
     preencher_chao(f, 62, 129, 21);
 
-    //plataformas complexas
     for (int c =  2; c <=  6; c++) colocar_bloco(f, 17, c);
     for (int c =  9; c <= 13; c++) colocar_bloco(f, 14, c);
     for (int c = 16; c <= 20; c++) colocar_bloco(f, 11, c);
@@ -209,7 +161,6 @@ void preencher_fase3(Fase *f) {
     colocar_bloco(f, 19, 58);
     for (int c = 63; c <= 67; c++) colocar_bloco(f, 14, c);
 
-    //moedas
     for (int c =  3; c <=  5; c++) f->mapa[16][c] = MOEDA;
     for (int c = 10; c <= 12; c++) f->mapa[13][c] = MOEDA;
     for (int c = 17; c <= 19; c++) f->mapa[10][c] = MOEDA;
@@ -218,15 +169,11 @@ void preencher_fase3(Fase *f) {
     for (int c = 57; c <= 60; c++) f->mapa[ 9][c] = MOEDA;
     for (int c = 64; c <= 66; c++) f->mapa[13][c] = MOEDA;
 
-    // Blocos de poder: fileira mista + solo alto
-    // Fileira: [tijolo][?][tijolo][tijolo][tijolo]
     colocar_bloco(f,   17,  7); colocar_powerup(f, 17,  8);
     colocar_bloco(f,   17,  9); colocar_bloco(f,   17, 10);
     colocar_bloco(f,   17, 11);
-    // Solo alto isolado
     colocar_powerup(f, 14,  5);
 
-    // Parkour zone: degrau deslocado + prateleira + bloco normal + moedas
     for (int c = 68; c <= 70; c++) colocar_bloco(f, 17, c);
     for (int c = 70; c <= 76; c++) colocar_bloco(f, 13, c);
     colocar_bloco(f, 13, 79);
@@ -240,10 +187,7 @@ void preencher_fase3(Fase *f) {
     colocar_bloco(f, 20, 104);
     colocar_bloco(f, 20, 105);
     colocar_bloco(f, 19, 104);
-
 }
-
-//CarregarFase
 
 void CarregarFase(Fase *f, int n) {
     memset(f->mapa,   VAZIO, sizeof(f->mapa));
@@ -251,26 +195,20 @@ void CarregarFase(Fase *f, int n) {
     f->numero  = n;
     f->cameraX = 0.0f;
 
-    switch (n) {
-        case 1:
-            f->corFundo      = (Color){  92, 148, 252, 255 }; //azul claro
-            f->cameraYOffset = 128.0f;
-            preencher_fase1(f);
-            break;
-        case 2:
-            f->corFundo      = (Color){ 255, 140,  60, 255 }; //laranja
-            f->cameraYOffset = 196.0f;
-            preencher_fase2(f);
-            break;
-        case 3:
-            f->corFundo      = (Color){  30,  10,  60, 255 }; //roxo escuro
-            f->cameraYOffset = 196.0f;
-            preencher_fase3(f);
-            break;
+    if (n == 1) {
+        f->corFundo      = (Color){  92, 148, 252, 255 };
+        f->cameraYOffset = 128.0f;
+        preencher_fase1(f);
+    } else if (n == 2) {
+        f->corFundo      = (Color){ 255, 140,  60, 255 };
+        f->cameraYOffset = 196.0f;
+        preencher_fase2(f);
+    } else if (n == 3) {
+        f->corFundo      = (Color){  30,  10,  60, 255 };
+        f->cameraYOffset = 196.0f;
+        preencher_fase3(f);
     }
 }
-
-//DesenharFase
 
 void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture2D texTerra,
                   Texture2D texCafe, Texture2D texFundo2) {
@@ -325,7 +263,6 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture
 
             if (b.tipo == BLOCO_TIPO_POWERUP) {
                 if (b.estado == BLOCO_ESTADO_ATIVO) {
-                    // bloco de interrogacao ativo
                     float bSize = (float)TILE * zoom;
                     if (texBloco.id > 0) {
                         float pad = 0.20f;
@@ -355,7 +292,6 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture
                         DrawText("?", x + (tileSize - tw) / 2, y + (tileSize - fSize) / 2, fSize, amareloBorda);
                     }
                 } else {
-                    // bloco de powerup ja usado — tijolo cinza
                     if (texTijoloCinza.id > 0) {
                         float tw = (float)texTijoloCinza.width;
                         float th = (float)texTijoloCinza.height;
@@ -395,7 +331,6 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture
                     }
                 }
             } else {
-                // bloco normal — plataforma
                 int topo = (i == 0 || f->mapa[i - 1][j] != BLOCO);
                 if (topo) {
                     if (texTijoloCinza.id > 0) {
@@ -458,8 +393,6 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture
     }
 }
 
-//VerificarColisao
-
 int VerificarColisao(Rectangle a, Rectangle b) {
     if (a.x + a.width  <= b.x) return 0;
     if (b.x + b.width  <= a.x) return 0;
@@ -467,4 +400,3 @@ int VerificarColisao(Rectangle a, Rectangle b) {
     if (b.y + b.height <= a.y) return 0;
     return 1;
 }
-

@@ -1,7 +1,6 @@
 #include "jogador.h"
 #include <math.h>
 
-// Retorna 1 se qualquer tile entre colEsq e colDir (inclusive) na linha eh solido
 int faixa_solida(Fase *f, int colEsq, int colDir, int linha) {
     for (int c = colEsq; c <= colDir; c++)
         if (tile_solido(f, c, linha)) return 1;
@@ -14,8 +13,6 @@ float aproximar(float v, float alvo, float delta) {
     return v;
 }
 
-
-// IniciarJogador — inicializa posicao, vidas e pontos
 void IniciarJogador(Jogador *j) {
     Texture2D sprites[3];
     int numSprites = j->numSprites;
@@ -50,7 +47,6 @@ void IniciarJogador(Jogador *j) {
     for (int i = 0; i < 3; i++) j->sprites[i] = sprites[i];
 }
 
-// AtualizarJogador — input, gravidade, movimento, colisao com mapa
 void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound snd1up) {
     if (j->estado == MORTO) {
         j->estadoMov = MOV_MORTO;
@@ -69,7 +65,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
 
     int dirInput = (right ? 1 : 0) - (left ? 1 : 0);
 
-    /* timers por frame */
     if (j->coyoteFrames > 0) j->coyoteFrames--;
     if (j->jumpBufferFrames > 0) j->jumpBufferFrames--;
     if (jumpPressed) j->jumpBufferFrames = JUMP_BUFFER_FRAMES;
@@ -78,7 +73,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         j->direcao = dirInput;
     }
 
-    /* pulo (buffer + coyote) */
     if (j->jumpBufferFrames > 0 && (j->noChao || j->coyoteFrames > 0)) {
         j->vy = FORCA_PULO;
         j->noChao = 0;
@@ -87,7 +81,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         PlaySound(sndJump);
     }
 
-    /* movimento horizontal */
     if (j->noChao) {
         if (dirInput != 0) {
             j->vx += (float)dirInput * ACELERACAO;
@@ -104,7 +97,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         }
     }
 
-    /* movimento e colisao no eixo X */
     j->x += j->vx;
 
     int colEsq = (int)(j->x + JOGADOR_HITBOX_OFFSET_X) / TILE;
@@ -121,16 +113,14 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         j->vx = 0.0f;
     }
 
-    /* gravidade */
     float grav = GRAVIDADE;
     if (j->vy >= 0.0f) grav *= 2.5f;
     j->vy += grav;
 
     if (j->vy > VELOCIDADE_QUEDA_MAXIMA) j->vy = VELOCIDADE_QUEDA_MAXIMA;
 
-    /* movimento e colisao no eixo Y */
     int noChaoAnterior = j->noChao;
-    j->vyAnterior = j->vy;   /* salva antes do chao zerar vy */
+    j->vyAnterior = j->vy;
     j->y += j->vy;
     j->noChao = 0;
 
@@ -145,8 +135,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         j->noChao = 1;
     }
 
-    /* verificacao secundaria: gravidade pequena pode nao penetrar o tile,
-       mas o chao ainda esta diretamente abaixo */
     if (!j->noChao && j->vy >= 0.0f) {
         int linBotRest = (int)(j->y + JOGADOR_ALTURA) / TILE;
         if (faixa_solida(f, colEsq, colDir, linBotRest)) {
@@ -173,12 +161,10 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         j->coyoteFrames = COYOTE_FRAMES;
     }
 
-    /* limites da fase */
     if (j->x + JOGADOR_HITBOX_OFFSET_X < 0) j->x = -(float)JOGADOR_HITBOX_OFFSET_X;
     float limDir = (float)((COLUNAS - 1) * TILE - JOGADOR_HITBOX_LARGURA) - JOGADOR_HITBOX_OFFSET_X;
     if (j->x > limDir) j->x = limDir;
 
-    /* camera segue o jogador */
     float viewWidth = GetScreenWidth() / CAMERA_ZOOM;
     float maxCam = (float)(COLUNAS * TILE - viewWidth);
     f->cameraX = j->x - viewWidth / 2.0f + JOGADOR_LARGURA / 2.0f;
@@ -186,7 +172,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
     if (f->cameraX > maxCam)  f->cameraX = maxCam;
     j->cameraX = f->cameraX;
 
-    /* estado de movimento e animacao */
     if (j->estado == MORTO) {
         j->estadoMov = MOV_MORTO;
     } else if (!j->noChao) {
@@ -213,7 +198,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         else                                  j->animFrame = 0;
     }
 
-    /* timer de invencibilidade */
     if (j->estado == INVENCIVEL) {
         j->timerInvencivel -= dt;
         if (j->timerInvencivel <= 0.0f) {
@@ -222,7 +206,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         }
     }
 
-    /* timer do cafe */
     if (j->cafeAtivo) {
         j->timerCafe -= dt;
         if (j->timerCafe <= 0.0f) {
@@ -231,7 +214,6 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
         }
     }
 
-    /* caiu fora da tela */
     if (j->y > LINHAS * TILE) {
         j->vidas--;
         if (j->vidas <= 0)
@@ -241,11 +223,9 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
     }
 }
 
-// DesenharJogador — renderiza sprite com Raylib
 void DesenharJogador(Jogador *j, float cameraYOffset) {
     if (j->estado == MORTO) return;
 
-    // Piscar quando INVENCIVEL: some nos frames impares
     if (j->estado == INVENCIVEL && j->timerInvencivel > 0.5f && (int)(GetTime() * 10) % 2 == 0) return;
 
     float zoom = CAMERA_ZOOM;
@@ -281,14 +261,12 @@ void DesenharJogador(Jogador *j, float cameraYOffset) {
 
         DrawRectangle((int)screenX, (int)screenY, (int)largura, (int)altura, corpo);
 
-        /* olhos simples para indicar direcao */
         int olhoY = (int)screenY + (int)(altura / 4.0f);
         int olhoX1 = (j->direcao >= 0) ? ((int)screenX + (int)largura - 12) : ((int)screenX + 6);
         int olhoX2 = (j->direcao >= 0) ? ((int)screenX + (int)largura - 6)  : ((int)screenX + 12);
         DrawRectangle(olhoX1, olhoY, 4, 4, WHITE);
         DrawRectangle(olhoX2, olhoY, 4, 4, WHITE);
 
-        /* pezinhos simples para animacao */
         if (j->estadoMov == MOV_CAMINHANDO) {
             int footY = (int)screenY + (int)altura - 5;
             int off = (j->animFrame % 2 == 0) ? 3 : 7;

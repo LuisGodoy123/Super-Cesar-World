@@ -17,7 +17,7 @@
 typedef struct {
     float x, y;
     float vx, vy;
-    int tipo;          // CAMINHADOR | PERSEGUIDOR | BOSS
+    int tipo;
     int vida;
     int ativo;
     int largura, altura;
@@ -25,16 +25,16 @@ typedef struct {
     int   animFrame;
     float timerPouso;
     float stuckTimer;
-    float patrulhaMin;  // limite esquerdo (voador/boss)
-    float patrulhaMax;  // limite direito  (voador/boss)
-    float patrulhaYMin; // limite superior do boss
-    float patrulhaYMax; // limite inferior do boss
-    int   spriteSet;    // 1 = fase1, 2 = fase2
+    float patrulhaMin;
+    float patrulhaMax;
+    float patrulhaYMin;
+    float patrulhaYMax;
+    int   spriteSet;
 } Inimigo;
 
-typedef struct No {        // no da lista de inimigos 
+typedef struct No {
     Inimigo dados;
-    struct No *proximo;    // ponteiro para o proximo no
+    struct No *proximo;
 } No;
 
 No  *CriarInimigo(int tipo, float x, float y);

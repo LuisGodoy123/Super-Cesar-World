@@ -4,7 +4,6 @@
 #define LARGURA 1280
 #define ALTURA   720
 
-/* posicoes do menu */
 #define MENU_X       530
 #define MENU_Y_INICIO 340
 #define MENU_ESPACO   52
@@ -15,10 +14,6 @@ const char *LABELS[OPCAO_TOTAL] = {
     "PLACAR",
 };
 
-/* ------------------------------------------------------------------ */
-/* Helpers visuais                                                       */
-/* ------------------------------------------------------------------ */
-
 void desenhar_texto_contorno(const char *txt, int x, int y,
                                     int tamanho, Color preenchimento, Color contorno) {
     DrawText(txt, x - 2, y,     tamanho, contorno);
@@ -28,7 +23,6 @@ void desenhar_texto_contorno(const char *txt, int x, int y,
     DrawText(txt, x, y,         tamanho, preenchimento);
 }
 
-/* contorno grosso (3px) para o titulo principal */
 void desenhar_texto_contorno_grosso(const char *txt, int x, int y,
                                            int tamanho, Color preenchimento, Color contorno) {
     for (int dx = -3; dx <= 3; dx++)
@@ -38,7 +32,6 @@ void desenhar_texto_contorno_grosso(const char *txt, int x, int y,
     DrawText(txt, x, y, tamanho, preenchimento);
 }
 
-/* texto com leve negrito (3 passadas) */
 void desenhar_texto_fonte_negrito(Font fonte, const char *txt,
                                          Vector2 pos, float tamanho, float espacamento, Color cor) {
     DrawTextEx(fonte, txt, pos, tamanho, espacamento, cor);
@@ -46,14 +39,12 @@ void desenhar_texto_fonte_negrito(Font fonte, const char *txt,
     DrawTextEx(fonte, txt, (Vector2){pos.x, pos.y + 1}, tamanho, espacamento, cor);
 }
 
-/* fallback de negrito para fonte padrao */
 void desenhar_texto_negrito(const char *txt, int x, int y, int tamanho, Color cor) {
     DrawText(txt, x, y, tamanho, cor);
     DrawText(txt, x + 1, y, tamanho, cor);
     DrawText(txt, x, y + 1, tamanho, cor);
 }
 
-/* desenha palavra letra a letra com fonte padrao, cada uma com sua cor */
 void desenhar_palavra_colorida(const char *palavra, Color *cores,
                                       int x, int y, int tamanho, Color contorno) {
     char buf[2] = {0, 0};
@@ -65,7 +56,6 @@ void desenhar_palavra_colorida(const char *palavra, Color *cores,
     }
 }
 
-/* desenha palavra letra a letra com fonte customizada, cada uma com sua cor */
 void desenhar_palavra_colorida_fonte(const char *palavra, Color *cores,
                                             Font fonte, int x, int y,
                                             float tamanho, Color contorno) {
@@ -81,35 +71,28 @@ void desenhar_palavra_colorida_fonte(const char *palavra, Color *cores,
     }
 }
 
-/* logo CESAR real: disco plano + oval do corpo + letra C como anel parcial */
 void desenhar_logo_cesar(int cx, int cy, int r, Color cFundo) {
     Color cD = {16, 12, 8, 255};
 
-    /* 1. Disco plano na base — oval muito larga e achatada */
     DrawEllipse(cx, cy + r * 55 / 58, r,          r * 16 / 58, cD);
 
-    /* 2. Corpo oval principal (externo) */
     DrawEllipse(cx, cy + r * 10 / 58, r * 54 / 58, r * 44 / 58, cD);
 
-    /* 3. Buraco interno do corpo (cor do fundo) */
     DrawEllipse(cx, cy + r * 14 / 58, r * 32 / 58, r * 26 / 58, cFundo);
 
-    /* 4. Letra "C" — anel parcial (abertura para a direita ~70 graus) */
     float outerC = (float)(r * 28 / 58);
     float innerC = (float)(r * 16 / 58);
     int   ccx    = cx;
     int   ccy    = cy - r * 16 / 58;
     DrawRing((Vector2){ccx, ccy}, innerC, outerC, 45.0f, 315.0f, 40, cD);
 
-    /* 5. Sombra/espessura do disco (borda inferior da base) */
     DrawEllipse(cx, cy + r * 60 / 58, r * 95 / 100, r * 12 / 58,
                 (Color){10, 8, 5, 255});
 }
 
-/* preenche uma area com padrao de tijolos (running bond) */
 void desenhar_tijolos(int x0, int y0, int larg, int alt,
                               Color cTij, Color cMort) {
-    int bW = 68, bH = 22, mJ = 3; /* largura, altura, junta */
+    int bW = 68, bH = 22, mJ = 3;
     DrawRectangle(x0, y0, larg, alt, cMort);
     for (int row = 0; row * bH < alt + bH; row++) {
         int offset = (row % 2 == 0) ? 0 : bW / 2;
@@ -118,7 +101,6 @@ void desenhar_tijolos(int x0, int y0, int larg, int alt,
             int by = y0 + row * bH;
             int bw = bW - mJ;
             int bh = bH - mJ;
-            /* clip ao limite da parede */
             if (bx < x0) { bw -= (x0 - bx); bx = x0; }
             if (bx + bw > x0 + larg) bw = x0 + larg - bx;
             if (by + bh > y0 + alt)  bh = y0 + alt  - by;
@@ -128,104 +110,67 @@ void desenhar_tijolos(int x0, int y0, int larg, int alt,
     }
 }
 
-/* folha de palmeira: base no tronco, ponta em (px,py) com largura w */
 void folha_palma(int tx, int ty, int px, int py, int w, Color c) {
-    /* desenha como dois triangulos sobrepostos para dar volume */
     DrawTriangle((Vector2){tx - w, ty},
                  (Vector2){tx + w, ty},
                  (Vector2){px,     py}, c);
 }
 
 void desenhar_fundo_programatico(void) {
-    /* ── paleta de cores ── */
-    Color cEsc    = { 14,  10,   6, 255}; /* escuro geral            */
-    Color cCeu    = { 12,  14,  22, 255}; /* ceu quase preto         */
-    Color cTijE   = {205,  70,  22, 255}; /* tijolo fachada esquerda */
-    Color cMortE  = {155,  45,  12, 255}; /* junta esquerda          */
-    Color cTijLat = {155,  50,  14, 255}; /* tijolo lateral (escuro) */
-    Color cMortLat= {112,  32,   8, 255}; /* junta lateral           */
-    Color cTijD   = {190,  62,  18, 255}; /* tijolo fachada direita  */
-    Color cMortD  = {142,  40,  10, 255}; /* junta direita           */
-    Color cGnd    = {100,  95,  86, 255}; /* calcada                 */
+    Color cEsc    = { 14,  10,   6, 255};
+    Color cCeu    = { 12,  14,  22, 255};
+    Color cTijE   = {205,  70,  22, 255};
+    Color cMortE  = {155,  45,  12, 255};
+    Color cTijLat = {155,  50,  14, 255};
+    Color cMortLat= {112,  32,   8, 255};
+    Color cTijD   = {190,  62,  18, 255};
+    Color cMortD  = {142,  40,  10, 255};
+    Color cGnd    = {100,  95,  86, 255};
 
-    /* ── layout geral ──
-       lateral esq: x=0..68
-       fachada esq: x=68..735   gap: x=735..758   fachada dir: x=758..1280
-       ceu: y=0..55   chao: y=692..720                                    */
     int xLat = 68;
     int xGap = 735, gapW = 23;
     int xDir = xGap + gapW;
     int ySky = 55, yGnd = 692;
 
-    /* ══════════════════════════════════════
-       1. CEU
-    ══════════════════════════════════════ */
     DrawRectangle(0, 0, LARGURA, ySky, cCeu);
 
-    /* ══════════════════════════════════════
-       2. PAREDES
-    ══════════════════════════════════════ */
-    /* parede lateral esquerda — face lateral do predio, mais escura */
     desenhar_tijolos(0,    ySky, xLat,            yGnd - ySky, cTijLat, cMortLat);
-    /* linha de aresta entre lateral e fachada */
     DrawRectangle(xLat - 3, ySky, 5, yGnd - ySky, (Color){90, 26, 6, 255});
 
-    /* fachada esquerda */
     desenhar_tijolos(xLat, ySky, xGap - xLat,    yGnd - ySky, cTijE, cMortE);
 
-    /* gap entre predios */
     DrawRectangle(xGap, ySky, gapW, yGnd - ySky, cEsc);
 
-    /* fachada direita */
     desenhar_tijolos(xDir, ySky, LARGURA - xDir, yGnd - ySky, cTijD, cMortD);
 
-    /* ══════════════════════════════════════
-       3. FACHADA ESQUERDA — detalhes
-    ══════════════════════════════════════ */
-
-    /* --- ENTRADA/PORTA DUPLA ---
-       Ocupa o canto direito da fachada esq, de y=278 ate o chao    */
     int pX = 508, pY = 278, pW = xGap - pX, pH = yGnd - pY;
-    /* abertura */
     DrawRectangle(pX, pY, pW, pH, (Color){10, 8, 6, 255});
-    /* batentes e verga */
     DrawRectangle(pX,       pY, 12, pH, (Color){28, 22, 14, 255});
     DrawRectangle(pX+pW-12, pY, 12, pH, (Color){28, 22, 14, 255});
     DrawRectangle(pX,       pY, pW, 12, (Color){28, 22, 14, 255});
-    /* duas folhas da porta */
     int fW = (pW - 26) / 2;
     DrawRectangle(pX + 13,       pY + 13, fW, pH - 13, (Color){20, 16, 10, 255});
     DrawRectangle(pX + 13 + fW,  pY + 13, fW, pH - 13, (Color){20, 16, 10, 255});
-    /* fresta central */
     DrawRectangle(pX + 13 + fW - 1, pY + 13, 3, pH - 13, (Color){6, 4, 2, 255});
-    /* paineis decorativos nas folhas */
     DrawRectangle(pX + 18,      pY + 20, fW - 10, 80, (Color){25, 20, 13, 255});
     DrawRectangle(pX + 18,      pY+115, fW - 10, 80, (Color){25, 20, 13, 255});
     DrawRectangle(pX+13+fW+5,   pY + 20, fW - 10, 80, (Color){25, 20, 13, 255});
     DrawRectangle(pX+13+fW+5,   pY+115, fW - 10, 80, (Color){25, 20, 13, 255});
-    /* macanetas */
     int mkY = pY + pH / 2;
     DrawRectangle(pX + 13 + fW - 18, mkY, 18, 7, (Color){52, 42, 28, 255});
     DrawRectangle(pX + 13 + fW +  2, mkY, 18, 7, (Color){52, 42, 28, 255});
 
-    /* --- LOGO CESAR ESQUERDO ---
-       Centralizado na area livre (xLat ate pX)                      */
     int logoExC = (xLat + pX) / 2;
     desenhar_logo_cesar(logoExC, 188, 58, cTijE);
 
-    /* --- TEXTO C.E.S.A.R. --- */
     {
         int tw = MeasureText("C.E.S.A.R.", 24);
         DrawText("C.E.S.A.R.", logoExC - tw / 2, 270, 24, cEsc);
     }
 
-    /* --- PALMEIRA ---
-       Tronco centrado em tx=210 (dentro da area livre)              */
     int tx = 210, ty = 368;
     int trunkBot = yGnd - 98;
 
-    /* folhas: da mais externa/escura ate a central/clara
-       cada folha: (base_x, base_y) -> (ponta_x, ponta_y), largura  */
     folha_palma(tx, ty, tx - 205, ty + 220, 15, (Color){18,  78, 24, 255});
     folha_palma(tx, ty, tx - 172, ty + 178, 14, (Color){22,  90, 28, 255});
     folha_palma(tx, ty, tx - 135, ty + 135, 13, (Color){26, 102, 32, 255});
@@ -239,33 +184,23 @@ void desenhar_fundo_programatico(void) {
     folha_palma(tx, ty, tx + 138, ty + 130, 13, (Color){26, 102, 32, 255});
     folha_palma(tx, ty, tx + 174, ty + 174, 14, (Color){22,  90, 28, 255});
     folha_palma(tx, ty, tx + 208, ty + 215, 15, (Color){18,  78, 24, 255});
-    /* camada traseira para volume */
     folha_palma(tx, ty, tx -  82, ty +  22, 10, (Color){38, 128, 46, 255});
     folha_palma(tx, ty, tx +  86, ty +  20, 10, (Color){38, 128, 46, 255});
 
-    /* tronco */
     int tH = trunkBot - ty;
     DrawRectangle(tx - 8, ty, 16, tH, (Color){ 78, 46, 13, 255});
     DrawRectangle(tx - 4, ty + 8, 7, tH, (Color){ 98, 60, 19, 255});
     for (int a = 0; a < 14; a++)
         DrawRectangle(tx - 8, ty + 16 + a * 17, 16, 3, (Color){58, 33,  9, 255});
 
-    /* vaso */
     DrawRectangle(tx - 62, trunkBot,      124, 88, (Color){44, 50, 64, 255});
-    DrawRectangle(tx - 70, trunkBot,      140, 15, (Color){56, 62, 76, 255}); /* borda */
-    DrawRectangle(tx - 54, trunkBot + 78, 108, 10, (Color){35, 40, 52, 255}); /* base */
-    /* sombra lateral no vaso */
+    DrawRectangle(tx - 70, trunkBot,      140, 15, (Color){56, 62, 76, 255});
+    DrawRectangle(tx - 54, trunkBot + 78, 108, 10, (Color){35, 40, 52, 255});
     DrawRectangle(tx + 38, trunkBot + 4, 20, 80, (Color){22, 26, 36, 80});
 
-    /* ══════════════════════════════════════
-       4. FACHADA DIREITA — detalhes
-    ══════════════════════════════════════ */
-
-    /* --- LOGO CESAR DIREITO --- */
     int logoDxC = xDir + (LARGURA - xDir) / 3;
     desenhar_logo_cesar(logoDxC, 188, 58, cTijD);
 
-    /* --- TEXTOS --- */
     {
         int tw1 = MeasureText("c.e.s.a.r.", 24);
         int tw2 = MeasureText("school", 24);
@@ -273,42 +208,31 @@ void desenhar_fundo_programatico(void) {
         DrawText("school",     logoDxC - tw2 / 2, 302, 24, cEsc);
     }
 
-    /* --- VENEZIANA ---
-       Localizada no lado direito da fachada dir, area central/baixa  */
     int vX = xDir + (LARGURA - xDir) * 57 / 100;
     int vY = 395, vW = 272, vH = 262;
-    /* moldura */
     DrawRectangle(vX - 10, vY - 10, vW + 20, vH + 20, cEsc);
-    /* fundo escuro dentro da moldura */
     DrawRectangle(vX, vY, vW, vH, (Color){18, 13, 8, 255});
-    /* laminas horizontais com efeito 3D (brilho no topo, sombra embaixo) */
     int nSlats = 14, slatH = vH / nSlats;
     for (int s = 0; s < nSlats; s++) {
         int ly = vY + s * slatH + 2;
         int sh = slatH - 3;
-        DrawRectangle(vX + 3, ly,      vW - 6, sh,  (Color){36, 28, 18, 255}); /* corpo */
-        DrawRectangle(vX + 3, ly,      vW - 6,  4,  (Color){50, 40, 26, 255}); /* brilho */
-        DrawRectangle(vX + 3, ly + sh - 2, vW - 6, 2, (Color){10, 7,  4, 255}); /* sombra */
+        DrawRectangle(vX + 3, ly,      vW - 6, sh,  (Color){36, 28, 18, 255});
+        DrawRectangle(vX + 3, ly,      vW - 6,  4,  (Color){50, 40, 26, 255});
+        DrawRectangle(vX + 3, ly + sh - 2, vW - 6, 2, (Color){10, 7,  4, 255});
     }
-    /* divisores verticais */
     DrawRectangle(vX + vW * 1 / 3, vY, 5, vH, cEsc);
     DrawRectangle(vX + vW * 2 / 3, vY, 5, vH, cEsc);
 
-    /* ══════════════════════════════════════
-       5. CALCADA E SOMBRA
-    ══════════════════════════════════════ */
     DrawRectangle(0, yGnd, LARGURA, ALTURA - yGnd, cGnd);
     for (int c = 0; c <= 22; c++)
         DrawLine(c * 62, yGnd, c * 62, ALTURA, (Color){78, 74, 66, 255});
     DrawLine(0, yGnd + 18, LARGURA, yGnd + 18, (Color){78, 74, 66, 255});
 
-    /* sombra gradiente base dos predios */
     for (int i = 0; i < 22; i++)
         DrawRectangle(0, yGnd - 22 + i, LARGURA, 1,
                       (Color){0, 0, 0, (unsigned char)(i * 8)});
 }
 
-/* moldura de madeira ao redor da tela (estilo retro) */
 void desenhar_borda_madeira(void) {
     const int t = 36;
     Color cEscuro = (Color){58, 31, 10, 255};
@@ -317,25 +241,21 @@ void desenhar_borda_madeira(void) {
     Color cSombra = (Color){36, 18, 6, 255};
     Color cPrego  = (Color){196, 178, 122, 255};
 
-    /* faixa externa */
     DrawRectangle(0, 0, LARGURA, t, cEscuro);
     DrawRectangle(0, ALTURA - t, LARGURA, t, cEscuro);
     DrawRectangle(0, t, t, ALTURA - 2 * t, cEscuro);
     DrawRectangle(LARGURA - t, t, t, ALTURA - 2 * t, cEscuro);
 
-    /* faixa interna para dar volume */
     DrawRectangle(6, 6, LARGURA - 12, t - 12, cMedio);
     DrawRectangle(6, ALTURA - t + 6, LARGURA - 12, t - 12, cMedio);
     DrawRectangle(6, t, t - 12, ALTURA - 2 * t, cMedio);
     DrawRectangle(LARGURA - t + 6, t, t - 12, ALTURA - 2 * t, cMedio);
 
-    /* brilho/sombra chanfrados (topo/esquerda claros, base/direita escuros) */
     DrawLine(8, 8, LARGURA - 9, 8, cClaro);
     DrawLine(8, 8, 8, ALTURA - 9, cClaro);
     DrawLine(9, ALTURA - 9, LARGURA - 8, ALTURA - 9, cSombra);
     DrawLine(LARGURA - 9, 9, LARGURA - 9, ALTURA - 8, cSombra);
 
-    /* veios horizontais na madeira */
     for (int x = 20; x < LARGURA - 20; x += 54) {
         DrawLine(x, 16, x + 26, 16, cClaro);
         DrawLine(x + 4, 23, x + 30, 23, cSombra);
@@ -343,7 +263,6 @@ void desenhar_borda_madeira(void) {
         DrawLine(x + 3, ALTURA - 24, x + 31, ALTURA - 24, cSombra);
     }
 
-    /* pregos */
     int px[] = { 22, LARGURA / 2, LARGURA - 22 };
     int pyTop = 18;
     int pyBot = ALTURA - 18;
@@ -354,10 +273,6 @@ void desenhar_borda_madeira(void) {
     DrawCircle(18, ALTURA / 2, 4, cPrego);
     DrawCircle(LARGURA - 18, ALTURA / 2, 4, cPrego);
 }
-
-/* ------------------------------------------------------------------ */
-/* IniciarMenu                                                          */
-/* ------------------------------------------------------------------ */
 
 void IniciarMenu(Menu *m) {
     m->selecionado = OPCAO_COMECAR;
@@ -386,7 +301,6 @@ void IniciarMenu(Menu *m) {
         m->temNome = 1;
     }
 
-    /* tenta carregar fonte local sem antialiasing (pixel perfeito) */
     const char *caminhos_fonte[] = {
         "assets/fontes/SuperMarioWorld.ttf",
         "assets/fontes/PressStart2P-Regular.ttf",
@@ -396,7 +310,6 @@ void IniciarMenu(Menu *m) {
     for (int i = 0; i < n; i++) {
         if (FileExists(caminhos_fonte[i])) {
             m->fonte = LoadFontEx(caminhos_fonte[i], 128, NULL, 0);
-            /* desativa antialiasing — filtro de ponto mantem aspecto pixel */
             SetTextureFilter(m->fonte.texture, TEXTURE_FILTER_POINT);
             m->temFonte = 1;
             break;
@@ -409,10 +322,6 @@ void LiberarMenu(Menu *m) {
     if (m->temNome)  UnloadTexture(m->texNome);
     if (m->temFonte) UnloadFont(m->fonte);
 }
-
-/* ------------------------------------------------------------------ */
-/* AtualizarMenu — retorna opcao confirmada ou -1                       */
-/* ------------------------------------------------------------------ */
 
 int AtualizarMenu(Menu *m) {
     m->tempoCursor += GetFrameTime();
@@ -431,14 +340,9 @@ int AtualizarMenu(Menu *m) {
     return -1;
 }
 
-/* ------------------------------------------------------------------ */
-/* DesenharMenu                                                          */
-/* ------------------------------------------------------------------ */
-
 void DesenharMenu(Menu *m, Placar *p) {
     const float ESCALA_TEXTO_MENU = 1.22f;
 
-    /* --- fundo --- */
     if (m->temFundo) {
         DrawTexturePro(m->fundo,
             (Rectangle){0, 0, (float)m->fundo.width, (float)m->fundo.height},
@@ -450,7 +354,6 @@ void DesenharMenu(Menu *m, Placar *p) {
 
     desenhar_borda_madeira();
 
-    /* --- titulo: imagem nomedojogo.png --- */
     if (m->temNome) {
         float nomeAltura  = 270.0f;
         float nomeAspecto = (float)m->texNome.width / (float)m->texNome.height;
@@ -461,7 +364,6 @@ void DesenharMenu(Menu *m, Placar *p) {
             (Rectangle){nomeX, 32.0f, nomeLargura, nomeAltura},
             (Vector2){0, 0}, 0.0f, WHITE);
     } else {
-        /* fallback: titulo em texto */
         const Color COR_BORGONHA  = (Color){255, 140,  0, 255};
         const Color COR_BRANCO    = (Color){255, 255, 255, 255};
         const Color COR_CONTORNO  = (Color){ 22,  55, 135, 255};
@@ -478,7 +380,6 @@ void DesenharMenu(Menu *m, Placar *p) {
     }
 
 
-    /* --- itens do menu --- */
     float tItem   = (m->temFonte ? 18.0f : 28.0f) * ESCALA_TEXTO_MENU;
     float tCursor = (m->temFonte ? 18.0f : 30.0f) * ESCALA_TEXTO_MENU;
     int   espaco  = (int)((m->temFonte ? 48.0f : (float)MENU_ESPACO) * ESCALA_TEXTO_MENU * 0.85f);
@@ -505,7 +406,6 @@ void DesenharMenu(Menu *m, Placar *p) {
             desenhar_texto_fonte_negrito(m->fonte, LABELS[i],
                                          (Vector2){menuXCentralizado, y}, tItem, 1, WHITE);
 
-            /* cursor piscante */
             if (selecionado) {
                 int visivel = (int)(m->tempoCursor * 4) % 2;
                 if (visivel)
@@ -522,7 +422,6 @@ void DesenharMenu(Menu *m, Placar *p) {
         }
     }
 
-    /* --- top scores (so aparece se PLACAR selecionado) --- */
     if (m->selecionado == OPCAO_PLACAR && p != NULL) {
         int px = LARGURA / 2 - 120;
         int py = MENU_Y_INICIO + OPCAO_TOTAL * espaco + 16;
@@ -542,7 +441,6 @@ void DesenharMenu(Menu *m, Placar *p) {
         }
     }
 
-    /* --- rodape --- */
     const char *rodape = "(c) 2026 CESAR ESTUDIOS";
     if (m->temFonte) {
         float tRodape = 12 * ESCALA_TEXTO_MENU;
@@ -557,7 +455,6 @@ void DesenharMenu(Menu *m, Placar *p) {
                                (Color){140, 140, 140, 255});
     }
 
-    /* icone de engrenagem simples */
     int lRodapeGear = MeasureText(rodape, 20);
     DrawCircleLines(LARGURA / 2 - lRodapeGear / 2 - 32, ALTURA - 22, 14,
                     (Color){140, 140, 140, 255});
