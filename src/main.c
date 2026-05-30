@@ -26,7 +26,6 @@ void resetar_posicao_jogador_preservando_status(Jogador *j) {
 	int   vidas     = j->vidas;
 	int   pontos    = j->pontos;
 	int   moedas    = j->moedas;
-	int   devMode   = j->devMode;
 	int   cafeAtivo = j->cafeAtivo;
 	float timerCafe = j->timerCafe;
 
@@ -35,7 +34,6 @@ void resetar_posicao_jogador_preservando_status(Jogador *j) {
 	j->vidas     = vidas;
 	j->pontos    = pontos;
 	j->moedas    = moedas;
-	j->devMode   = devMode;
 	j->cafeAtivo = cafeAtivo;
 	j->timerCafe = timerCafe;
 }
@@ -260,22 +258,6 @@ int main(void) {
 	if (FileExists("assets/sprites/blocos/terra.png")) {
 		texTerra = LoadTexture("assets/sprites/blocos/terra.png");
 		SetTextureFilter(texTerra, TEXTURE_FILTER_POINT);
-	}
-
-	Texture2D texNuvem1 = {0};
-	if (FileExists("assets/sprites/elementosDeCenario/nuvem1.png")) {
-		texNuvem1 = LoadTexture("assets/sprites/elementosDeCenario/nuvem1.png");
-		SetTextureFilter(texNuvem1, TEXTURE_FILTER_BILINEAR);
-	}
-	Texture2D texNuvem2 = {0};
-	if (FileExists("assets/sprites/elementosDeCenario/nuvem2.png")) {
-		texNuvem2 = LoadTexture("assets/sprites/elementosDeCenario/nuvem2.png");
-		SetTextureFilter(texNuvem2, TEXTURE_FILTER_BILINEAR);
-	}
-	Texture2D texNuvem3 = {0};
-	if (FileExists("assets/sprites/elementosDeCenario/nuvem3.png")) {
-		texNuvem3 = LoadTexture("assets/sprites/elementosDeCenario/nuvem3.png");
-		SetTextureFilter(texNuvem3, TEXTURE_FILTER_BILINEAR);
 	}
 
 	Texture2D texIni1 = {0};
@@ -526,13 +508,12 @@ int main(void) {
 			cam.zoom     = extraZoom;
 
 			BeginMode2D(cam);
-			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texNuvem1, texNuvem2, texNuvem3, texCafe, texFundo2);
+			DesenharFase(&fase, texBloco, texTijoloCinza, texTerra, texCafe, texFundo2);
 			DesenharMoedas(listaMoedas, fase.cameraX, fase.cameraYOffset, texMoedas, numFramesMoeda, tempoAnimMoeda);
 			if (faseAtual == 1) DesenharChave(chaveF1, fase.cameraX, fase.cameraYOffset);
 			if (faseAtual == 2) DesenharChave(chaveF2, fase.cameraX, fase.cameraYOffset);
 			DesenharInimigos(listaInimigos, fase.cameraX, fase.cameraYOffset, texIni1, texIni2, texIniRebaixado, texF2Ini1, texF2Ini2, texF2Ini3, texBoss);
 			DesenharJogador(&jogador, fase.cameraYOffset);
-			if (jogador.devMode) DesenharGradeDebug(&fase);
 			EndMode2D();
 
 			int frameAtual = (numFramesMoeda > 0) ? ((int)(tempoAnimMoeda * 10.0f) % numFramesMoeda) : 0;
@@ -543,7 +524,6 @@ int main(void) {
 			if (faseAtual == 3 && jogador.x > 105 * 32.0f)
 				DesenharBarraVidaBoss(boss_vida(listaInimigos), 8);
 
-			if (jogador.devMode)   DrawText("[DEV] x3", LARGURA_TELA - 110,  8, 20, RED);
 			if (jogador.cafeAtivo) DrawText(TextFormat("[CAFE] %.1fs", jogador.timerCafe), LARGURA_TELA - 140, 32, 20, BROWN);
 
 			if (faseAtual == 3 && !boss_ativo(listaInimigos) && jogador.x > 105 * 32.0f) {
@@ -590,9 +570,6 @@ int main(void) {
 	if (texBloco.id > 0) UnloadTexture(texBloco);
 	if (texTijoloCinza.id > 0) UnloadTexture(texTijoloCinza);
 	if (texTerra.id > 0) UnloadTexture(texTerra);
-	if (texNuvem1.id > 0) UnloadTexture(texNuvem1);
-	if (texNuvem2.id > 0) UnloadTexture(texNuvem2);
-	if (texNuvem3.id > 0) UnloadTexture(texNuvem3);
 	if (texIni1.id > 0) UnloadTexture(texIni1);
 	if (texIni2.id > 0) UnloadTexture(texIni2);
 	if (texIniRebaixado.id > 0) UnloadTexture(texIniRebaixado);

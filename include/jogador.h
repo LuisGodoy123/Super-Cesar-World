@@ -55,7 +55,6 @@ typedef struct {
     float animTimer;
     int animFrame;
     float cameraX;        // offset da camera (seguindo o jogador)
-    int devMode;
     int cafeAtivo;
     float timerCafe;
     int moedas;

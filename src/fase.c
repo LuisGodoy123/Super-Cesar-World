@@ -270,102 +270,10 @@ void CarregarFase(Fase *f, int n) {
     }
 }
 
-// Nuvens decorativas
-
-typedef struct { float x, y, escala; } NuvemDeco;
-
-void desenhar_nuvem_deco(float wx, float wy, float escala, float cameraX, float cameraYOffset) {
-    float zoom = CAMERA_ZOOM;
-    // parallax: nuvens se movem a 50% da camera para dar sensacao de profundidade
-    float sx = (wx - cameraX * 0.5f) * zoom;
-    float sy = (wy - cameraYOffset) * zoom;
-
-    float r  = 22.0f * escala * zoom;
-    float r2 = 16.0f * escala * zoom;
-    float r3 = 13.0f * escala * zoom;
-
-    // culling simples
-    if (sx + r + r3 < 0 || sx - r - r2 > GetScreenWidth()) return;
-    if (sy + r < 0 || sy - r > GetScreenHeight()) return;
-
-    Color cor  = (Color){ 255, 255, 255, 220 };
-    Color somb = (Color){ 195, 210, 235, 170 };
-
-    // base retangular para fechar os gaps entre as bolhas
-    DrawRectangle((int)(sx - r2 * 0.7f), (int)(sy),
-                  (int)(r2 * 0.7f + r + r3 * 0.7f), (int)(r * 0.9f), cor);
-    // tres puffs
-    DrawCircleV((Vector2){ sx,               sy              }, r,  cor);
-    DrawCircleV((Vector2){ sx - r * 0.73f,   sy + r * 0.32f }, r2, cor);
-    DrawCircleV((Vector2){ sx + r * 0.76f,   sy + r * 0.26f }, r3, cor);
-    // sombra suave na base
-    DrawRectangle((int)(sx - r2 * 0.7f), (int)(sy + r * 0.82f),
-                  (int)(r2 * 0.7f + r + r3 * 0.7f), (int)(r * 0.22f), somb);
-}
-
-void desenhar_nuvens_sprite(float cameraX, float cameraYOffset,
-                                   Texture2D t1, Texture2D t2, Texture2D t3) {
-    typedef struct { float wx, wy, escala; int idx; } NuvemTex;
-    const NuvemTex nuvens[] = {
-        {  120, 165, 1.00f, 0 },
-        {  460, 148, 0.80f, 1 },
-        {  800, 195, 1.10f, 2 },
-        { 1130, 158, 0.90f, 0 },
-        { 1460, 182, 1.20f, 1 },
-        { 1790, 145, 0.85f, 2 },
-        { 2120, 172, 1.00f, 0 },
-        { 2450, 152, 0.90f, 1 },
-        { 2780, 190, 1.10f, 2 },
-        { 3110, 160, 0.85f, 0 },
-        { 3440, 178, 1.00f, 1 },
-        { 3760, 148, 0.92f, 2 },
-    };
-    int n = sizeof(nuvens) / sizeof(nuvens[0]);
-    Texture2D texs[3] = { t1, t2, t3 };
-    float zoom = CAMERA_ZOOM;
-
-    for (int i = 0; i < n; i++) {
-        Texture2D tex = texs[nuvens[i].idx];
-        if (tex.id == 0) continue;
-
-        float sx = (nuvens[i].wx - cameraX * 0.4f) * zoom;
-        float sy = (nuvens[i].wy - cameraYOffset) * zoom;
-        float h  = 55.0f * nuvens[i].escala * zoom;
-        float w  = h * ((float)tex.width / (float)tex.height);
-
-        if (sx + w < 0 || sx > GetScreenWidth())  continue;
-        if (sy + h < 0 || sy > GetScreenHeight()) continue;
-
-        Rectangle src  = { 0, 0, (float)tex.width, (float)tex.height };
-        Rectangle dest = { sx, sy, w, h };
-        DrawTexturePro(tex, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
-    }
-}
-
-void desenhar_nuvens(int faseNum, float cameraX, float cameraYOffset) {
-    const NuvemDeco n2[] = {
-        {  300,  52, 0.90f }, {  920,  34, 1.10f }, { 1620,  64, 0.80f },
-        { 2240,  40, 1.00f }, { 3020,  68, 1.20f },
-    };
-    const NuvemDeco n3[] = {
-        {  420,  48, 0.70f }, { 1230,  30, 0.90f },
-        { 2020,  54, 0.80f }, { 2830,  36, 1.00f },
-    };
-
-    const NuvemDeco *nuvens = NULL;
-    int n = 0;
-    if      (faseNum == 2) { nuvens = n2; n = 5; }
-    else if (faseNum == 3) { nuvens = n3; n = 4; }
-
-    for (int i = 0; i < n; i++)
-        desenhar_nuvem_deco(nuvens[i].x, nuvens[i].y, nuvens[i].escala, cameraX, cameraYOffset);
-}
-
 //DesenharFase
 
 void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture2D texTerra,
-                  Texture2D texNuvem1, Texture2D texNuvem2, Texture2D texNuvem3, Texture2D texCafe,
-                  Texture2D texFundo2) {
+                  Texture2D texCafe, Texture2D texFundo2) {
     ClearBackground(f->corFundo);
     if (f->numero == 2 && texFundo2.id > 0) {
         float sw = (float)GetScreenWidth();
@@ -374,10 +282,6 @@ void DesenharFase(Fase *f, Texture2D texBloco, Texture2D texTijoloCinza, Texture
             (Rectangle){0, 0, (float)texFundo2.width, (float)texFundo2.height},
             (Rectangle){0, 0, sw, sh},
             (Vector2){0, 0}, 0.0f, WHITE);
-    } else if (f->numero == 1) {
-        desenhar_nuvens_sprite(f->cameraX, f->cameraYOffset, texNuvem1, texNuvem2, texNuvem3);
-    } else {
-        desenhar_nuvens(f->numero, f->cameraX, f->cameraYOffset);
     }
 
     for (int i = 0; i < LINHAS; i++) {
@@ -564,26 +468,3 @@ int VerificarColisao(Rectangle a, Rectangle b) {
     return 1;
 }
 
-void DesenharGradeDebug(Fase *f) {
-    float zoom = CAMERA_ZOOM;
-    int   sw   = GetScreenWidth();
-    int   sh   = GetScreenHeight();
-    int   camX = (int)f->cameraX;
-    float camY = f->cameraYOffset;
-
-    for (int c = 0; c <= COLUNAS; c++) {
-        int sx = (int)((c * TILE - camX) * zoom);
-        if (sx < 0 || sx > sw) continue;
-        DrawLine(sx, 0, sx, sh, Fade(WHITE, 0.20f));
-        if (c < COLUNAS)
-            DrawText(TextFormat("%d", c), sx + 1, 1, 9, YELLOW);
-    }
-
-    for (int r = 0; r <= LINHAS; r++) {
-        int sy = (int)((r * TILE - camY) * zoom);
-        if (sy < 0 || sy > sh) continue;
-        DrawLine(0, sy, sw, sy, Fade(WHITE, 0.20f));
-        if (r < LINHAS)
-            DrawText(TextFormat("%d", r), 1, sy + 1, 9, YELLOW);
-    }
-}

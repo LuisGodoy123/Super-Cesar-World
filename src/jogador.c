@@ -40,7 +40,6 @@ void IniciarJogador(Jogador *j) {
     j->vyAnterior      = 0.0f;
     j->animFrame       = 0;
     j->cameraX         = 0.0f;
-    j->devMode         = 0;
     j->cafeAtivo       = 0;
     j->timerCafe       = 0.0f;
     j->moedas          = 0;
@@ -60,9 +59,7 @@ void AtualizarJogador(Jogador *j, Fase *f, int bloqueado, Sound sndJump, Sound s
 
     const float dt = 1.0f / 60.0f;
 
-    if (!bloqueado && IsKeyPressed(KEY_F1)) j->devMode = !j->devMode;
-
-    float fator = (j->devMode ? 3.0f : 1.0f) * (j->cafeAtivo ? FATOR_CAFE : 1.0f);
+    float fator = (j->cafeAtivo ? FATOR_CAFE : 1.0f);
     float vel_caminhada = VELOCIDADE_CAMINHADA * fator;
 
     int left  = !bloqueado && (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A));
