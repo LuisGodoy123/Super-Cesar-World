@@ -99,7 +99,6 @@ void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *fase) {
 		float x1 =  380.0f;
 		float x2 = 1100.0f;
 		float x3 = 1680.0f;
-		float x4 = 2360.0f;
 		AdicionarInimigo(listaInimigos, CAMINHADOR, x1, y_superficie_chao(fase, x1, 32, 480.0f));
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x2, y_superficie_chao(fase, x2, 32, 352.0f));
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x3, y_superficie_chao(fase, x3, 32, 416.0f));
