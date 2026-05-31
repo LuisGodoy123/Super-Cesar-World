@@ -24,7 +24,7 @@ else
 LDFLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 endif
 setup:
-	@echo "No Linux/macOS, instale a Raylib pelo gerenciador de pacotes."
+	@echo "No Linux/macOS, consulte o README para instalar a Raylib."
 endif
 
 SRC     = $(wildcard src/*.c)
