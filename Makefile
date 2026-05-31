@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := all
+
 ifeq ($(OS),Windows_NT)
 W64     ?= C:/raylib/w64devkit/bin
 CC       = $(W64)/gcc.exe
