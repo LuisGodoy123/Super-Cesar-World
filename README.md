@@ -175,4 +175,4 @@ make clean    # Remove arquivos compilados
 
 ## Screencast
 
-<!-- Adicione o link do video aqui -->
+https://github.com/user-attachments/assets/0d6ac7f2-f0f4-44bb-bd3d-0fb81da45ac2
