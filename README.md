@@ -79,7 +79,6 @@ Instale o [Homebrew](https://brew.sh/) e depois:
 brew install raylib gcc git make
 ```
 
-> **Nota:** Caso o Homebrew instale uma versao anterior a 6.0, compile do fonte seguindo o mesmo procedimento da Opcao 2 do Linux (substitua `sudo ldconfig` por nada — no macOS nao e necessario `ldconfig`).
 
 #### Windows
 
