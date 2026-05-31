@@ -50,7 +50,7 @@ Super Cesar World e um jogo de plataforma inspirado no classico Super Mario, ond
 
 ## Requisitos
 
-- [Raylib](https://www.raylib.com/) 5.0+
+- [Raylib](https://www.raylib.com/) 6.0+
 - Compilador C (gcc)
 - Make
 - Git
@@ -60,10 +60,26 @@ Super Cesar World e um jogo de plataforma inspirado no classico Super Mario, ond
 ## Instalacao das Dependencias
 
 #### Linux (Ubuntu/Debian)
+
+**Opcao 1: via apt (Ubuntu 24.04+ com Raylib 6.0 disponivel)**
 ```bash
 sudo apt-get update
-sudo apt-get install build-essential git libraylib-dev libgl1-mesa-dev libx11-dev
+sudo apt-get install build-essential git libgl1-mesa-dev libx11-dev libraylib-dev
 ```
+
+**Opcao 2: compilar do fonte (recomendado — garante Raylib 6.0 em qualquer distro)**
+```bash
+sudo apt-get update
+sudo apt-get install build-essential git libgl1-mesa-dev libx11-dev
+git clone --depth 1 --branch 6.0 https://github.com/raysan5/raylib.git /tmp/raylib
+cd /tmp/raylib/src
+make PLATFORM=PLATFORM_DESKTOP
+sudo make install
+sudo ldconfig
+cd -
+```
+
+> **Nota:** Recomenda-se a Opcao 2 para garantir que a versao 6.0 da Raylib esteja instalada corretamente, independente da distribuicao.
 
 #### macOS
 
@@ -72,10 +88,14 @@ Instale o [Homebrew](https://brew.sh/) e depois:
 brew install raylib gcc git make
 ```
 
+> **Nota:** Caso o Homebrew instale uma versao anterior a 6.0, compile do fonte seguindo o mesmo procedimento da Opcao 2 do Linux (substitua `sudo ldconfig` por nada — no macOS nao e necessario `ldconfig`).
+
 #### Windows
 
 1. Baixe o [w64devkit](https://github.com/skeeto/w64devkit/releases) e extraia em `C:\raylib\w64devkit\`
-2. Baixe o [codigo-fonte da Raylib](https://github.com/raysan5/raylib/releases) e extraia em `C:\raylib\raylib\`
+2. Baixe o [codigo-fonte da Raylib 6.0](https://github.com/raysan5/raylib/releases/tag/6.0) e extraia em `C:\raylib\raylib\`
+
+> **Atencao:** `make setup` apenas compila a Raylib. Certifique-se de ter baixado e extraido o codigo-fonte da Raylib 6.0 no caminho correto antes de rodar esse comando.
 
 Em seguida, compile a Raylib uma unica vez com o mesmo gcc que sera usado no jogo:
 ```bash
@@ -95,7 +115,7 @@ make setup W64=C:/seu/w64devkit/bin RAYLIB=C:/seu/raylib/src
 
 ### Passo 1: Clonar o Repositorio
 ```bash
-git clone https://github.com/seu-usuario/Super-Cesar-World.git
+git clone https://github.com/LuisGodoy123/Super-Cesar-World.git
 cd Super-Cesar-World
 ```
 
@@ -116,6 +136,8 @@ make W64=C:/seu/w64devkit/bin RAYLIB=C:/seu/raylib/src
 ```
 
 ### Passo 4: Executar
+
+> **Atencao:** Execute sempre a partir da raiz do projeto (onde estao as pastas `assets/` e `data/`). Rodar o executavel de outro diretorio fara o jogo iniciar sem sprites, sons e sem salvar o placar.
 
 ```bash
 make run

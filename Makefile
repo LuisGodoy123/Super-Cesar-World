@@ -43,7 +43,11 @@ build:
 	mkdir -p build
 
 run: all
+ifeq ($(OS),Windows_NT)
 	$(RUN)
+else
+	cd $(dir $(abspath $(lastword $(MAKEFILE_LIST)))) && ./$(TARGET)
+endif
 
 clean:
 	rm -f build/*.o $(TARGET)
