@@ -61,13 +61,6 @@ Super Cesar World e um jogo de plataforma inspirado no classico Super Mario, ond
 
 #### Linux (Ubuntu/Debian)
 
-**Opcao 1: via apt (Ubuntu 24.04+ com Raylib 6.0 disponivel)**
-```bash
-sudo apt-get update
-sudo apt-get install build-essential git libgl1-mesa-dev libx11-dev libraylib-dev
-```
-
-**Opcao 2: compilar do fonte (recomendado — garante Raylib 6.0 em qualquer distro)**
 ```bash
 sudo apt-get update
 sudo apt-get install build-essential git libgl1-mesa-dev libx11-dev
@@ -78,8 +71,6 @@ sudo make install
 sudo ldconfig
 cd -
 ```
-
-> **Nota:** Recomenda-se a Opcao 2 para garantir que a versao 6.0 da Raylib esteja instalada corretamente, independente da distribuicao.
 
 #### macOS
 
