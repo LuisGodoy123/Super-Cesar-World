@@ -145,7 +145,7 @@ int colidiu(Inimigo *ini, Jogador *j) {
     return VerificarColisao(retJog, retIni);
 }
 
-void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) {
+void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick, Sound sndDano) {
     No *atual = lista;
 
     while (atual != NULL) {
@@ -236,6 +236,7 @@ void AtualizarInimigos(No *lista, Jogador *j, Fase *f, float dt, Sound sndKick) 
                         j->timerInvencivel = 0.3f;
                     }
                 } else if (j->estado == VIVO) {
+                    PlaySound(sndDano);
                     j->vidas--;
                     j->estado          = INVENCIVEL;
                     j->timerInvencivel = TEMPO_INVENCIVEL;

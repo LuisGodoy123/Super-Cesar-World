@@ -315,6 +315,20 @@ int main(void) {
 	if (FileExists("assets/sons/kick.wav"))  sndKick  = LoadSound("assets/sons/kick.wav");
 	Sound sndPowerup = {0};
 	if (FileExists("assets/sons/powerup.wav")) sndPowerup = LoadSound("assets/sons/powerup.wav");
+	Sound sndDano = {0};
+	if (FileExists("assets/sons/TomarDano.wav")) sndDano = LoadSound("assets/sons/TomarDano.wav");
+
+	Music musicas[3] = {0};
+	if (FileExists("assets/sons/SomPrimeiraFase.mp3")) musicas[0] = LoadMusicStream("assets/sons/SomPrimeiraFase.mp3");
+	if (FileExists("assets/sons/SomSegundaFase.mp3"))  musicas[1] = LoadMusicStream("assets/sons/SomSegundaFase.mp3");
+	if (FileExists("assets/sons/SomTerceiraFase.mp3")) musicas[2] = LoadMusicStream("assets/sons/SomTerceiraFase.mp3");
+	for (int i = 0; i < 3; i++)
+		if (musicas[i].ctxData != NULL) SetMusicVolume(musicas[i], 1.5f);
+	int musicaAtual = 0;
+
+	Music musicaMenu = {0};
+	if (FileExists("assets/sons/SomTela Inicial.mp3")) musicaMenu = LoadMusicStream("assets/sons/SomTela Inicial.mp3");
+	if (musicaMenu.ctxData != NULL) PlayMusicStream(musicaMenu);
 
 	while (!WindowShouldClose()) {
 		float frameTime = GetFrameTime();
@@ -334,6 +348,9 @@ int main(void) {
 				AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 				estado = JOGANDO;
 				introTimer = 2.5f;
+				if (musicaMenu.ctxData != NULL) StopMusicStream(musicaMenu);
+				if (musicas[0].ctxData != NULL) PlayMusicStream(musicas[0]);
+				musicaAtual = 1;
 			}
 		} else if (estado == GAME_OVER) {
 			if (!scoreRegistrado) {
@@ -344,6 +361,7 @@ int main(void) {
 
 			if (IsKeyPressed(KEY_ENTER)) {
 				estado = MENU;
+				if (musicaMenu.ctxData != NULL) { StopMusicStream(musicaMenu); PlayMusicStream(musicaMenu); }
 			}
 		} else if (estado == VITORIA) {
 			if (!scoreRegistrado) {
@@ -354,6 +372,7 @@ int main(void) {
 
 			if (IsKeyPressed(KEY_ENTER)) {
 				estado = MENU;
+				if (musicaMenu.ctxData != NULL) { StopMusicStream(musicaMenu); PlayMusicStream(musicaMenu); }
 			}
 		}
 
@@ -376,7 +395,7 @@ int main(void) {
 					if (faseAtual == 1) IniciarChave(&chaveF1, 110 * TILE, 8 * TILE);
 					if (faseAtual == 2) IniciarChave(&chaveF2, 111 * TILE, 10 * TILE);
 				}
-				AtualizarInimigos(listaInimigos, &jogador, &fase, FIXED_DT, sndKick);
+				AtualizarInimigos(listaInimigos, &jogador, &fase, FIXED_DT, sndKick, sndDano);
 				AtualizarMoedas(listaMoedas, &jogador, sndCoin);
 				if (faseAtual == 1) AtualizarChave(&chaveF1, &jogador);
 				if (faseAtual == 2) AtualizarChave(&chaveF2, &jogador);
@@ -406,6 +425,8 @@ int main(void) {
 				if (jogador.estado == MORTO) {
 					estado = GAME_OVER;
 					scoreRegistrado = 0;
+					if (musicaAtual > 0 && musicas[musicaAtual - 1].ctxData != NULL) StopMusicStream(musicas[musicaAtual - 1]);
+					musicaAtual = 0;
 				} else {
 					int entrou_porta = 0;
 					if (faseAtual == 1) {
@@ -428,6 +449,9 @@ int main(void) {
 									IniciarChave(&chaveF2, 111 * TILE, 10 * TILE);
 									AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 									introTimer = 2.5f;
+									if (musicas[0].ctxData != NULL) StopMusicStream(musicas[0]);
+									if (musicas[1].ctxData != NULL) PlayMusicStream(musicas[1]);
+									musicaAtual = 2;
 									entrou_porta = 1;
 								}
 							}
@@ -452,6 +476,9 @@ int main(void) {
 									preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
 									AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 									introTimer = 2.5f;
+									if (musicas[1].ctxData != NULL) StopMusicStream(musicas[1]);
+									if (musicas[2].ctxData != NULL) PlayMusicStream(musicas[2]);
+									musicaAtual = 3;
 									entrou_porta = 1;
 								}
 							}
@@ -464,17 +491,22 @@ int main(void) {
 					if (!entrou_porta && bordaDirJogador >= fimDaFase) {
 						if (faseAtual < 3 && (faseAtual != 1 || chaveF1.coletada) && (faseAtual != 2 || chaveF2.coletada)) {
 							jogador.pontos += BONUS_COMPLETAR_FASE;
+							if (musicaAtual > 0 && musicas[musicaAtual - 1].ctxData != NULL) StopMusicStream(musicas[musicaAtual - 1]);
 							faseAtual++;
 							timerFase = 300.0f;
 							preparar_fase(&fase, &jogador, &listaInimigos, &listaMoedas, faseAtual, 1);
 							if (faseAtual == 2) IniciarChave(&chaveF2, 111 * TILE, 10 * TILE);
 							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 							introTimer = 2.5f;
+							if (musicas[faseAtual - 1].ctxData != NULL) PlayMusicStream(musicas[faseAtual - 1]);
+							musicaAtual = faseAtual;
 						} else if (faseAtual == 3 && !boss_ativo(listaInimigos)) {
 							jogador.pontos += BONUS_COMPLETAR_FASE;
 							AtualizarPlacar(&placar, jogador.pontos, jogador.vidas, jogador.moedas, faseAtual, (int)timerFase);
 							estado = VITORIA;
 							scoreRegistrado = 0;
+							if (musicaAtual > 0 && musicas[musicaAtual - 1].ctxData != NULL) StopMusicStream(musicas[musicaAtual - 1]);
+							musicaAtual = 0;
 						}
 					}
 				}
@@ -482,6 +514,11 @@ int main(void) {
 
 			acumulador -= FIXED_DT;
 		}
+
+		if (estado == MENU && musicaMenu.ctxData != NULL)
+			UpdateMusicStream(musicaMenu);
+		if (estado == JOGANDO && musicaAtual > 0 && musicas[musicaAtual - 1].ctxData != NULL)
+			UpdateMusicStream(musicas[musicaAtual - 1]);
 
 		BeginDrawing();
 
@@ -579,6 +616,10 @@ int main(void) {
 	UnloadSound(snd1up);
 	UnloadSound(sndKick);
 	UnloadSound(sndPowerup);
+	UnloadSound(sndDano);
+	for (int i = 0; i < 3; i++)
+		if (musicas[i].ctxData != NULL) UnloadMusicStream(musicas[i]);
+	if (musicaMenu.ctxData != NULL) UnloadMusicStream(musicaMenu);
 	CloseAudioDevice();
 	CloseWindow();
 	return 0;
