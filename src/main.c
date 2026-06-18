@@ -15,6 +15,7 @@
 
 typedef enum {
 	MENU = 0,
+	DIGITANDO_NICK,
 	JOGANDO,
 	GAME_OVER,
 	VITORIA
@@ -198,6 +199,8 @@ int main(void) {
 	int scoreRegistrado = 0;
 	float introTimer = 0.0f;
 	float timerFase = 300.0f;
+	char nickname[NICK_MAX + 1] = {0};
+	int  nickLen = 0;
 
 	IniciarPlacar(&placar);
 	CarregarPlacar(&placar);
@@ -345,6 +348,28 @@ int main(void) {
 		if (estado == MENU) {
 			int opcao = AtualizarMenu(&menu);
 			if (opcao == OPCAO_COMECAR) {
+				estado  = DIGITANDO_NICK;
+				nickLen = 0;
+				nickname[0] = '\0';
+			}
+		} else if (estado == DIGITANDO_NICK) {
+			int c = GetCharPressed();
+			while (c > 0) {
+				if (c >= 'a' && c <= 'z') c -= 32;
+				int valido = (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
+				if (valido && nickLen < NICK_MAX) {
+					nickname[nickLen++] = (char)c;
+					nickname[nickLen]   = '\0';
+				}
+				c = GetCharPressed();
+			}
+			if (IsKeyPressed(KEY_BACKSPACE) && nickLen > 0) {
+				nickname[--nickLen] = '\0';
+			}
+			if (IsKeyPressed(KEY_ESCAPE)) {
+				estado = MENU;
+			}
+			if (IsKeyPressed(KEY_ENTER) && nickLen > 0) {
 				faseAtual = 1;
 				scoreRegistrado = 0;
 				timerFase = 300.0f;
@@ -360,7 +385,7 @@ int main(void) {
 			}
 		} else if (estado == GAME_OVER) {
 			if (!scoreRegistrado) {
-				RegistrarPontuacaoFinal(&placar, jogador.pontos);
+				RegistrarPontuacaoFinal(&placar, jogador.pontos, nickname);
 				SalvarPlacar(&placar);
 				scoreRegistrado = 1;
 			}
@@ -371,7 +396,7 @@ int main(void) {
 			}
 		} else if (estado == VITORIA) {
 			if (!scoreRegistrado) {
-				RegistrarPontuacaoFinal(&placar, jogador.pontos);
+				RegistrarPontuacaoFinal(&placar, jogador.pontos, nickname);
 				SalvarPlacar(&placar);
 				scoreRegistrado = 1;
 			}
@@ -530,6 +555,9 @@ int main(void) {
 
 		if (estado == MENU) {
 			DesenharMenu(&menu, &placar);
+		} else if (estado == DIGITANDO_NICK) {
+			DesenharMenu(&menu, NULL);
+			DesenharInputNick(&menu, nickname);
 		} else if (estado == JOGANDO) {
 			float extraZoom = 1.0f;
 			if (introTimer > 0.0f) {

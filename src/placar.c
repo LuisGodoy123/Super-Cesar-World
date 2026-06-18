@@ -1,5 +1,6 @@
 #include "placar.h"
 #include <stdio.h>
+#include <string.h>
 
 #define HUD_ALTURA   68
 #define HUD_COR      ((Color){0, 0, 0, 200})
@@ -23,7 +24,10 @@ int medir_texto(Font *fonte, int temFonte, const char *txt, int tamanho) {
 }
 
 void limpar_top_scores(Placar *p) {
-	for (int i = 0; i < TOP_SCORES; i++) p->topScores[i] = 0;
+	for (int i = 0; i < TOP_SCORES; i++) {
+		p->topScores[i] = 0;
+		p->topNicks[i][0] = '\0';
+	}
 }
 
 void IniciarPlacar(Placar *p) {
@@ -51,13 +55,19 @@ void CarregarPlacar(Placar *p) {
 	if (p == NULL) return;
 
 	FILE *f = fopen(ARQ_PLACAR, "r");
-	if (f == NULL) {
-		limpar_top_scores(p);
-		return;
-	}
+	if (f == NULL) { limpar_top_scores(p); return; }
 
 	for (int i = 0; i < TOP_SCORES; i++) {
-		if (fscanf(f, "%d", &p->topScores[i]) != 1) p->topScores[i] = 0;
+		char nick[NICK_MAX + 1] = {0};
+		int  score = 0;
+		if (fscanf(f, "%12s %d\n", nick, &score) == 2) {
+			strncpy(p->topNicks[i], nick, NICK_MAX);
+			p->topNicks[i][NICK_MAX] = '\0';
+			p->topScores[i] = score;
+		} else {
+			p->topNicks[i][0] = '\0';
+			p->topScores[i] = 0;
+		}
 	}
 
 	fclose(f);
@@ -69,27 +79,31 @@ void SalvarPlacar(Placar *p) {
 	FILE *f = fopen(ARQ_PLACAR, "w");
 	if (f == NULL) return;
 
-	for (int i = 0; i < TOP_SCORES; i++) fprintf(f, "%d\n", p->topScores[i]);
+	for (int i = 0; i < TOP_SCORES; i++)
+		fprintf(f, "%s %d\n", p->topNicks[i][0] ? p->topNicks[i] : "---", p->topScores[i]);
 
 	fclose(f);
 }
 
-void RegistrarPontuacaoFinal(Placar *p, int pontuacaoFinal) {
+void RegistrarPontuacaoFinal(Placar *p, int pontuacaoFinal, const char *nick) {
 	if (p == NULL) return;
 
 	int pos = -1;
 	for (int i = 0; i < TOP_SCORES; i++) {
-		if (pontuacaoFinal > p->topScores[i]) {
-			pos = i;
-			break;
-		}
+		if (pontuacaoFinal > p->topScores[i]) { pos = i; break; }
 	}
 
 	if (pos < 0) return;
 
-	for (int i = TOP_SCORES - 1; i > pos; i--) p->topScores[i] = p->topScores[i - 1];
+	for (int i = TOP_SCORES - 1; i > pos; i--) {
+		p->topScores[i] = p->topScores[i - 1];
+		strncpy(p->topNicks[i], p->topNicks[i - 1], NICK_MAX);
+		p->topNicks[i][NICK_MAX] = '\0';
+	}
 
 	p->topScores[pos] = pontuacaoFinal;
+	strncpy(p->topNicks[pos], (nick && nick[0]) ? nick : "---", NICK_MAX);
+	p->topNicks[pos][NICK_MAX] = '\0';
 }
 
 void DesenharPlacar(Placar *p, Font *fonte, int temFonte, Texture2D texMoeda, int temTexMoeda) {
@@ -145,7 +159,9 @@ void DesenharTopScores(Placar *p, int x, int y) {
 	DrawText("TOP 5 SCORES", x, y, 32, YELLOW);
 
 	for (int i = 0; i < TOP_SCORES; i++) {
-		DrawText(TextFormat("%d. %d", i + 1, p->topScores[i]), x, y + 40 + i * 28, 24, WHITE);
+		const char *nick = p->topNicks[i][0] ? p->topNicks[i] : "---";
+		DrawText(TextFormat("%d. %-12s %07d", i + 1, nick, p->topScores[i]),
+		         x, y + 40 + i * 28, 24, WHITE);
 	}
 }
 

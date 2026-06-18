@@ -1,5 +1,6 @@
 #include "menu.h"
 #include <stdio.h>
+#include <string.h>
 
 #define LARGURA 1280
 #define ALTURA   720
@@ -427,17 +428,21 @@ void DesenharMenu(Menu *m, Placar *p) {
         int py = MENU_Y_INICIO + OPCAO_TOTAL * espaco + 16;
         if (m->temFonte) {
             desenhar_texto_fonte_negrito(m->fonte, "TOP 5:", (Vector2){px, py}, 16 * ESCALA_TEXTO_MENU, 1, YELLOW);
-            for (int i = 0; i < TOP_SCORES; i++)
+            for (int i = 0; i < TOP_SCORES; i++) {
+                const char *nick = p->topNicks[i][0] ? p->topNicks[i] : "---";
                 desenhar_texto_fonte_negrito(m->fonte,
-                                             TextFormat("%d. %07d", i + 1, p->topScores[i]),
+                                             TextFormat("%d. %-12s %07d", i + 1, nick, p->topScores[i]),
                                              (Vector2){px, py + 24 + i * 24},
                                              14 * ESCALA_TEXTO_MENU, 1, WHITE);
+            }
         } else {
             desenhar_texto_negrito("TOP 5:", px, py, (int)(22 * ESCALA_TEXTO_MENU), YELLOW);
-            for (int i = 0; i < TOP_SCORES; i++)
-                desenhar_texto_negrito(TextFormat("%d. %07d", i + 1, p->topScores[i]),
+            for (int i = 0; i < TOP_SCORES; i++) {
+                const char *nick = p->topNicks[i][0] ? p->topNicks[i] : "---";
+                desenhar_texto_negrito(TextFormat("%d. %-12s %07d", i + 1, nick, p->topScores[i]),
                                        px, py + 28 + i * 26,
                                        (int)(20 * ESCALA_TEXTO_MENU), WHITE);
+            }
         }
     }
 
@@ -460,4 +465,63 @@ void DesenharMenu(Menu *m, Placar *p) {
                     (Color){140, 140, 140, 255});
     desenhar_texto_negrito("C", LARGURA / 2 - lRodapeGear / 2 - 38, ALTURA - 30, 18,
                            (Color){140, 140, 140, 255});
+}
+
+void DesenharInputNick(Menu *m, const char *nick) {
+    // overlay escuro sobre o menu
+    DrawRectangle(0, 0, LARGURA, ALTURA, (Color){0, 0, 0, 155});
+
+    int bW = 500, bH = 220;
+    int bX = (LARGURA - bW) / 2;
+    int bY = (ALTURA  - bH) / 2;
+
+    DrawRectangle(bX, bY, bW, bH, (Color){18, 18, 38, 245});
+    DrawRectangleLines(bX,     bY,     bW,     bH,     YELLOW);
+    DrawRectangleLines(bX + 3, bY + 3, bW - 6, bH - 6, (Color){90, 90, 30, 200});
+
+    const char *titulo = "DIGITE SEU NICK:";
+    if (m->temFonte) {
+        float tT = 22.0f;
+        int tw = (int)MeasureTextEx(m->fonte, titulo, tT, 1).x;
+        DrawTextEx(m->fonte, titulo, (Vector2){bX + (bW - tw) / 2, bY + 26}, tT, 1, YELLOW);
+    } else {
+        int tT = 24;
+        int tw = MeasureText(titulo, tT);
+        desenhar_texto_negrito(titulo, bX + (bW - tw) / 2, bY + 26, tT, YELLOW);
+    }
+
+    // campo de entrada
+    int fX = bX + 50, fY = bY + 76, fW = bW - 100, fH = 46;
+    DrawRectangle(fX, fY, fW, fH, (Color){4, 4, 20, 255});
+    DrawRectangleLines(fX, fY, fW, fH, WHITE);
+
+    // texto + cursor piscante
+    int cursor = (int)(GetTime() * 2.0) % 2;
+    char exibir[NICK_MAX + 2];
+    int len = (int)strlen(nick);
+    memcpy(exibir, nick, len);
+    exibir[len]     = cursor ? '_' : ' ';
+    exibir[len + 1] = '\0';
+
+    if (m->temFonte) {
+        float tN = 26.0f;
+        int th = (int)MeasureTextEx(m->fonte, exibir, tN, 1).y;
+        DrawTextEx(m->fonte, exibir,
+                   (Vector2){fX + 12, fY + (fH - th) / 2}, tN, 1, WHITE);
+    } else {
+        int tN = 28;
+        DrawText(exibir, fX + 12, fY + (fH - tN) / 2, tN, WHITE);
+    }
+
+    const char *dica = "ENTER: confirmar     ESC: voltar";
+    if (m->temFonte) {
+        float tD = 13.0f;
+        int dw = (int)MeasureTextEx(m->fonte, dica, tD, 1).x;
+        DrawTextEx(m->fonte, dica,
+                   (Vector2){bX + (bW - dw) / 2, bY + bH - 36}, tD, 1, LIGHTGRAY);
+    } else {
+        int tD = 16;
+        int dw = MeasureText(dica, tD);
+        DrawText(dica, bX + (bW - dw) / 2, bY + bH - 36, tD, LIGHTGRAY);
+    }
 }
