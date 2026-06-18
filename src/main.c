@@ -84,6 +84,9 @@ void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *fase) {
 		AdicionarInimigo(listaInimigos, CAMINHADOR, 3360.0f, 352.0f);
 		AdicionarInimigo(listaInimigos, CAMINHADOR, 3680.0f, 352.0f);
 		AdicionarInimigo(listaInimigos, CAMINHADOR, 3520.0f, 224.0f);
+		AdicionarInimigo(listaInimigos, CAMINHADOR, 4256.0f, 480.0f);
+		AdicionarInimigo(listaInimigos, CAMINHADOR, 4704.0f, 416.0f);
+		AdicionarInimigo(listaInimigos, CAMINHADOR, 5024.0f, 480.0f);
 	} else if (faseAtual == 2) {
 		float x1 =  350.0f;
 		float x2 = 1150.0f;
@@ -95,6 +98,9 @@ void carregar_inimigos_da_fase(No **listaInimigos, int faseAtual, Fase *fase) {
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, x4, y_superficie_chao(fase, x4, 32, 320.0f));
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, 3296.0f, 336.0f);
 		AdicionarInimigo(listaInimigos, PERSEGUIDOR, 3520.0f, 240.0f);
+		AdicionarInimigo(listaInimigos, CAMINHADOR,  4352.0f, y_superficie_chao(fase, 4352.0f, 32, 640.0f));
+		AdicionarInimigo(listaInimigos, PERSEGUIDOR, 4832.0f, y_superficie_chao(fase, 4832.0f, 48, 624.0f));
+		AdicionarInimigo(listaInimigos, PERSEGUIDOR, 5056.0f, y_superficie_chao(fase, 5056.0f, 48, 624.0f));
 	} else if (faseAtual == 3) {
 		float x1 =  380.0f;
 		float x2 = 1100.0f;

@@ -6,7 +6,7 @@
 
 #define TILE     32
 #define LINHAS   23
-#define COLUNAS  130
+#define COLUNAS  165
 #define CAMERA_ZOOM 1.35f
 #define CAMERA_Y_OFFSET 128.0f
 

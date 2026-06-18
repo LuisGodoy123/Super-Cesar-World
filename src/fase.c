@@ -94,8 +94,30 @@ void preencher_fase1(Fase *f) {
     colocar_bloco(f, 8, 108);
     colocar_bloco(f, 8, 112);
 
-    colocar_porta(f, 15, 126);
-    colocar_porta(f, 16, 126);
+    // extensão: colunas 130-163
+    preencher_chao(f, 130, 140, 17);
+    preencher_chao(f, 141, 148, 15);
+    preencher_chao(f, 149, 155, 17);
+    preencher_chao(f, 156, 163, 16);
+
+    for (int c = 131; c <= 136; c++) colocar_bloco(f, 13, c);
+    for (int c = 143; c <= 148; c++) colocar_bloco(f, 11, c);
+    plataforma(f, 151, 155, 9);
+    colocar_bloco(f, 8, 150);
+    colocar_bloco(f, 8, 156);
+
+    colocar_powerup(f, 13, 133);
+    colocar_powerup(f,  9, 152);
+
+    for (int c = 132; c <= 135; c++) f->mapa[12][c] = MOEDA;
+    for (int c = 144; c <= 147; c++) f->mapa[10][c] = MOEDA;
+    for (int c = 152; c <= 154; c++) f->mapa[ 8][c] = MOEDA;
+    for (int c = 157; c <= 161; c++) f->mapa[15][c] = MOEDA;
+
+    colocar_porta(f, 14, 161);
+    colocar_porta(f, 15, 161);
+
+    preencher_chao(f, 162, 164, 16);
 }
 
 void preencher_fase2(Fase *f) {
@@ -137,8 +159,26 @@ void preencher_fase2(Fase *f) {
     colocar_bloco(f, 10, 108);
     colocar_bloco(f, 10, 113);
 
-    colocar_porta(f, 19, 125);
-    colocar_porta(f, 20, 125);
+    // extensão: colunas 130-163
+    preencher_chao(f, 130, 163, 21);
+
+    for (int c = 131; c <= 137; c++) colocar_bloco(f, 17, c);
+    for (int c = 141; c <= 147; c++) colocar_bloco(f, 14, c);
+    for (int c = 152; c <= 158; c++) colocar_bloco(f, 11, c);
+    colocar_bloco(f, 10, 151);
+    colocar_bloco(f, 10, 159);
+
+    colocar_powerup(f, 17, 134);
+    colocar_powerup(f, 11, 155);
+
+    for (int c = 132; c <= 136; c++) f->mapa[16][c] = MOEDA;
+    for (int c = 142; c <= 146; c++) f->mapa[13][c] = MOEDA;
+    for (int c = 153; c <= 157; c++) f->mapa[10][c] = MOEDA;
+
+    colocar_porta(f, 19, 161);
+    colocar_porta(f, 20, 161);
+
+    preencher_chao(f, 162, 164, 21);
 }
 
 void preencher_fase3(Fase *f) {
@@ -187,6 +227,8 @@ void preencher_fase3(Fase *f) {
     colocar_bloco(f, 20, 104);
     colocar_bloco(f, 20, 105);
     colocar_bloco(f, 19, 104);
+
+    preencher_chao(f, 130, 164, 21);
 }
 
 void CarregarFase(Fase *f, int n) {
