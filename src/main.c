@@ -168,7 +168,8 @@ void desenhar_texto_hud(Font *fonte, int temFonte, const char *txt,
 }
 
 int main(void) {
-	InitWindow(LARGURA_TELA, ALTURA_TELA, "Super Cesar World");
+	SetConfigFlags(FLAG_FULLSCREEN_MODE);
+	InitWindow(GetMonitorWidth(0), GetMonitorHeight(0), "Super Cesar World");
 	InitAudioDevice();
 	SetTargetFPS(60);
 
