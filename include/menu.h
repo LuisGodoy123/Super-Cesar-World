@@ -25,5 +25,6 @@ void IniciarMenu(Menu *m);
 void LiberarMenu(Menu *m);
 int  AtualizarMenu(Menu *m);
 void DesenharMenu(Menu *m, Placar *p);
+void DesenharInputNick(Menu *m, const char *nick);
 
 #endif
